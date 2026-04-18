@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#161c30"/>
+      <stop offset="100%" stop-color="#0d0f14"/>
+    </radialGradient>
+    <clipPath id="rr">
+      <rect width="1024" height="1024" rx="224"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <g clip-path="url(#rr)">
+    <!-- Stars -->
+    <circle cx="120"  cy="100" r="5"   fill="rgba(255,255,255,0.5)"/>
+    <circle cx="880"  cy="80"  r="4"   fill="rgba(255,255,255,0.4)"/>
+    <circle cx="940"  cy="380" r="4.5" fill="rgba(255,255,255,0.35)"/>
+    <circle cx="80"   cy="640" r="4"   fill="rgba(255,255,255,0.3)"/>
+    <circle cx="900"  cy="860" r="5"   fill="rgba(255,255,255,0.4)"/>
+    <circle cx="160"  cy="920" r="3.5" fill="rgba(255,255,255,0.25)"/>
+    <circle cx="512"  cy="70"  r="4"   fill="rgba(255,255,255,0.45)"/>
+    <circle cx="75"   cy="340" r="3.5" fill="rgba(255,255,255,0.3)"/>
+    <circle cx="960"  cy="560" r="4"   fill="rgba(255,255,255,0.35)"/>
+    <circle cx="300"  cy="60"  r="3"   fill="rgba(255,255,255,0.3)"/>
+    <circle cx="750"  cy="950" r="3.5" fill="rgba(255,255,255,0.25)"/>
+
+    <!-- HEART 1 — Blue, centered at (340, 520) -->
+    <path d="M340 700
+             C260 640 160 596 160 516
+             C160 464 200 432 248 432
+             C284 432 312 452 340 476
+             C368 452 396 432 432 432
+             C480 432 520 464 520 516
+             C520 596 420 640 340 700 Z"
+          fill="rgba(91,141,238,0.2)" stroke="#5b8dee" stroke-width="12" stroke-linejoin="round"/>
+    <!-- Wave 1 inside heart 1 -->
+    <path d="M176 520 Q212 476 248 520 Q284 564 320 520 Q356 476 392 520 Q420 552 440 532 Q480 500 512 520"
+          fill="none" stroke="#5b8dee" stroke-width="10" opacity="0.85" stroke-linecap="round"/>
+    <!-- Wave 2 inside heart 1 -->
+    <path d="M184 572 Q220 528 256 572 Q292 616 328 572 Q364 528 400 572 Q428 604 456 580"
+          fill="none" stroke="#5b8dee" stroke-width="7" opacity="0.35" stroke-linecap="round"/>
+
+    <!-- HEART 2 — Pink, centered at (684, 520) -->
+    <path d="M684 700
+             C604 640 504 596 504 516
+             C504 464 544 432 592 432
+             C628 432 656 452 684 476
+             C712 452 740 432 776 432
+             C824 432 864 464 864 516
+             C864 596 764 640 684 700 Z"
+          fill="rgba(255,110,180,0.2)" stroke="#ff6eb4" stroke-width="12" stroke-linejoin="round"/>
+    <!-- Wave 1 inside heart 2 -->
+    <path d="M520 520 Q556 476 592 520 Q628 564 664 520 Q700 476 736 520 Q764 552 784 532 Q824 500 856 520"
+          fill="none" stroke="#ff6eb4" stroke-width="10" opacity="0.85" stroke-linecap="round"/>
+    <!-- Wave 2 inside heart 2 -->
+    <path d="M528 572 Q564 528 600 572 Q636 616 672 572 Q708 528 744 572 Q772 604 800 580"
+          fill="none" stroke="#ff6eb4" stroke-width="7" opacity="0.35" stroke-linecap="round"/>
+
+    <!-- Golden connecting dot center -->
+    <circle cx="512" cy="512" r="28"  fill="#f5d842" opacity="0.95"/>
+    <circle cx="512" cy="512" r="48"  fill="none" stroke="#f5d842" stroke-width="5"  opacity="0.3"/>
+    <circle cx="512" cy="512" r="70"  fill="none" stroke="#f5d842" stroke-width="2"  opacity="0.15"/>
+  </g>
+
+  <rect width="1024" height="1024" rx="224" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+</svg>
