@@ -4,117 +4,324 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BiorhythmMatch</title>
-<meta name="description" content="Interactive biorhythm calculator that tracks physical, emotional and intellectual cycles for two people, with compatibility scoring and comparative charts.">
-<meta name="theme-color" content="#0d0f14">
+<meta name="description" content="Calculadora interactiva de biorritmos que compara ciclos físico, emocional e intelectual de dos personas, con puntaje de compatibilidad y gráficos comparativos.">
+<meta name="theme-color" content="#080a10">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="BiorhythmMatch">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0f14;--surface:#161920;--surface2:#1e2230;
-  --border:rgba(255,255,255,0.08);--text:#e8eaf0;--muted:#7a7f96;
-  --accent:#5b8dee;--radius:14px;--radius-sm:8px;
+  --bg:#080a10;
+  --surface:#0f1118;
+  --surface2:#161b26;
+  --surface3:#1c2232;
+  --border:rgba(255,255,255,0.07);
+  --border-h:rgba(255,255,255,0.14);
+  --text:#dde2f0;
+  --muted:#5a607a;
+  --muted2:#7e86a0;
+  --accent:#5b8dee;
+  --accent2:#ff6eb4;
+  --gold:#f5d842;
+  --green:#4ecda4;
+  --orange:#f59e3f;
+  --red:#f06a6a;
+  --purple:#c77dff;
+  --yellow:#f0c040;
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:7px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
-.stars{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,0.4) 0%,transparent 100%),
-    radial-gradient(1px 1px at 80% 15%,rgba(255,255,255,0.3) 0%,transparent 100%),
-    radial-gradient(1px 1px at 55% 70%,rgba(255,255,255,0.25) 0%,transparent 100%),
-    radial-gradient(1px 1px at 10% 80%,rgba(255,255,255,0.2) 0%,transparent 100%),
-    radial-gradient(1px 1px at 90% 60%,rgba(255,255,255,0.3) 0%,transparent 100%),
-    radial-gradient(1px 1px at 40% 90%,rgba(255,255,255,0.15) 0%,transparent 100%),
-    radial-gradient(1px 1px at 70% 40%,rgba(255,255,255,0.2) 0%,transparent 100%),
-    radial-gradient(1px 1px at 30% 55%,rgba(255,255,255,0.25) 0%,transparent 100%);
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
 }
-.container{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
-header{text-align:center;margin-bottom:2.5rem}
-header h1{font-family:'DM Serif Display',serif;font-size:2.6rem;font-weight:400;letter-spacing:-0.02em;
-  background:linear-gradient(135deg,#e8eaf0 30%,#5b8dee 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.4rem}
-header p{color:var(--muted);font-size:14px;font-weight:300}
-.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem}
-.card-title{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem}
+
+/* ─── Stars ─── */
+.stars{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.stars::before,.stars::after{
+  content:'';position:absolute;inset:0;
+}
+.stars::before{
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,0.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 22% 8%, rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 45% 5%, rgba(255,255,255,0.35) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 68% 10%, rgba(255,255,255,0.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 7%, rgba(255,255,255,0.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 92% 22%, rgba(255,255,255,0.45) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 78% 35%, rgba(255,255,255,0.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 42%, rgba(255,255,255,0.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 33% 55%, rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 58% 60%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 4% 68%, rgba(255,255,255,0.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 72% 80%, rgba(255,255,255,0.3) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 28% 88%, rgba(255,255,255,0.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 50% 93%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 12% 95%, rgba(255,255,255,0.3) 0%,transparent 100%);
+}
+.stars::after{
+  background-image:
+    radial-gradient(1px 1px at 38% 18%, rgba(255,255,255,0.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 62% 28%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 72%, rgba(255,255,255,0.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 82% 52%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,0.15) 0%,transparent 100%),
+    radial-gradient(2px 2px at 96% 40%, rgba(255,255,255,0.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 7% 30%, rgba(91,141,238,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 94% 85%, rgba(255,110,180,0.35) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 48% 76%, rgba(245,216,66,0.3) 0%,transparent 100%);
+}
+
+/* Aurora glow behind header */
+.aurora{
+  position:fixed;top:-120px;left:50%;transform:translateX(-50%);
+  width:700px;height:400px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at center, rgba(91,141,238,0.08) 0%, rgba(255,110,180,0.05) 40%, transparent 70%);
+  filter:blur(40px);
+}
+
+/* ─── Layout ─── */
+.container{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:2.5rem 1.5rem 5rem;
+}
+
+/* ─── Header ─── */
+header{text-align:center;margin-bottom:3rem}
+.logo-wrap{
+  display:inline-flex;align-items:center;gap:16px;
+  margin-bottom:1rem;
+}
+header h1{
+  font-family:'DM Serif Display',serif;
+  font-size:2.8rem;font-weight:400;
+  letter-spacing:-0.03em;
+  background:linear-gradient(135deg,#dde2f0 20%,#7aafff 55%,#ff9de2 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.1;
+}
+header .sub{
+  color:var(--muted2);font-size:14px;font-weight:300;
+  letter-spacing:0.03em;margin-top:0.3rem;
+}
+
+/* ─── Cards ─── */
+.card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.6rem;
+  margin-bottom:1.25rem;
+  transition:border-color 0.3s;
+}
+.card:hover{border-color:var(--border-h)}
+.card-title{
+  font-size:10.5px;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.4rem;
+}
+
+/* ─── Grid ─── */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
-.person-block{background:var(--surface2);border-radius:var(--radius-sm);padding:1.25rem}
-.person-label{font-size:12px;margin-bottom:0.75rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase}
-.field{margin-bottom:0.75rem}.field:last-child{margin-bottom:0}
-.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-input[type="text"]{width:100%;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 12px;outline:none;transition:border-color 0.2s}
-input[type="text"]:focus{border-color:var(--accent)}
+
+/* ─── Person blocks ─── */
+.person-block{
+  background:var(--surface2);
+  border-radius:var(--radius-sm);
+  padding:1.3rem;
+  border:0.5px solid var(--border);
+  transition:border-color 0.3s;
+}
+.person-block:hover{border-color:var(--border-h)}
+.person-label{
+  font-size:12px;margin-bottom:1rem;
+  font-weight:600;letter-spacing:0.07em;
+  text-transform:uppercase;display:flex;align-items:center;gap:8px;
+}
+.person-label::before{
+  content:'';display:inline-block;
+  width:6px;height:6px;border-radius:50%;
+}
+.p1-label{color:var(--accent)}
+.p1-label::before{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.p2-label{color:var(--orange)}
+.p2-label::before{background:var(--orange);box-shadow:0 0 8px var(--orange)}
+
+/* ─── Profile bar ─── */
+.profile-bar{
+  margin-bottom:1rem;padding-bottom:1rem;
+  border-bottom:0.5px solid var(--border);
+}
+.profile-bar-label{
+  font-size:10.5px;color:var(--muted);
+  margin-bottom:7px;letter-spacing:0.08em;text-transform:uppercase;
+}
+.profile-actions{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+select.profile-select{
+  flex:1;min-width:0;
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-xs);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  padding:8px 30px 8px 11px;outline:none;
+  cursor:pointer;transition:border-color 0.2s;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%235a607a' d='M5 7L1 2h8z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+}
+select.profile-select:focus{border-color:var(--accent)}
+select.profile-select option{background:#161b26;color:#dde2f0}
+.profile-toast{font-size:11px;color:var(--green);margin-top:5px;min-height:15px;transition:opacity 0.3s}
+
+/* ─── Fields ─── */
+.field{margin-bottom:0.8rem}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:11.5px;color:var(--muted2);margin-bottom:5px;font-weight:500}
+input[type="text"]{
+  width:100%;
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-xs);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  padding:10px 13px;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+input[type="text"]:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(91,141,238,0.12);
+}
+input[type="text"]::placeholder{color:var(--muted)}
 .hint{font-size:11px;color:var(--muted);margin-top:3px}
-.err{font-size:11px;color:#f06a6a;margin-top:3px;display:none}
+.err{font-size:11px;color:var(--red);margin-top:3px;display:none}
+
+/* ─── Date row ─── */
 .date-row{display:flex;align-items:flex-end;gap:1rem}
 .date-row .field{flex:1;margin-bottom:0}
-.btn-row{display:flex;gap:0.75rem;flex-shrink:0}
-button{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);
-  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:10px 22px;
-  cursor:pointer;transition:opacity 0.2s,transform 0.1s;white-space:nowrap}
-button:hover{opacity:0.85}button:active{transform:scale(0.98)}
-.btn-clear{background:transparent;border:0.5px solid var(--border);color:var(--muted)}
-.btn-clear:hover{border-color:rgba(255,255,255,0.2);color:var(--text);opacity:1}
-#results{display:none;animation:fadeIn 0.4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.metric-card{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;text-align:center}
-.metric-label{font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:0.06em;text-transform:uppercase}
+.btn-row{display:flex;gap:0.6rem;flex-shrink:0}
+
+/* ─── Buttons ─── */
+button{
+  background:var(--accent);color:#fff;border:none;
+  border-radius:var(--radius-xs);
+  font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;
+  padding:10px 22px;cursor:pointer;
+  transition:opacity 0.2s,transform 0.1s,box-shadow 0.2s;
+  white-space:nowrap;letter-spacing:0.01em;
+}
+button:hover{opacity:0.88;box-shadow:0 4px 16px rgba(91,141,238,0.25)}
+button:active{transform:scale(0.97)}
+.btn-clear{
+  background:transparent;
+  border:0.5px solid var(--border);
+  color:var(--muted2);
+}
+.btn-clear:hover{border-color:var(--border-h);color:var(--text);opacity:1;box-shadow:none}
+.btn-sm{padding:8px 13px;font-size:12px}
+.btn-save{
+  background:rgba(91,141,238,0.14);color:var(--accent);
+  border:0.5px solid rgba(91,141,238,0.3);
+}
+.btn-save:hover{background:rgba(91,141,238,0.25);opacity:1;box-shadow:0 3px 12px rgba(91,141,238,0.2)}
+.btn-delete{
+  background:rgba(240,106,106,0.1);color:var(--red);
+  border:0.5px solid rgba(240,106,106,0.25);
+}
+.btn-delete:hover{background:rgba(240,106,106,0.2);opacity:1;box-shadow:none}
+
+/* ─── Results ─── */
+#results{display:none;animation:fadeUp 0.5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ─── Metric cards ─── */
+.metric-card{
+  background:var(--surface2);
+  border-radius:var(--radius-sm);
+  padding:1.1rem 1rem;text-align:center;
+  border:0.5px solid var(--border);
+  transition:transform 0.2s,border-color 0.2s;
+}
+.metric-card:hover{transform:translateY(-2px);border-color:var(--border-h)}
+.metric-label{font-size:10.5px;color:var(--muted);margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase}
 .metric-row{display:flex;align-items:center;justify-content:center;gap:5px}
-.metric-value{font-size:24px;font-weight:500;font-family:'DM Serif Display',serif}
-.arrow{font-size:20px;line-height:1;font-weight:700}
-.metric-tag{font-size:11px;color:var(--muted);margin-top:3px}
-.compat-center{text-align:center}
-.compat-number{font-family:'DM Serif Display',serif;font-size:5rem;font-weight:400;line-height:1;margin:0.5rem 0}
-.compat-desc{font-size:14px;color:var(--muted);margin-bottom:1.25rem}
-.compat-raw{font-size:11px;color:var(--muted);margin-top:0.75rem}
-.chart-section{margin-bottom:1.5rem}
-.chart-label{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.legend{display:flex;gap:18px;font-size:12px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+.metric-value{font-size:26px;font-weight:400;font-family:'DM Serif Display',serif;line-height:1}
+.arrow{font-size:18px;line-height:1;font-weight:700}
+.metric-tag{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* ─── Compat cards ─── */
+.compat-center{text-align:center;padding-top:0.25rem}
+.compat-number{
+  font-family:'DM Serif Display',serif;
+  font-size:5.5rem;font-weight:400;line-height:1;
+  margin:0.5rem 0 0.4rem;
+  letter-spacing:-0.02em;
+}
+.compat-desc{font-size:14px;color:var(--muted2);margin-bottom:1.3rem;font-style:italic}
+.compat-raw{font-size:10.5px;color:var(--muted);margin-top:0.85rem;letter-spacing:0.02em}
+
+/* ─── Charts ─── */
+.chart-section{margin-bottom:1.6rem}
+.chart-label{
+  font-size:13px;font-weight:600;color:var(--muted2);
+  margin-bottom:9px;display:flex;align-items:center;gap:10px;
+}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--muted2);margin-bottom:9px;flex-wrap:wrap}
 .legend span{display:flex;align-items:center;gap:6px}
 .leg-line{width:18px;height:2px;border-radius:2px;display:inline-block}
-.cycle-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;letter-spacing:0.04em}
+.cycle-tag{
+  display:inline-block;font-size:10px;padding:3px 9px;
+  border-radius:20px;font-weight:600;letter-spacing:0.04em;
+}
 .chart-wrap{position:relative;width:100%;height:190px}
-hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.25rem 0}
-.profile-bar{margin-bottom:0.85rem;padding-bottom:0.85rem;border-bottom:0.5px solid var(--border)}
-.profile-bar-label{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase}
-.profile-actions{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
-select.profile-select{flex:1;min-width:0;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;
-  cursor:pointer;transition:border-color 0.2s;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7f96' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
-select.profile-select:focus{border-color:var(--accent)}
-select.profile-select option{background:#1e2230;color:#e8eaf0}
-.btn-sm{padding:8px 14px;font-size:12px}
-.btn-save{background:rgba(91,141,238,0.18);color:#5b8dee;border:0.5px solid rgba(91,141,238,0.35)}
-.btn-save:hover{background:rgba(91,141,238,0.28);opacity:1}
-.btn-delete{background:rgba(240,106,106,0.12);color:#f06a6a;border:0.5px solid rgba(240,106,106,0.25)}
-.btn-delete:hover{background:rgba(240,106,106,0.22);opacity:1}
-.profile-toast{font-size:11px;color:#4ecda4;margin-top:5px;min-height:15px;transition:opacity 0.3s}
-@media(max-width:600px){
-  .grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}
-  header h1{font-size:2rem}.date-row{flex-direction:column;align-items:stretch}
-  button{width:100%}.btn-row{flex-direction:column}
+hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
+
+/* ─── Person card accent borders ─── */
+#card-p1{transition:border-color 0.4s}
+#card-p2{transition:border-color 0.4s}
+
+/* ─── Responsive ─── */
+@media(max-width:620px){
+  .grid2{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  header h1{font-size:2.2rem}
+  .compat-number{font-size:4rem}
+  .date-row{flex-direction:column;align-items:stretch}
+  button{width:100%}
+  .btn-row{flex-direction:column}
   .profile-actions{flex-direction:column;align-items:stretch}
   select.profile-select{width:100%}
 }
 </style>
 </head>
 <body>
+<div class="aurora"></div>
 <div class="stars"></div>
 <div class="container">
 
 <header>
-  <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:0.6rem">
-    <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 192 192" style="flex-shrink:0">
+  <div class="logo-wrap">
+    <!-- Logo SVG inline -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 192 192" style="flex-shrink:0;filter:drop-shadow(0 0 18px rgba(91,141,238,0.25))">
       <defs>
         <radialGradient id="hbg" cx="50%" cy="50%" r="60%">
           <stop offset="0%" stop-color="#161c30"/>
-          <stop offset="100%" stop-color="#0d0f14"/>
+          <stop offset="100%" stop-color="#0a0d17"/>
         </radialGradient>
         <clipPath id="hrr"><rect width="192" height="192" rx="42"/></clipPath>
       </defs>
@@ -126,26 +333,30 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
         <circle cx="20" cy="128" r="1" fill="rgba(255,255,255,0.3)"/>
         <circle cx="165" cy="158" r="1.2" fill="rgba(255,255,255,0.4)"/>
         <circle cx="112" cy="18" r="0.9" fill="rgba(255,255,255,0.45)"/>
-        <path d="M64 128 C49 116 33 108 33 93 C33 83 41 77 50 77 C57 77 62 81 64 85 C66 81 71 77 78 77 C87 77 95 83 95 93 C95 108 79 116 64 128 Z" fill="rgba(91,141,238,0.2)" stroke="#5b8dee" stroke-width="2.2" stroke-linejoin="round"/>
-        <path d="M37 94 Q46 85 55 94 Q64 103 73 94 Q82 85 91 94" fill="none" stroke="#5b8dee" stroke-width="2" opacity="0.85" stroke-linecap="round"/>
-        <path d="M128 128 C113 116 97 108 97 93 C97 83 105 77 114 77 C121 77 126 81 128 85 C130 81 135 77 142 77 C151 77 159 83 159 93 C159 108 143 116 128 128 Z" fill="rgba(255,110,180,0.2)" stroke="#ff6eb4" stroke-width="2.2" stroke-linejoin="round"/>
-        <path d="M101 94 Q110 85 119 94 Q128 103 137 94 Q146 85 155 94" fill="none" stroke="#ff6eb4" stroke-width="2" opacity="0.85" stroke-linecap="round"/>
-        <circle cx="96" cy="96" r="5.5" fill="#f5d842" opacity="0.95"/>
-        <circle cx="96" cy="96" r="9" fill="none" stroke="#f5d842" stroke-width="1" opacity="0.3"/>
+        <!-- Heart 1 (blue) -->
+        <path d="M64 128 C49 116 33 108 33 93 C33 83 41 77 50 77 C57 77 62 81 64 85 C66 81 71 77 78 77 C87 77 95 83 95 93 C95 108 79 116 64 128 Z" fill="rgba(91,141,238,0.18)" stroke="#5b8dee" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M37 94 Q46 85 55 94 Q64 103 73 94 Q82 85 91 94" fill="none" stroke="#5b8dee" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
+        <!-- Heart 2 (pink) -->
+        <path d="M128 128 C113 116 97 108 97 93 C97 83 105 77 114 77 C121 77 126 81 128 85 C130 81 135 77 142 77 C151 77 159 83 159 93 C159 108 143 116 128 128 Z" fill="rgba(255,110,180,0.18)" stroke="#ff6eb4" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M101 94 Q110 85 119 94 Q128 103 137 94 Q146 85 155 94" fill="none" stroke="#ff6eb4" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
+        <!-- Gold dot -->
+        <circle cx="96" cy="96" r="5.5" fill="#f5d842" opacity="0.97"/>
+        <circle cx="96" cy="96" r="10" fill="none" stroke="#f5d842" stroke-width="1" opacity="0.25"/>
       </g>
-      <rect width="192" height="192" rx="42" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <rect width="192" height="192" rx="42" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
     </svg>
-    <h1 style="margin-bottom:0">BiorhythmMatch</h1>
+    <h1>BiorhythmMatch</h1>
   </div>
-  <p>Calculá los ciclos vitales y la compatibilidad entre dos personas</p>
+  <p class="sub">Calculá los ciclos vitales y la compatibilidad entre dos personas</p>
 </header>
 
+<!-- Personas -->
 <div class="card">
   <div class="card-title">Personas</div>
   <div class="grid2">
+    <!-- Persona 1 -->
     <div class="person-block">
-      <div class="person-label" style="color:#5b8dee">Persona 1</div>
-      <!-- Barra de perfiles compartida -->
+      <div class="person-label p1-label">Persona 1</div>
       <div class="profile-bar">
         <div class="profile-bar-label">Perfil guardado</div>
         <div class="profile-actions">
@@ -159,18 +370,18 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
       </div>
       <div class="field">
         <label>Nombre</label>
-        <input type="text" id="n1" placeholder="Nombre" />
+        <input type="text" id="n1" placeholder="Nombre"/>
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10" />
+        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10"/>
         <div class="hint">DD/MM/AAAA</div>
         <div class="err" id="err-d1">Fecha inválida</div>
       </div>
     </div>
+    <!-- Persona 2 -->
     <div class="person-block">
-      <div class="person-label" style="color:#f59e3f">Persona 2</div>
-      <!-- Barra de perfiles compartida -->
+      <div class="person-label p2-label">Persona 2</div>
       <div class="profile-bar">
         <div class="profile-bar-label">Perfil guardado</div>
         <div class="profile-actions">
@@ -184,11 +395,11 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
       </div>
       <div class="field">
         <label>Nombre</label>
-        <input type="text" id="n2" placeholder="Nombre" />
+        <input type="text" id="n2" placeholder="Nombre"/>
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10" />
+        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10"/>
         <div class="hint">DD/MM/AAAA</div>
         <div class="err" id="err-d2">Fecha inválida</div>
       </div>
@@ -196,12 +407,13 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
   </div>
 </div>
 
+<!-- Fecha de consulta -->
 <div class="card">
   <div class="card-title">Fecha de consulta</div>
   <div class="date-row">
     <div class="field">
       <label>Fecha a calcular</label>
-      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10" />
+      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10"/>
       <div class="hint">DD/MM/AAAA</div>
       <div class="err" id="err-dq">Fecha inválida</div>
     </div>
@@ -212,15 +424,22 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
   </div>
 </div>
 
+<!-- Resultados -->
 <div id="results">
+
+  <!-- Métricas P1 -->
   <div class="card" id="card-p1">
     <div class="card-title" id="title-p1">Persona 1</div>
     <div class="grid3" id="metrics-p1"></div>
   </div>
+
+  <!-- Métricas P2 -->
   <div class="card" id="card-p2">
     <div class="card-title" id="title-p2">Persona 2</div>
     <div class="grid3" id="metrics-p2"></div>
   </div>
+
+  <!-- Compatibilidad (2 columnas) -->
   <div class="grid2" style="margin-bottom:1.25rem">
     <div class="card" style="margin-bottom:0">
       <div class="card-title">Compatibilidad general</div>
@@ -241,64 +460,78 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
       </div>
     </div>
   </div>
+
+  <!-- Gráficos -->
   <div class="card">
-    <div class="card-title">Curvas comparativas — 30 días</div>
+    <div class="card-title">Curvas comparativas — 46 días</div>
+
+    <!-- Físico -->
     <div class="chart-section">
       <div class="chart-label">
         <span>Ciclo Físico</span>
-        <span class="cycle-tag" style="background:rgba(91,141,238,0.15);color:#5b8dee">23 días</span>
+        <span class="cycle-tag" style="background:rgba(91,141,238,0.13);color:#5b8dee">23 días</span>
       </div>
       <div class="legend" id="leg-f"></div>
       <div class="chart-wrap"><canvas id="cf" role="img" aria-label="Ciclo físico comparativo"></canvas></div>
     </div>
     <hr class="divider">
+
+    <!-- Emocional -->
     <div class="chart-section">
       <div class="chart-label">
         <span>Ciclo Emocional</span>
-        <span class="cycle-tag" style="background:rgba(78,205,164,0.15);color:#4ecda4">28 días</span>
+        <span class="cycle-tag" style="background:rgba(78,205,164,0.13);color:#4ecda4">28 días</span>
       </div>
       <div class="legend" id="leg-e"></div>
       <div class="chart-wrap"><canvas id="ce" role="img" aria-label="Ciclo emocional comparativo"></canvas></div>
     </div>
     <hr class="divider">
+
+    <!-- Intelectual -->
     <div class="chart-section">
       <div class="chart-label">
         <span>Ciclo Intelectual</span>
-        <span class="cycle-tag" style="background:rgba(199,125,255,0.15);color:#c77dff">33 días</span>
+        <span class="cycle-tag" style="background:rgba(199,125,255,0.13);color:#c77dff">33 días</span>
       </div>
       <div class="legend" id="leg-i"></div>
       <div class="chart-wrap"><canvas id="ci" role="img" aria-label="Ciclo intelectual comparativo"></canvas></div>
     </div>
     <hr class="divider">
-    <div class="chart-section">
+
+    <!-- Pasión -->
+    <div class="chart-section" style="margin-bottom:0">
       <div class="chart-label">
         <span>Pasión</span>
-        <span class="cycle-tag" style="background:rgba(245,216,66,0.15);color:#f5d842">Físico + Emocional</span>
+        <span class="cycle-tag" style="background:rgba(245,216,66,0.13);color:#f5d842">Físico + Emocional</span>
       </div>
       <div class="legend" id="leg-p"></div>
       <div class="chart-wrap"><canvas id="cp" role="img" aria-label="Pasión comparativa"></canvas></div>
     </div>
   </div>
-</div>
-</div>
+
+</div><!-- /results -->
+</div><!-- /container -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const CYCLES = {F:23,E:28,I:33};
-const C1 = {f:'#5b8dee',e:'#4ecda4',i:'#c77dff',p:'#5b8dee'};
-const C2 = {f:'#f59e3f',e:'#f06a6a',i:'#f0c040',p:'#ff6eb4'};
-const CP = '#f5d842'; // pasión combinada
+// ── Constantes ──────────────────────────────────────────────
+const CYCLES = {F:23, E:28, I:33};
+const C1 = {f:'#5b8dee', e:'#4ecda4', i:'#c77dff', p:'#5b8dee'};
+const C2 = {f:'#f59e3f', e:'#f06a6a', i:'#f0c040', p:'#ff6eb4'};
+const CP  = '#f5d842';
 let charts = [];
 
-// Persistencia
+// ── Persistencia de campos ───────────────────────────────────
 const FIELDS = ['n1','d1','n2','d2','dq'];
 FIELDS.forEach(id => {
   const el = document.getElementById(id);
-  try { const s = localStorage.getItem('bio_'+id); if(s) el.value=s; } catch(e){}
-  el.addEventListener('input', () => { try{localStorage.setItem('bio_'+id,el.value);}catch(e){} });
+  try { const s = localStorage.getItem('bio_'+id); if(s) el.value = s; } catch(e){}
+  el.addEventListener('input', () => {
+    try { localStorage.setItem('bio_'+id, el.value); } catch(e){}
+  });
 });
 
-// Prellenar fecha de consulta con hoy si está vacía
+// ── Prellenar fecha de hoy ───────────────────────────────────
 (function(){
   const dqEl = document.getElementById('dq');
   if(!dqEl.value){
@@ -310,63 +543,68 @@ FIELDS.forEach(id => {
   }
 })();
 
-// Auto-formato DD/MM/AAAA
+// ── Auto-formato DD/MM/AAAA ──────────────────────────────────
 ['d1','d2','dq'].forEach(id => {
-  document.getElementById(id).addEventListener('input', function() {
+  document.getElementById(id).addEventListener('input', function(){
     let v = this.value.replace(/\D/g,'');
-    if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2);
-    if(v.length>5) v=v.slice(0,5)+'/'+v.slice(5);
+    if(v.length > 2) v = v.slice(0,2)+'/'+v.slice(2);
+    if(v.length > 5) v = v.slice(0,5)+'/'+v.slice(5);
     this.value = v.slice(0,10);
-    try{localStorage.setItem('bio_'+id,this.value);}catch(e){}
+    try { localStorage.setItem('bio_'+id, this.value); } catch(e){}
   });
 });
 
-function parseDate(str) {
+// ── Parseo de fecha ──────────────────────────────────────────
+function parseDate(str){
   if(!str) return null;
   const m = str.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if(!m) return null;
   const day=+m[1], mon=+m[2]-1, yr=+m[3];
-  const d = new Date(yr, mon, day, 0, 0, 0, 0);
+  const d = new Date(yr, mon, day, 0,0,0,0);
   if(isNaN(d)||d.getFullYear()!==yr||d.getMonth()!==mon||d.getDate()!==day) return null;
   return d;
 }
 
-// Comparar solo fechas sin hora para evitar problemas de timezone
-function daysBetween(a,b){
+function daysBetween(a, b){
   const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
   const utcB = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
   return Math.round((utcB - utcA) / 86400000);
 }
-function bio(days,cycle){ return Math.sin(2*Math.PI*days/cycle); }
 
+function bio(days, cycle){ return Math.sin(2 * Math.PI * days / cycle); }
+
+function addDays(date, n){
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()+n, 0,0,0,0);
+}
+
+// ── Colores y etiquetas ──────────────────────────────────────
 function colorVal(v){
-  if(v>0.33) return '#4ecda4';
-  if(v<-0.33) return '#f06a6a';
+  if(v > 0.33)  return '#4ecda4';
+  if(v < -0.33) return '#f06a6a';
   return '#7a7f96';
 }
-
 function tagLabel(v){
-  if(v>0.66) return 'Máximo';
-  if(v>0.33) return 'Alto';
-  if(v>-0.33) return 'Neutro';
-  if(v>-0.66) return 'Bajo';
+  if(v >  0.66) return 'Máximo';
+  if(v >  0.33) return 'Alto';
+  if(v > -0.33) return 'Neutro';
+  if(v > -0.66) return 'Bajo';
   return 'Mínimo';
 }
-
 function getArrow(days, cycle){
-  const t = bio(days, cycle);
+  const t  = bio(days,   cycle);
   const t1 = bio(days+1, cycle);
   if(t1 > t+0.005) return {s:'↑', c:'#4ecda4'};
   if(t1 < t-0.005) return {s:'↓', c:'#f06a6a'};
   return {s:'→', c:'#7a7f96'};
 }
 
+// ── Renderizar métricas ──────────────────────────────────────
 function renderMetrics(containerId, vals, days){
-  const labels={f:'Físico',e:'Emocional',i:'Intelectual'};
-  const cmap={f:CYCLES.F,e:CYCLES.E,i:CYCLES.I};
+  const labels = {f:'Físico', e:'Emocional', i:'Intelectual'};
+  const cmap   = {f:CYCLES.F, e:CYCLES.E, i:CYCLES.I};
   document.getElementById(containerId).innerHTML = ['f','e','i'].map(k => {
     const arr = getArrow(days, cmap[k]);
-    const v = vals[k];
+    const v   = vals[k];
     return `<div class="metric-card">
       <div class="metric-label">${labels[k]}</div>
       <div class="metric-row">
@@ -378,32 +616,156 @@ function renderMetrics(containerId, vals, days){
   }).join('');
 }
 
-// Compatibilidad fórmula Excel:
-// Para cada ciclo: recorre un ciclo completo a partir de la fecha de consulta,
-// calcula la suma de ambas curvas cada día, toma el máximo, aplica:
-// INT(MAX_suma * 100 / 2 * 100) / 100
+// ── Compatibilidad (fórmula) ─────────────────────────────────
 function calcCompat(birth1, birth2, dq, cycle){
   let maxVal = -Infinity;
-  for(let d=0; d<cycle; d++){
+  for(let d = 0; d < cycle; d++){
     const v1 = bio(daysBetween(birth1, addDays(dq, d)), cycle);
     const v2 = bio(daysBetween(birth2, addDays(dq, d)), cycle);
-    const s = v1 + v2;
+    const s  = v1 + v2;
     if(s > maxVal) maxVal = s;
   }
   return Math.floor(maxVal * 100 / 2 * 100) / 100;
 }
 
-function buildLegend(elId,l1,l2,c1,c2){
-  document.getElementById(elId).innerHTML=`
+// ── Series para gráficos ─────────────────────────────────────
+function makeSeriesData(birth, dq, cycle){
+  return Array.from({length:46}, (_,k) => {
+    const d = addDays(dq, k-7);
+    return Math.round(bio(daysBetween(birth, d), cycle) * 1000) / 10;
+  });
+}
+function makePassionData(birth, dq){
+  return Array.from({length:46}, (_,k) => {
+    const d    = addDays(dq, k-7);
+    const days = daysBetween(birth, d);
+    const f    = bio(days, CYCLES.F);
+    const e    = bio(days, CYCLES.E);
+    return Math.round((f+e)/2 * 1000) / 10;
+  });
+}
+function makeCombinedPassionData(birth1, birth2, dq){
+  const ds1 = makePassionData(birth1, dq);
+  const ds2 = makePassionData(birth2, dq);
+  return ds1.map((v,i) => Math.round((v+ds2[i])/2 * 10) / 10);
+}
+function makeLabels(dq){
+  return Array.from({length:46}, (_,k) => {
+    const d = addDays(dq, k-7);
+    return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+  });
+}
+
+// ── Línea vertical en el día consultado ─────────────────────
+function todayLinePlugin(canvasId){
+  return {
+    id: 'todayLine_'+canvasId,
+    afterDraw(chart){
+      const meta = chart.getDatasetMeta(0);
+      if(!meta.data[7]) return;
+      const x = meta.data[7].x;
+      const c = chart.ctx;
+      c.save();
+      c.strokeStyle = 'rgba(255,255,255,0.2)';
+      c.lineWidth   = 1.5;
+      c.setLineDash([4,3]);
+      c.beginPath();
+      c.moveTo(x, chart.chartArea.top);
+      c.lineTo(x, chart.chartArea.bottom);
+      c.stroke();
+      // Small label "Hoy"
+      c.setLineDash([]);
+      c.fillStyle   = 'rgba(255,255,255,0.25)';
+      c.font        = '10px DM Sans, sans-serif';
+      c.textAlign   = 'center';
+      c.fillText('hoy', x, chart.chartArea.top - 4);
+      c.restore();
+    }
+  };
+}
+
+const CHART_OPTS = {
+  responsive:true, maintainAspectRatio:false,
+  interaction:{mode:'index', intersect:false},
+  plugins:{
+    legend:{display:false},
+    tooltip:{
+      mode:'index', intersect:false,
+      backgroundColor:'#161b26',
+      borderColor:'rgba(255,255,255,0.1)',borderWidth:0.5,
+      titleColor:'#5a607a',bodyColor:'#dde2f0',
+      padding:10, cornerRadius:8,
+      callbacks:{label: ctx => ` ${ctx.raw>0?'+':''}${ctx.raw}%`}
+    }
+  },
+  scales:{
+    x:{
+      ticks:{color:'#5a607a',font:{size:10},maxTicksLimit:10,autoSkip:true},
+      grid:{color:'rgba(255,255,255,0.035)'},
+      border:{color:'rgba(255,255,255,0.07)'}
+    },
+    y:{
+      min:-105, max:105,
+      ticks:{color:'#5a607a',font:{size:10},callback:v=>v+'%',stepSize:50},
+      grid:{color:'rgba(255,255,255,0.05)'},
+      border:{color:'rgba(255,255,255,0.07)'}
+    }
+  }
+};
+
+function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
+  const ctx    = document.getElementById(canvasId).getContext('2d');
+  const labels = makeLabels(dq);
+  const ds1    = makeSeriesData(d1, dq, cycle);
+  const ds2    = makeSeriesData(d2, dq, cycle);
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2', data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  charts.push(ch);
+}
+
+function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
+  const ctx    = document.getElementById(canvasId).getContext('2d');
+  const labels = makeLabels(dq);
+  const ds1    = makePassionData(d1, dq);
+  const ds2    = makePassionData(d2, dq);
+  const ds3    = makeCombinedPassionData(d1, d2, dq);
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1',     data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2',     data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]},
+        {label:'Pasión', data:ds3, borderColor:c3, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[2,2]}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  charts.push(ch);
+}
+
+// ── Leyendas ─────────────────────────────────────────────────
+function buildLegend(elId, l1, l2, c1, c2){
+  document.getElementById(elId).innerHTML = `
     <span><span class="leg-line" style="background:${c1}"></span>${l1}</span>
     <span style="display:flex;align-items:center;gap:6px">
       <svg width="18" height="8" style="flex-shrink:0"><line x1="0" y1="4" x2="18" y2="4" stroke="${c2}" stroke-width="2" stroke-dasharray="5,3"/></svg>
       ${l2}
     </span>`;
 }
-
-function buildLegend3(elId,l1,l2,l3,c1,c2,c3){
-  document.getElementById(elId).innerHTML=`
+function buildLegend3(elId, l1, l2, l3, c1, c2, c3){
+  document.getElementById(elId).innerHTML = `
     <span><span class="leg-line" style="background:${c1}"></span>${l1}</span>
     <span style="display:flex;align-items:center;gap:6px">
       <svg width="18" height="8" style="flex-shrink:0"><line x1="0" y1="4" x2="18" y2="4" stroke="${c2}" stroke-width="2" stroke-dasharray="5,3"/></svg>
@@ -415,266 +777,144 @@ function buildLegend3(elId,l1,l2,l3,c1,c2,c3){
     </span>`;
 }
 
-function addDays(date, n){
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()+n, 0, 0, 0, 0);
+// ── Manejo de errores de fecha ────────────────────────────────
+function setErr(id, show){
+  document.getElementById('err-'+id).style.display = show ? 'block' : 'none';
+  document.getElementById(id).style.borderColor    = show ? '#f06a6a' : '';
+  if(show)
+    document.getElementById(id).style.boxShadow = '0 0 0 3px rgba(240,106,106,0.12)';
+  else
+    document.getElementById(id).style.boxShadow = '';
 }
 
-function makeSeriesData(birth,dq,cycle){
-  return Array.from({length:46},(_,k)=>{
-    const d = addDays(dq, k-7);
-    return Math.round(bio(daysBetween(birth,d),cycle)*1000)/10;
-  });
-}
-
-function makePassionData(birth,dq){
-  return Array.from({length:46},(_,k)=>{
-    const d = addDays(dq, k-7);
-    const days = daysBetween(birth, d);
-    const f = bio(days, CYCLES.F);
-    const e = bio(days, CYCLES.E);
-    return Math.round((f + e) / 2 * 1000) / 10;
-  });
-}
-
-function makeCombinedPassionData(birth1,birth2,dq){
-  const ds1 = makePassionData(birth1,dq);
-  const ds2 = makePassionData(birth2,dq);
-  return ds1.map((v,i) => Math.round((v + ds2[i]) / 2 * 10) / 10);
-}
-
-function makeLabels(dq){
-  return Array.from({length:46},(_,k)=>{
-    const d = addDays(dq, k-7);
-    return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
-  });
-}
-
-function mkChart(canvasId,d1,d2,dq,cycle,c1,c2){
-  const ctx=document.getElementById(canvasId).getContext('2d');
-  const labels=makeLabels(dq);
-  const ds1=makeSeriesData(d1,dq,cycle);
-  const ds2=makeSeriesData(d2,dq,cycle);
-  const todayPlugin={
-    id:'todayLine_'+canvasId,
-    afterDraw(chart){
-      const meta = chart.getDatasetMeta(0);
-if (!meta.data[7]) return;
-const x = meta.data[7].x;
-	  
-      const c=chart.ctx;
-      c.save();c.strokeStyle='rgba(255,255,255,0.22)';c.lineWidth=1.5;c.setLineDash([4,3]);
-      c.beginPath();c.moveTo(x,chart.chartArea.top);c.lineTo(x,chart.chartArea.bottom);c.stroke();c.restore();
-    }
-  };
-  const ch=new Chart(ctx,{
-    type:'line',
-    plugins:[todayPlugin],
-    data:{
-      labels,
-      datasets:[
-        {label:'P1',data:ds1,borderColor:c1,backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.4,borderDash:[]},
-        {label:'P2',data:ds2,borderColor:c2,backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.4,borderDash:[6,3]}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{mode:'index',intersect:false,
-          backgroundColor:'#1e2230',borderColor:'rgba(255,255,255,0.12)',borderWidth:0.5,
-          titleColor:'#7a7f96',bodyColor:'#e8eaf0',padding:10,
-          callbacks:{label:ctx=>` ${ctx.raw>0?'+':''}${ctx.raw}%`}}
-      },
-      scales:{
-        x:{ticks:{color:'#7a7f96',font:{size:10},maxTicksLimit:10,autoSkip:true},
-           grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.08)'}},
-        y:{min:-105,max:105,
-           ticks:{color:'#7a7f96',font:{size:10},callback:v=>v+'%',stepSize:50},
-           grid:{color:'rgba(255,255,255,0.06)'},border:{color:'rgba(255,255,255,0.08)'}}
-      }
-    }
-  });
-  charts.push(ch);
-}
-
-function mkPassionChart(canvasId,d1,d2,dq,c1,c2,c3){
-  const ctx=document.getElementById(canvasId).getContext('2d');
-  const labels=makeLabels(dq);
-  const ds1=makePassionData(d1,dq);
-  const ds2=makePassionData(d2,dq);
-  const ds3=makeCombinedPassionData(d1,d2,dq);
-  const todayPlugin={
-    id:'todayLine_'+canvasId,
-    afterDraw(chart){
-      const meta=chart.getDatasetMeta(0);
-      if(!meta.data[7]) return;
-      const x=meta.data[7].x;
-      const c=chart.ctx;
-      c.save();c.strokeStyle='rgba(255,255,255,0.22)';c.lineWidth=1.5;c.setLineDash([4,3]);
-      c.beginPath();c.moveTo(x,chart.chartArea.top);c.lineTo(x,chart.chartArea.bottom);c.stroke();c.restore();
-    }
-  };
-  const ch=new Chart(ctx,{
-    type:'line',
-    plugins:[todayPlugin],
-    data:{
-      labels,
-      datasets:[
-        {label:'P1',data:ds1,borderColor:c1,backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.4,borderDash:[]},
-        {label:'P2',data:ds2,borderColor:c2,backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.4,borderDash:[6,3]},
-        {label:'Pasión',data:ds3,borderColor:c3,backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.4,borderDash:[2,2]}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{mode:'index',intersect:false,
-          backgroundColor:'#1e2230',borderColor:'rgba(255,255,255,0.12)',borderWidth:0.5,
-          titleColor:'#7a7f96',bodyColor:'#e8eaf0',padding:10,
-          callbacks:{label:ctx=>` ${ctx.raw>0?'+':''}${ctx.raw}%`}}
-      },
-      scales:{
-        x:{ticks:{color:'#7a7f96',font:{size:10},maxTicksLimit:10,autoSkip:true},
-           grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.08)'}},
-        y:{min:-105,max:105,
-           ticks:{color:'#7a7f96',font:{size:10},callback:v=>v+'%',stepSize:50},
-           grid:{color:'rgba(255,255,255,0.06)'},border:{color:'rgba(255,255,255,0.08)'}}
-      }
-    }
-  });
-  charts.push(ch);
-}
-
-function setErr(id,show){
-  document.getElementById('err-'+id).style.display=show?'block':'none';
-  document.getElementById(id).style.borderColor=show?'#f06a6a':'';
-}
-
+// ── Edad, signo zodiacal, signo chino ────────────────────────
 function calcAge(birth, refDate){
   let age = refDate.getFullYear() - birth.getFullYear();
   const m = refDate.getMonth() - birth.getMonth();
   if(m < 0 || (m === 0 && refDate.getDate() < birth.getDate())) age--;
   return age;
 }
-
 function MOD(n, d){ return ((n % d) + d) % d; }
 
 function getZodiac(date){
-  const signs = ['Capri','Acuario','Piscis','Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capri'];
+  const signs  = ['Capri','Acuario','Piscis','Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capri'];
   const limits = [0,20,50,80,110,141,172,204,235,266,296,326,356];
-  const start = new Date(date.getFullYear(), 0, 0);
+  const start  = new Date(date.getFullYear(), 0, 0);
   const dayOfYear = Math.floor((date - start) / 86400000);
   let idx = 0;
   for(let i = 0; i < limits.length; i++){ if(dayOfYear >= limits[i]) idx = i; }
   return signs[idx];
 }
-
 function getChineseSign(date){
   const animals = ['Rata','Buey','Tigre','Gato','Dragón','Serpiente','Caballo','Cabra','Mono','Gallo','Perro','Jabalí'];
   const yr = date.getFullYear();
   const correction = MOD(38 + Math.floor(0.2422*(yr-1900)) - Math.floor((yr-1900)/4), 30);
   const chineseNewYear = new Date(yr, 0, 21 + correction);
-  const effectiveYear = date < chineseNewYear ? yr - 1 : yr;
+  const effectiveYear  = date < chineseNewYear ? yr - 1 : yr;
   return animals[MOD(effectiveYear - 2020, 12)];
 }
 
+// ── Calcular ─────────────────────────────────────────────────
 function calcular(){
-  const sv1=document.getElementById('d1').value;
-  const sv2=document.getElementById('d2').value;
-  const svq=document.getElementById('dq').value;
-  const d1=parseDate(sv1), d2=parseDate(sv2), dq=parseDate(svq);
+  const sv1 = document.getElementById('d1').value;
+  const sv2 = document.getElementById('d2').value;
+  const svq = document.getElementById('dq').value;
+  const d1  = parseDate(sv1), d2 = parseDate(sv2), dq = parseDate(svq);
   setErr('d1',!d1); setErr('d2',!d2); setErr('dq',!dq);
-  if(!d1||!d2||!dq) return;
+  if(!d1 || !d2 || !dq) return;
 
-  const n1=document.getElementById('n1').value.trim()||'Persona 1';
-  const n2=document.getElementById('n2').value.trim()||'Persona 2';
-  const age1=calcAge(d1,dq), age2=calcAge(d2,dq);
-  const days1=daysBetween(d1,dq), days2=daysBetween(d2,dq);
-  const v1={f:bio(days1,CYCLES.F),e:bio(days1,CYCLES.E),i:bio(days1,CYCLES.I)};
-  const v2={f:bio(days2,CYCLES.F),e:bio(days2,CYCLES.E),i:bio(days2,CYCLES.I)};
+  const n1 = document.getElementById('n1').value.trim() || 'Persona 1';
+  const n2 = document.getElementById('n2').value.trim() || 'Persona 2';
 
-  const z1=getZodiac(d1), ch1=getChineseSign(d1);
-  const z2=getZodiac(d2), ch2=getChineseSign(d2);
-  document.getElementById('title-p1').innerHTML=`${n1} <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${z1} · ${ch1}</span>`;
-  document.getElementById('title-p2').innerHTML=`${n2} <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2}</span>`;
-  document.getElementById('card-p1').style.borderColor='rgba(91,141,238,0.3)';
-  document.getElementById('card-p2').style.borderColor='rgba(245,158,63,0.3)';
+  const age1  = calcAge(d1, dq), age2  = calcAge(d2, dq);
+  const days1 = daysBetween(d1, dq), days2 = daysBetween(d2, dq);
+  const v1    = {f:bio(days1,CYCLES.F), e:bio(days1,CYCLES.E), i:bio(days1,CYCLES.I)};
+  const v2    = {f:bio(days2,CYCLES.F), e:bio(days2,CYCLES.E), i:bio(days2,CYCLES.I)};
 
-  renderMetrics('metrics-p1',v1,days1);
-  renderMetrics('metrics-p2',v2,days2);
+  const z1  = getZodiac(d1),      ch1 = getChineseSign(d1);
+  const z2  = getZodiac(d2),      ch2 = getChineseSign(d2);
 
-  // Compatibilidad fórmula Excel
-  const rawF=calcCompat(d1,d2,dq,CYCLES.F);
-  const rawE=calcCompat(d1,d2,dq,CYCLES.E);
-  const rawI=calcCompat(d1,d2,dq,CYCLES.I);
-  const pctF=Math.min(100,Math.max(0,Math.round(rawF)));
-  const pctE=Math.min(100,Math.max(0,Math.round(rawE)));
-  const pctI=Math.min(100,Math.max(0,Math.round(rawI)));
-  const total=Math.round((pctF+pctE+pctI)/3);
+  document.getElementById('title-p1').innerHTML =
+    `${n1} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${z1} · ${ch1}</span>`;
+  document.getElementById('title-p2').innerHTML =
+    `${n2} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2}</span>`;
 
-  const ccolor=total>=70?'#4ecda4':total>=45?'#f59e3f':'#f06a6a';
-  const ctxt=total>=70?'Alta compatibilidad':total>=45?'Compatibilidad moderada':'Baja compatibilidad';
+  document.getElementById('card-p1').style.borderColor = 'rgba(91,141,238,0.3)';
+  document.getElementById('card-p2').style.borderColor = 'rgba(245,158,63,0.3)';
 
-  document.getElementById('compat-num').textContent=total+'%';
-  document.getElementById('compat-num').style.color=ccolor;
-  document.getElementById('compat-desc').textContent=ctxt;
-  document.getElementById('compat-raw').textContent=
+  renderMetrics('metrics-p1', v1, days1);
+  renderMetrics('metrics-p2', v2, days2);
+
+  // Compatibilidad
+  const rawF = calcCompat(d1, d2, dq, CYCLES.F);
+  const rawE = calcCompat(d1, d2, dq, CYCLES.E);
+  const rawI = calcCompat(d1, d2, dq, CYCLES.I);
+  const pctF = Math.min(100, Math.max(0, Math.round(rawF)));
+  const pctE = Math.min(100, Math.max(0, Math.round(rawE)));
+  const pctI = Math.min(100, Math.max(0, Math.round(rawI)));
+  const total = Math.round((pctF+pctE+pctI)/3);
+
+  const ccolor = total>=70 ? '#4ecda4' : total>=45 ? '#f59e3f' : '#f06a6a';
+  const ctxt   = total>=70 ? 'Alta compatibilidad' : total>=45 ? 'Compatibilidad moderada' : 'Baja compatibilidad';
+
+  document.getElementById('compat-num').textContent  = total+'%';
+  document.getElementById('compat-num').style.color  = ccolor;
+  document.getElementById('compat-desc').textContent = ctxt;
+  document.getElementById('compat-raw').textContent  =
     `Valores crudos — Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}  ·  Intelectual: ${rawI.toFixed(2)}`;
 
-  document.getElementById('compat-detail').innerHTML=[
-    {lbl:'Físico',p:pctF,r:rawF},
-    {lbl:'Emocional',p:pctE,r:rawE},
-    {lbl:'Intelectual',p:pctI,r:rawI}
-  ].map(x=>`<div class="metric-card">
+  document.getElementById('compat-detail').innerHTML = [
+    {lbl:'Físico', p:pctF, r:rawF},
+    {lbl:'Emocional', p:pctE, r:rawE},
+    {lbl:'Intelectual', p:pctI, r:rawI}
+  ].map(x => `<div class="metric-card">
     <div class="metric-label">${x.lbl}</div>
     <div class="metric-row" style="justify-content:center">
-      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:500;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
+      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
     </div>
   </div>`).join('');
 
-  // Compatibilidad Pasión = promedio de Físico + Emocional
+  // Pasión
   const totalPassion = Math.round((pctF + pctE) / 2);
-  const cpColor = totalPassion>=70?'#4ecda4':totalPassion>=45?'#f59e3f':'#f06a6a';
-  const cpTxt   = totalPassion>=70?'Alta pasión':totalPassion>=45?'Pasión moderada':'Baja pasión';
-  document.getElementById('compat-passion-num').textContent = totalPassion+'%';
-  document.getElementById('compat-passion-num').style.color = cpColor;
+  const cpColor = totalPassion>=70 ? '#4ecda4' : totalPassion>=45 ? '#f59e3f' : '#f06a6a';
+  const cpTxt   = totalPassion>=70 ? 'Alta pasión' : totalPassion>=45 ? 'Pasión moderada' : 'Baja pasión';
+  document.getElementById('compat-passion-num').textContent  = totalPassion+'%';
+  document.getElementById('compat-passion-num').style.color  = cpColor;
   document.getElementById('compat-passion-desc').textContent = cpTxt;
-  document.getElementById('compat-passion-raw').textContent =
+  document.getElementById('compat-passion-raw').textContent  =
     `Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}`;
-  document.getElementById('compat-passion-detail').innerHTML=[
-    {lbl:'Físico',p:pctF},
-    {lbl:'Emocional',p:pctE}
-  ].map(x=>`<div class="metric-card">
+  document.getElementById('compat-passion-detail').innerHTML = [
+    {lbl:'Físico', p:pctF},
+    {lbl:'Emocional', p:pctE}
+  ].map(x => `<div class="metric-card">
     <div class="metric-label">${x.lbl}</div>
     <div class="metric-row" style="justify-content:center">
-      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:500;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
+      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
     </div>
   </div>`).join('');
 
-  // Mostrar resultados ANTES de crear los charts para que los canvas tengan dimensiones
-  const res=document.getElementById('results');
-  res.style.display='block';
+  // Mostrar resultados y crear charts
+  const res = document.getElementById('results');
+  res.style.display = 'block';
 
-  charts.forEach(ch=>ch.destroy()); charts=[];
-  buildLegend('leg-f',n1,n2,C1.f,C2.f);
-  buildLegend('leg-e',n1,n2,C1.e,C2.e);
-  buildLegend('leg-i',n1,n2,C1.i,C2.i);
-  buildLegend3('leg-p',n1,n2,'Pasión',C1.p,C2.p,CP);
+  charts.forEach(ch => ch.destroy()); charts = [];
+  buildLegend('leg-f', n1, n2, C1.f, C2.f);
+  buildLegend('leg-e', n1, n2, C1.e, C2.e);
+  buildLegend('leg-i', n1, n2, C1.i, C2.i);
+  buildLegend3('leg-p', n1, n2, 'Pasión', C1.p, C2.p, CP);
 
-  // Esperar dos frames para que el DOM pinte antes de crear los charts
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      mkChart('cf',d1,d2,dq,CYCLES.F,C1.f,C2.f);
-      mkChart('ce',d1,d2,dq,CYCLES.E,C1.e,C2.e);
-      mkChart('ci',d1,d2,dq,CYCLES.I,C1.i,C2.i);
-      mkPassionChart('cp',d1,d2,dq,C1.p,C2.p,CP);
-      setTimeout(()=>res.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      mkChart('cf', d1, d2, dq, CYCLES.F, C1.f, C2.f);
+      mkChart('ce', d1, d2, dq, CYCLES.E, C1.e, C2.e);
+      mkChart('ci', d1, d2, dq, CYCLES.I, C1.i, C2.i);
+      mkPassionChart('cp', d1, d2, dq, C1.p, C2.p, CP);
+      setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 80);
     });
   });
 }
 
-// ── Gestión de perfiles compartidos (Persona 1 y 2) ─────────────────
+// ── Gestión de perfiles compartidos ─────────────────────────
 const PROFILES_KEY = 'bio_profiles_shared';
 
 function getProfiles(){
@@ -686,11 +926,11 @@ function setProfiles(obj){
 
 function renderAllSelects(selectedKey, changedSlot){
   ['1','2'].forEach(slot => {
-    const sel = document.getElementById('profile-select-'+slot);
+    const sel      = document.getElementById('profile-select-'+slot);
     const profiles = getProfiles();
-    const keys = Object.keys(profiles).sort((a,b) => profiles[a].name.localeCompare(profiles[b].name));
-    const active = (slot === changedSlot) ? selectedKey : sel.value;
-    sel.innerHTML = '<option value="">— Ingresar datos nuevos —</option>' +
+    const keys     = Object.keys(profiles).sort((a,b) => profiles[a].name.localeCompare(profiles[b].name));
+    const active   = (slot === changedSlot) ? selectedKey : sel.value;
+    sel.innerHTML  = '<option value="">— Ingresar datos nuevos —</option>' +
       keys.map(k => `<option value="${k}"${k===active?' selected':''}>${profiles[k].name} (${profiles[k].date})</option>`).join('');
   });
 }
@@ -702,7 +942,7 @@ function saveProfile(slot){
   if(!parseDate(date)){ showToast(slot, 'Fecha inválida.', true); return; }
   const key = name.toLowerCase().replace(/\s+/g,'_') + '_' + date.replace(/\//g,'');
   const profiles = getProfiles();
-  profiles[key] = { name, date };
+  profiles[key] = {name, date};
   setProfiles(profiles);
   renderAllSelects(key, slot);
   showToast(slot, 'Perfil guardado ✓');
@@ -715,7 +955,10 @@ function loadProfile(slot, key){
   if(!p) return;
   document.getElementById('n'+slot).value = p.name;
   document.getElementById('d'+slot).value = p.date;
-  try{ localStorage.setItem('bio_n'+slot, p.name); localStorage.setItem('bio_d'+slot, p.date); }catch(e){}
+  try {
+    localStorage.setItem('bio_n'+slot, p.name);
+    localStorage.setItem('bio_d'+slot, p.date);
+  } catch(e){}
   setErr('d'+slot, false);
 }
 
@@ -733,26 +976,30 @@ function deleteProfile(slot){
 
 function showToast(slot, msg, isErr){
   const t = document.getElementById('profile-toast-'+slot);
-  t.textContent = msg;
-  t.style.color = isErr ? '#f06a6a' : '#4ecda4';
-  t.style.opacity = '1';
-  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.textContent='',400); }, 2600);
+  t.textContent    = msg;
+  t.style.color    = isErr ? '#f06a6a' : '#4ecda4';
+  t.style.opacity  = '1';
+  setTimeout(() => {
+    t.style.opacity = '0';
+    setTimeout(() => t.textContent = '', 400);
+  }, 2600);
 }
 
-// Inicializar ambos selectores al cargar
-renderAllSelects('', null);
-
+// ── Limpiar ──────────────────────────────────────────────────
 function limpiar(){
-  FIELDS.forEach(id=>{
-    document.getElementById(id).value='';
-    try{localStorage.removeItem('bio_'+id);}catch(e){}
+  FIELDS.forEach(id => {
+    document.getElementById(id).value = '';
+    try { localStorage.removeItem('bio_'+id); } catch(e){}
   });
-  ['d1','d2','dq'].forEach(id=>setErr(id,false));
-  charts.forEach(ch=>ch.destroy()); charts=[];
-  document.getElementById('results').style.display='none';
-  document.getElementById('card-p1').style.borderColor='';
-  document.getElementById('card-p2').style.borderColor='';
+  ['d1','d2','dq'].forEach(id => setErr(id, false));
+  charts.forEach(ch => ch.destroy()); charts = [];
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('card-p1').style.borderColor = '';
+  document.getElementById('card-p2').style.borderColor = '';
 }
+
+// ── Init ─────────────────────────────────────────────────────
+renderAllSelects('', null);
 </script>
 </body>
 </html>
