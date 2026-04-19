@@ -820,98 +820,178 @@ function calcular(){
   const sv2 = document.getElementById('d2').value;
   const svq = document.getElementById('dq').value;
   const d1  = parseDate(sv1), d2 = parseDate(sv2), dq = parseDate(svq);
-  setErr('d1',!d1); setErr('d2',!d2); setErr('dq',!dq);
-  if(!d1 || !d2 || !dq) return;
+
+  // P1 y fecha son obligatorios; P2 es opcional
+  setErr('d1', !d1); setErr('dq', !dq);
+  setErr('d2', false); // P2 nunca marca error: es opcional
+  if(!d1 || !dq) return;
+
+  const soloP1 = !d2; // modo una sola persona
 
   const n1 = document.getElementById('n1').value.trim() || 'Persona 1';
   const n2 = document.getElementById('n2').value.trim() || 'Persona 2';
 
-  const age1  = calcAge(d1, dq), age2  = calcAge(d2, dq);
-  const days1 = daysBetween(d1, dq), days2 = daysBetween(d2, dq);
+  // ── Persona 1 ──
+  const age1  = calcAge(d1, dq);
+  const days1 = daysBetween(d1, dq);
   const v1    = {f:bio(days1,CYCLES.F), e:bio(days1,CYCLES.E), i:bio(days1,CYCLES.I)};
-  const v2    = {f:bio(days2,CYCLES.F), e:bio(days2,CYCLES.E), i:bio(days2,CYCLES.I)};
-
-  const z1  = getZodiac(d1),      ch1 = getChineseSign(d1);
-  const z2  = getZodiac(d2),      ch2 = getChineseSign(d2);
+  const z1    = getZodiac(d1), ch1 = getChineseSign(d1);
 
   document.getElementById('title-p1').innerHTML =
     `${n1} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${z1} · ${ch1}</span>`;
-  document.getElementById('title-p2').innerHTML =
-    `${n2} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2}</span>`;
-
   document.getElementById('card-p1').style.borderColor = 'rgba(91,141,238,0.3)';
-  document.getElementById('card-p2').style.borderColor = 'rgba(245,158,63,0.3)';
-
   renderMetrics('metrics-p1', v1, days1);
-  renderMetrics('metrics-p2', v2, days2);
 
-  // Compatibilidad
-  const rawF = calcCompat(d1, d2, dq, CYCLES.F);
-  const rawE = calcCompat(d1, d2, dq, CYCLES.E);
-  const rawI = calcCompat(d1, d2, dq, CYCLES.I);
-  const pctF = Math.min(100, Math.max(0, Math.round(rawF)));
-  const pctE = Math.min(100, Math.max(0, Math.round(rawE)));
-  const pctI = Math.min(100, Math.max(0, Math.round(rawI)));
-  const total = Math.round((pctF+pctE+pctI)/3);
+  // ── Persona 2 ──
+  const card2 = document.getElementById('card-p2');
+  if(!soloP1){
+    const age2  = calcAge(d2, dq);
+    const days2 = daysBetween(d2, dq);
+    const v2    = {f:bio(days2,CYCLES.F), e:bio(days2,CYCLES.E), i:bio(days2,CYCLES.I)};
+    const z2    = getZodiac(d2), ch2 = getChineseSign(d2);
+    document.getElementById('title-p2').innerHTML =
+      `${n2} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2}</span>`;
+    card2.style.borderColor = 'rgba(245,158,63,0.3)';
+    card2.style.display = '';
+    renderMetrics('metrics-p2', v2, days2);
+  } else {
+    card2.style.display = 'none';
+  }
 
-  const ccolor = total>=70 ? '#4ecda4' : total>=45 ? '#f59e3f' : '#f06a6a';
-  const ctxt   = total>=70 ? 'Alta compatibilidad' : total>=45 ? 'Compatibilidad moderada' : 'Baja compatibilidad';
+  // ── Compatibilidad ──
+  const compatGrid  = document.querySelector('.grid2[style*="margin-bottom"]');
 
-  document.getElementById('compat-num').textContent  = total+'%';
-  document.getElementById('compat-num').style.color  = ccolor;
-  document.getElementById('compat-desc').textContent = ctxt;
-  document.getElementById('compat-raw').textContent  =
-    `Valores crudos — Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}  ·  Intelectual: ${rawI.toFixed(2)}`;
+  if(!soloP1){
+    compatGrid.style.display = '';
+    const rawF = calcCompat(d1, d2, dq, CYCLES.F);
+    const rawE = calcCompat(d1, d2, dq, CYCLES.E);
+    const rawI = calcCompat(d1, d2, dq, CYCLES.I);
+    const pctF = Math.min(100, Math.max(0, Math.round(rawF)));
+    const pctE = Math.min(100, Math.max(0, Math.round(rawE)));
+    const pctI = Math.min(100, Math.max(0, Math.round(rawI)));
+    const total = Math.round((pctF+pctE+pctI)/3);
 
-  document.getElementById('compat-detail').innerHTML = [
-    {lbl:'Físico', p:pctF, r:rawF},
-    {lbl:'Emocional', p:pctE, r:rawE},
-    {lbl:'Intelectual', p:pctI, r:rawI}
-  ].map(x => `<div class="metric-card">
-    <div class="metric-label">${x.lbl}</div>
-    <div class="metric-row" style="justify-content:center">
-      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
-    </div>
-  </div>`).join('');
+    const ccolor = total>=70 ? '#4ecda4' : total>=45 ? '#f59e3f' : '#f06a6a';
+    const ctxt   = total>=70 ? 'Alta compatibilidad' : total>=45 ? 'Compatibilidad moderada' : 'Baja compatibilidad';
+    document.getElementById('compat-num').textContent  = total+'%';
+    document.getElementById('compat-num').style.color  = ccolor;
+    document.getElementById('compat-desc').textContent = ctxt;
+    document.getElementById('compat-raw').textContent  =
+      `Valores crudos — Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}  ·  Intelectual: ${rawI.toFixed(2)}`;
+    document.getElementById('compat-detail').innerHTML = [
+      {lbl:'Físico', p:pctF},
+      {lbl:'Emocional', p:pctE},
+      {lbl:'Intelectual', p:pctI}
+    ].map(x => `<div class="metric-card">
+      <div class="metric-label">${x.lbl}</div>
+      <div class="metric-row" style="justify-content:center">
+        <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
+      </div>
+    </div>`).join('');
 
-  // Pasión
-  const totalPassion = Math.round((pctF + pctE) / 2);
-  const cpColor = totalPassion>=70 ? '#4ecda4' : totalPassion>=45 ? '#f59e3f' : '#f06a6a';
-  const cpTxt   = totalPassion>=70 ? 'Alta pasión' : totalPassion>=45 ? 'Pasión moderada' : 'Baja pasión';
-  document.getElementById('compat-passion-num').textContent  = totalPassion+'%';
-  document.getElementById('compat-passion-num').style.color  = cpColor;
-  document.getElementById('compat-passion-desc').textContent = cpTxt;
-  document.getElementById('compat-passion-raw').textContent  =
-    `Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}`;
-  document.getElementById('compat-passion-detail').innerHTML = [
-    {lbl:'Físico', p:pctF},
-    {lbl:'Emocional', p:pctE}
-  ].map(x => `<div class="metric-card">
-    <div class="metric-label">${x.lbl}</div>
-    <div class="metric-row" style="justify-content:center">
-      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
-    </div>
-  </div>`).join('');
+    const totalPassion = Math.round((pctF + pctE) / 2);
+    const cpColor = totalPassion>=70 ? '#4ecda4' : totalPassion>=45 ? '#f59e3f' : '#f06a6a';
+    const cpTxt   = totalPassion>=70 ? 'Alta pasión' : totalPassion>=45 ? 'Pasión moderada' : 'Baja pasión';
+    document.getElementById('compat-passion-num').textContent  = totalPassion+'%';
+    document.getElementById('compat-passion-num').style.color  = cpColor;
+    document.getElementById('compat-passion-desc').textContent = cpTxt;
+    document.getElementById('compat-passion-raw').textContent  =
+      `Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}`;
+    document.getElementById('compat-passion-detail').innerHTML = [
+      {lbl:'Físico', p:pctF},
+      {lbl:'Emocional', p:pctE}
+    ].map(x => `<div class="metric-card">
+      <div class="metric-label">${x.lbl}</div>
+      <div class="metric-row" style="justify-content:center">
+        <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
+      </div>
+    </div>`).join('');
+  } else {
+    // Solo P1: compatibilidad oculta; pasión de P1 sola
+    compatGrid.style.display = 'none';
+  }
 
-  // Mostrar resultados y crear charts
+  // ── Mostrar resultados y crear charts ──
   const res = document.getElementById('results');
   res.style.display = 'block';
 
   charts.forEach(ch => ch.destroy()); charts = [];
-  buildLegend('leg-f', n1, n2, C1.f, C2.f);
-  buildLegend('leg-e', n1, n2, C1.e, C2.e);
-  buildLegend('leg-i', n1, n2, C1.i, C2.i);
-  buildLegend3('leg-p', n1, n2, 'Pasión', C1.p, C2.p, CP);
 
-  requestAnimationFrame(() => {
+  if(!soloP1){
+    // Modo dos personas: gráficos comparativos normales
+    buildLegend('leg-f', n1, n2, C1.f, C2.f);
+    buildLegend('leg-e', n1, n2, C1.e, C2.e);
+    buildLegend('leg-i', n1, n2, C1.i, C2.i);
+    buildLegend3('leg-p', n1, n2, 'Pasión', C1.p, C2.p, CP);
     requestAnimationFrame(() => {
-      mkChart('cf', d1, d2, dq, CYCLES.F, C1.f, C2.f);
-      mkChart('ce', d1, d2, dq, CYCLES.E, C1.e, C2.e);
-      mkChart('ci', d1, d2, dq, CYCLES.I, C1.i, C2.i);
-      mkPassionChart('cp', d1, d2, dq, C1.p, C2.p, CP);
-      setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+      requestAnimationFrame(() => {
+        mkChart('cf', d1, d2, dq, CYCLES.F, C1.f, C2.f);
+        mkChart('ce', d1, d2, dq, CYCLES.E, C1.e, C2.e);
+        mkChart('ci', d1, d2, dq, CYCLES.I, C1.i, C2.i);
+        mkPassionChart('cp', d1, d2, dq, C1.p, C2.p, CP);
+        setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+      });
     });
+  } else {
+    // Modo una persona: solo P1, P2 muestra "--"
+    buildLegendSolo('leg-f', n1, C1.f);
+    buildLegendSolo('leg-e', n1, C1.e);
+    buildLegendSolo('leg-i', n1, C1.i);
+    buildLegendSolo('leg-p', n1, C1.p);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        mkChartSolo('cf', d1, dq, CYCLES.F, C1.f);
+        mkChartSolo('ce', d1, dq, CYCLES.E, C1.e);
+        mkChartSolo('ci', d1, dq, CYCLES.I, C1.i);
+        mkPassionChartSolo('cp', d1, dq, C1.p);
+        setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+      });
+    });
+  }
+}
+
+// ── Helpers modo una persona ─────────────────────────────────
+function buildLegendSolo(elId, l1, c1){
+  document.getElementById(elId).innerHTML =
+    `<span><span class="leg-line" style="background:${c1}"></span>${l1}</span>
+     <span style="color:var(--muted)">— P2: sin datos —</span>`;
+}
+
+function mkChartSolo(canvasId, d1, dq, cycle, c1){
+  const ctx    = document.getElementById(canvasId).getContext('2d');
+  const labels = makeLabels(dq);
+  const ds1    = makeSeriesData(d1, dq, cycle);
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4},
+        {label:'P2', data:Array(46).fill(null), borderColor:'transparent', backgroundColor:'transparent', borderWidth:0, pointRadius:0}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
   });
+  charts.push(ch);
+}
+
+function mkPassionChartSolo(canvasId, d1, dq, c1){
+  const ctx    = document.getElementById(canvasId).getContext('2d');
+  const labels = makeLabels(dq);
+  const ds1    = makePassionData(d1, dq);
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  charts.push(ch);
 }
 
 // ── Gestión de perfiles compartidos ─────────────────────────
@@ -996,6 +1076,9 @@ function limpiar(){
   document.getElementById('results').style.display = 'none';
   document.getElementById('card-p1').style.borderColor = '';
   document.getElementById('card-p2').style.borderColor = '';
+  document.getElementById('card-p2').style.display = '';
+  const compatGrid = document.querySelector('.grid2[style*="margin-bottom"]');
+  if(compatGrid) compatGrid.style.display = '';
 }
 
 // ── Init ─────────────────────────────────────────────────────
