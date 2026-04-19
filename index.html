@@ -221,24 +221,13 @@ select.profile-select option{background:#1e2230;color:#e8eaf0}
     <div class="card-title" id="title-p2">Persona 2</div>
     <div class="grid3" id="metrics-p2"></div>
   </div>
-  <div class="grid2" style="margin-bottom:1.25rem">
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Compatibilidad general</div>
-      <div class="compat-center">
-        <div class="compat-number" id="compat-num">—</div>
-        <div class="compat-desc" id="compat-desc"></div>
-        <div class="grid3" id="compat-detail"></div>
-        <div class="compat-raw" id="compat-raw"></div>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Compatibilidad pasión</div>
-      <div class="compat-center">
-        <div class="compat-number" id="compat-passion-num">—</div>
-        <div class="compat-desc" id="compat-passion-desc"></div>
-        <div class="grid2" id="compat-passion-detail"></div>
-        <div class="compat-raw" id="compat-passion-raw"></div>
-      </div>
+  <div class="card">
+    <div class="card-title">Compatibilidad general</div>
+    <div class="compat-center">
+      <div class="compat-number" id="compat-num">—</div>
+      <div class="compat-desc" id="compat-desc"></div>
+      <div class="grid3" id="compat-detail"></div>
+      <div class="compat-raw" id="compat-raw"></div>
     </div>
   </div>
   <div class="card">
@@ -558,6 +547,27 @@ function calcAge(birth, refDate){
   return age;
 }
 
+function MOD(n, d){ return ((n % d) + d) % d; }
+
+function getZodiac(date){
+  const signs = ['Capri','Acuario','Piscis','Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capri'];
+  const limits = [0,20,50,80,110,141,172,204,235,266,296,326,356];
+  const start = new Date(date.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((date - start) / 86400000);
+  let idx = 0;
+  for(let i = 0; i < limits.length; i++){ if(dayOfYear >= limits[i]) idx = i; }
+  return signs[idx];
+}
+
+function getChineseSign(date){
+  const animals = ['Rata','Buey','Tigre','Gato','Dragón','Serpiente','Caballo','Cabra','Mono','Gallo','Perro','Jabalí'];
+  const yr = date.getFullYear();
+  const correction = MOD(38 + Math.floor(0.2422*(yr-1900)) - Math.floor((yr-1900)/4), 30);
+  const chineseNewYear = new Date(yr, 0, 21 + correction);
+  const effectiveYear = date < chineseNewYear ? yr - 1 : yr;
+  return animals[MOD(effectiveYear - 2020, 12)];
+}
+
 function calcular(){
   const sv1=document.getElementById('d1').value;
   const sv2=document.getElementById('d2').value;
@@ -573,8 +583,10 @@ function calcular(){
   const v1={f:bio(days1,CYCLES.F),e:bio(days1,CYCLES.E),i:bio(days1,CYCLES.I)};
   const v2={f:bio(days2,CYCLES.F),e:bio(days2,CYCLES.E),i:bio(days2,CYCLES.I)};
 
-  document.getElementById('title-p1').innerHTML=`${n1} <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años</span>`;
-  document.getElementById('title-p2').innerHTML=`${n2} <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años</span>`;
+  const z1=getZodiac(d1), ch1=getChineseSign(d1);
+  const z2=getZodiac(d2), ch2=getChineseSign(d2);
+  document.getElementById('title-p1').innerHTML=`${n1} <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${z1} · ${ch1}</span>`;
+  document.getElementById('title-p2').innerHTML=`${n2} <span style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2}</span>`;
   document.getElementById('card-p1').style.borderColor='rgba(91,141,238,0.3)';
   document.getElementById('card-p2').style.borderColor='rgba(245,158,63,0.3)';
 
@@ -603,25 +615,6 @@ function calcular(){
     {lbl:'Físico',p:pctF,r:rawF},
     {lbl:'Emocional',p:pctE,r:rawE},
     {lbl:'Intelectual',p:pctI,r:rawI}
-  ].map(x=>`<div class="metric-card">
-    <div class="metric-label">${x.lbl}</div>
-    <div class="metric-row" style="justify-content:center">
-      <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:500;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
-    </div>
-  </div>`).join('');
-
-  // Compatibilidad Pasión = promedio de Físico + Emocional
-  const totalPassion = Math.round((pctF + pctE) / 2);
-  const cpColor = totalPassion>=70?'#4ecda4':totalPassion>=45?'#f59e3f':'#f06a6a';
-  const cpTxt   = totalPassion>=70?'Alta pasión':totalPassion>=45?'Pasión moderada':'Baja pasión';
-  document.getElementById('compat-passion-num').textContent = totalPassion+'%';
-  document.getElementById('compat-passion-num').style.color = cpColor;
-  document.getElementById('compat-passion-desc').textContent = cpTxt;
-  document.getElementById('compat-passion-raw').textContent =
-    `Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}`;
-  document.getElementById('compat-passion-detail').innerHTML=[
-    {lbl:'Físico',p:pctF},
-    {lbl:'Emocional',p:pctE}
   ].map(x=>`<div class="metric-card">
     <div class="metric-label">${x.lbl}</div>
     <div class="metric-row" style="justify-content:center">
