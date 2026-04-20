@@ -814,6 +814,53 @@ function getChineseSign(date){
   return animals[MOD(effectiveYear - 2020, 12)];
 }
 
+// ── Fase lunar y luna llena más cercana ──────────────────────
+// Referencia: luna nueva el 6 de enero de 2000 (J2000 simplificado)
+const LUNAR_REF = Date.UTC(2000, 0, 6, 18, 14, 0); // ms
+const SYNODIC   = 29.530588853 * 86400000;           // ms
+
+function lunarAge(date){
+  const ms = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - LUNAR_REF;
+  return ((ms % SYNODIC) + SYNODIC) % SYNODIC / 86400000; // días en el ciclo 0–29.53
+}
+
+function lunarPhaseInfo(date){
+  const age = lunarAge(date);
+  const pct = age / 29.530588853; // 0–1
+  // 8 fases
+  const phases = [
+    {name:'Luna nueva',        emoji:'🌑', min:0,      max:0.0625},
+    {name:'Creciente inicial', emoji:'🌒', min:0.0625, max:0.1875},
+    {name:'Cuarto creciente',  emoji:'🌓', min:0.1875, max:0.3125},
+    {name:'Gibosa creciente',  emoji:'🌔', min:0.3125, max:0.4375},
+    {name:'Luna llena',        emoji:'🌕', min:0.4375, max:0.5625},
+    {name:'Gibosa menguante',  emoji:'🌖', min:0.5625, max:0.6875},
+    {name:'Cuarto menguante',  emoji:'🌗', min:0.6875, max:0.8125},
+    {name:'Menguante final',   emoji:'🌘', min:0.8125, max:1},
+  ];
+  const phase = phases.find(p => pct >= p.min && pct < p.max) || phases[0];
+  return {age: age.toFixed(1), emoji: phase.emoji, name: phase.name};
+}
+
+function nearestFullMoon(date){
+  const ms = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  // Distancia a la luna llena dentro del ciclo (mitad del ciclo = llena)
+  const halfCycle = SYNODIC / 2;
+  const cyclePos  = ((ms - LUNAR_REF) % SYNODIC + SYNODIC) % SYNODIC;
+  // días hasta la próxima llena / días desde la última llena
+  const toNext = (halfCycle - cyclePos + SYNODIC) % SYNODIC;
+  const toPrev = cyclePos > halfCycle ? cyclePos - halfCycle : halfCycle + cyclePos;
+  const diff   = toNext <= toPrev ? toNext : -toPrev; // + = futura, - = pasada
+  const days   = Math.round(diff / 86400000);
+  const fullMs = ms + days * 86400000;
+  const fd     = new Date(fullMs);
+  const label  = fd.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const absDays = Math.abs(days);
+  if(absDays === 0) return `🌕 Luna llena ese día`;
+  const dir = days > 0 ? `en ${absDays} día${absDays>1?'s':''}` : `hace ${absDays} día${absDays>1?'s':''}`;
+  return `🌕 Llena el ${label} (${dir})`;
+}
+
 // ── Calcular ─────────────────────────────────────────────────
 function calcular(){
   const sv1 = document.getElementById('d1').value;
@@ -836,9 +883,11 @@ function calcular(){
   const days1 = daysBetween(d1, dq);
   const v1    = {f:bio(days1,CYCLES.F), e:bio(days1,CYCLES.E), i:bio(days1,CYCLES.I)};
   const z1    = getZodiac(d1), ch1 = getChineseSign(d1);
+  const moon1 = lunarPhaseInfo(d1), nfm1 = nearestFullMoon(d1);
 
   document.getElementById('title-p1').innerHTML =
-    `${n1} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${z1} · ${ch1}</span>`;
+    `${n1} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${z1} · ${ch1} · ${moon1.emoji} ${moon1.name} (día ${moon1.age})</span>`+
+    `<div style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:3px;letter-spacing:0">${nfm1}</div>`;
   document.getElementById('card-p1').style.borderColor = 'rgba(91,141,238,0.3)';
   renderMetrics('metrics-p1', v1, days1);
 
@@ -849,8 +898,10 @@ function calcular(){
     const days2 = daysBetween(d2, dq);
     const v2    = {f:bio(days2,CYCLES.F), e:bio(days2,CYCLES.E), i:bio(days2,CYCLES.I)};
     const z2    = getZodiac(d2), ch2 = getChineseSign(d2);
+    const moon2 = lunarPhaseInfo(d2), nfm2 = nearestFullMoon(d2);
     document.getElementById('title-p2').innerHTML =
-      `${n2} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2}</span>`;
+      `${n2} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${z2} · ${ch2} · ${moon2.emoji} ${moon2.name} (día ${moon2.age})</span>`+
+      `<div style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:3px;letter-spacing:0">${nfm2}</div>`;
     card2.style.borderColor = 'rgba(245,158,63,0.3)';
     card2.style.display = '';
     renderMetrics('metrics-p2', v2, days2);
