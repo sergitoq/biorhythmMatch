@@ -291,6 +291,51 @@ button:active{transform:scale(0.97)}
 .chart-wrap{position:relative;width:100%;height:190px}
 hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
 
+/* ─── Chart fullscreen modal ─── */
+.chart-wrap{cursor:pointer}
+.chart-wrap::after{
+  content:'⛶';position:absolute;top:8px;right:8px;
+  font-size:16px;color:rgba(255,255,255,0.2);
+  pointer-events:none;transition:color 0.2s;
+}
+.chart-wrap:hover::after{color:rgba(255,255,255,0.5)}
+
+#chart-modal{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(8,10,16,0.97);
+  align-items:center;justify-content:center;
+}
+#chart-modal.open{display:flex}
+#chart-modal-inner{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  padding:1.2rem 1.4rem 1rem;
+}
+#chart-modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:0.8rem;flex-shrink:0;
+}
+#chart-modal-title{
+  font-size:13px;font-weight:600;color:var(--muted2);
+  display:flex;align-items:center;gap:10px;
+}
+#chart-modal-legend{
+  font-size:12px;color:var(--muted2);
+  display:flex;gap:18px;flex-wrap:wrap;margin-top:5px;
+}
+#chart-modal-close{
+  background:transparent;border:0.5px solid var(--border);
+  color:var(--muted2);padding:7px 14px;font-size:13px;
+  border-radius:var(--radius-xs);flex-shrink:0;
+}
+#chart-modal-close:hover{color:var(--text);border-color:var(--border-h);box-shadow:none}
+#chart-modal-canvas-wrap{flex:1;position:relative;min-height:0}
+
+/* En landscape el modal usa todo el espacio */
+@media(orientation:landscape){
+  #chart-modal-inner{padding:0.8rem 1.2rem 0.6rem}
+}
+
 /* ─── Person card accent borders ─── */
 #card-p1{transition:border-color 0.4s}
 #card-p2{transition:border-color 0.4s}
@@ -511,6 +556,22 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
 
 </div><!-- /results -->
 </div><!-- /container -->
+
+<!-- Fullscreen chart modal -->
+<div id="chart-modal" role="dialog" aria-modal="true">
+  <div id="chart-modal-inner">
+    <div id="chart-modal-header">
+      <div>
+        <div id="chart-modal-title"></div>
+        <div id="chart-modal-legend"></div>
+      </div>
+      <button id="chart-modal-close" onclick="closeChartModal()">✕ Cerrar</button>
+    </div>
+    <div id="chart-modal-canvas-wrap">
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -1143,6 +1204,84 @@ function limpiar(){
 
 // ── Init ─────────────────────────────────────────────────────
 renderAllSelects('', null);
+
+// ── Fullscreen chart modal ────────────────────────────────────
+let modalChart = null;
+
+// Metadata de cada gráfico para reconstruirlo en el modal
+const CHART_META = {
+  cf: { title:'Ciclo Físico',      tag:'23 días',           tagColor:'#5b8dee', tagBg:'rgba(91,141,238,0.13)',  legId:'leg-f' },
+  ce: { title:'Ciclo Emocional',   tag:'28 días',           tagColor:'#4ecda4', tagBg:'rgba(78,205,164,0.13)',  legId:'leg-e' },
+  ci: { title:'Ciclo Intelectual', tag:'33 días',           tagColor:'#c77dff', tagBg:'rgba(199,125,255,0.13)', legId:'leg-i' },
+  cp: { title:'Pasión',            tag:'Físico + Emocional',tagColor:'#f5d842', tagBg:'rgba(245,216,66,0.13)',  legId:'leg-p' },
+};
+
+// Agregar tap listener a cada chart-wrap
+document.querySelectorAll('.chart-wrap').forEach(wrap => {
+  const canvas = wrap.querySelector('canvas');
+  if(!canvas) return;
+  wrap.addEventListener('click', () => openChartModal(canvas.id));
+});
+
+function openChartModal(canvasId){
+  const meta    = CHART_META[canvasId];
+  const srcChart = charts.find(c => c.canvas.id === canvasId);
+  if(!srcChart || !meta) return;
+
+  // Título y tag
+  document.getElementById('chart-modal-title').innerHTML =
+    `${meta.title} <span style="font-size:10px;padding:3px 9px;border-radius:20px;font-weight:600;background:${meta.tagBg};color:${meta.tagColor}">${meta.tag}</span>`;
+
+  // Copiar leyenda
+  document.getElementById('chart-modal-legend').innerHTML =
+    document.getElementById(meta.legId).innerHTML;
+
+  // Copiar datasets del chart original
+  const srcData = srcChart.data;
+  const srcOpts = JSON.parse(JSON.stringify(CHART_OPTS));
+
+  // Destruir modal chart anterior
+  if(modalChart){ modalChart.destroy(); modalChart = null; }
+
+  const ctx = document.getElementById('chart-modal-canvas').getContext('2d');
+  modalChart = new Chart(ctx, {
+    type: 'line',
+    plugins: [todayLinePlugin('chart-modal-canvas')],
+    data: {
+      labels: srcData.labels,
+      datasets: srcData.datasets.map(ds => ({...ds}))
+    },
+    options: srcOpts
+  });
+
+  // Bloquear scroll del body
+  document.body.style.overflow = 'hidden';
+  // Pedir orientación landscape en móvil si está disponible
+  if(screen.orientation && screen.orientation.lock){
+    screen.orientation.lock('landscape').catch(()=>{});
+  }
+
+  const modal = document.getElementById('chart-modal');
+  modal.classList.add('open');
+  // Resize tras abrir para que el canvas ocupe bien el espacio
+  requestAnimationFrame(() => { if(modalChart) modalChart.resize(); });
+}
+
+function closeChartModal(){
+  document.getElementById('chart-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  if(screen.orientation && screen.orientation.unlock){
+    screen.orientation.unlock();
+  }
+  if(modalChart){ modalChart.destroy(); modalChart = null; }
+}
+
+// Cerrar con tecla Escape
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeChartModal(); });
+// Cerrar tocando el fondo oscuro
+document.getElementById('chart-modal').addEventListener('click', function(e){
+  if(e.target === this) closeChartModal();
+});
 </script>
 </body>
 </html>
