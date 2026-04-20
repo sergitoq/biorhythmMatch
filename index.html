@@ -844,17 +844,23 @@ function lunarPhaseInfo(date){
 
 function nearestFullMoon(date){
   const ms = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-  // Distancia a la luna llena dentro del ciclo (mitad del ciclo = llena)
+  // posición dentro del ciclo (0 = luna nueva, SYNODIC/2 = luna llena)
+  const cyclePos = ((ms - LUNAR_REF) % SYNODIC + SYNODIC) % SYNODIC;
   const halfCycle = SYNODIC / 2;
-  const cyclePos  = ((ms - LUNAR_REF) % SYNODIC + SYNODIC) % SYNODIC;
-  // días hasta la próxima llena / días desde la última llena
-  const toNext = (halfCycle - cyclePos + SYNODIC) % SYNODIC;
-  const toPrev = cyclePos > halfCycle ? cyclePos - halfCycle : halfCycle + cyclePos;
-  const diff   = toNext <= toPrev ? toNext : -toPrev; // + = futura, - = pasada
-  const days   = Math.round(diff / 86400000);
+  // ms hasta la próxima llena (puede ser 0 si hoy es llena)
+  const msToNext = (halfCycle - cyclePos + SYNODIC) % SYNODIC;
+  // ms desde la última llena
+  const msFromPrev = cyclePos <= halfCycle ? cyclePos : cyclePos - halfCycle;
+  // elegir la más cercana; si empatan, la futura
+  const diffMs = msToNext <= msFromPrev ? msToNext : -msFromPrev;
+  const days   = Math.round(diffMs / 86400000);
   const fullMs = ms + days * 86400000;
-  const fd     = new Date(fullMs);
-  const label  = fd.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  // Formatear desde UTC para evitar desfase por zona horaria
+  const fd   = new Date(fullMs);
+  const dd   = String(fd.getUTCDate()).padStart(2,'0');
+  const mmm  = String(fd.getUTCMonth()+1).padStart(2,'0');
+  const yyyy = fd.getUTCFullYear();
+  const label = `${dd}/${mmm}/${yyyy}`;
   const absDays = Math.abs(days);
   if(absDays === 0) return `🌕 Luna llena ese día`;
   const dir = days > 0 ? `en ${absDays} día${absDays>1?'s':''}` : `hace ${absDays} día${absDays>1?'s':''}`;
