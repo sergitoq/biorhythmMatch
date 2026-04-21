@@ -1236,55 +1236,64 @@ function openChartModal(canvasId){
   const modal  = document.getElementById('chart-modal');
   const inner  = document.getElementById('chart-modal-inner');
   const cWrap  = document.getElementById('chart-modal-canvas-wrap');
-  const canvas = document.getElementById('chart-modal-canvas');
+
+  // Reemplazar el canvas por uno nuevo limpio (Chart.js deja estado residual)
+  const oldCanvas = document.getElementById('chart-modal-canvas');
+  const canvas = document.createElement('canvas');
+  canvas.id = 'chart-modal-canvas';
+  oldCanvas.replaceWith(canvas);
 
   const isPortrait = window.innerWidth < window.innerHeight;
   const W = window.innerWidth;
   const H = window.innerHeight;
 
-  // Reset estilos
-  inner.style.cssText  = '';
-  cWrap.style.cssText  = '';
-  canvas.style.cssText = '';
-  modal.classList.remove('rotated');
-
-  if(isPortrait){
-    // El inner ocupa H×W (apaisado) y se rota 90° para quedar visible
-    inner.style.width          = H + 'px';
-    inner.style.height         = W + 'px';
-    inner.style.position       = 'absolute';
-    inner.style.top            = '0';
-    inner.style.left           = '0';
-    inner.style.transformOrigin= 'top left';
-    inner.style.transform      = `rotate(90deg) translateX(0) translateY(-${W}px)`;
-    inner.style.display        = 'flex';
-    inner.style.flexDirection  = 'column';
-    inner.style.padding        = '1rem 1.2rem 0.8rem';
-    inner.style.boxSizing      = 'border-box';
-  } else {
-    inner.style.width    = '100%';
-    inner.style.height   = '100%';
-    inner.style.display  = 'flex';
-    inner.style.flexDirection = 'column';
-    inner.style.padding  = '1rem 1.2rem 0.8rem';
-    inner.style.boxSizing= 'border-box';
-  }
+  // Reset
+  inner.style.cssText = '';
+  cWrap.style.cssText = '';
 
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
+  if(isPortrait){
+    // Inner tiene dimensiones apaisadas (H x W) y se rota visualmente
+    inner.style.cssText = `
+      position:absolute; top:0; left:0;
+      width:${H}px; height:${W}px;
+      transform:rotate(90deg) translateY(-${W}px);
+      transform-origin:top left;
+      display:flex; flex-direction:column;
+      padding:0.8rem 1.2rem 0.6rem; box-sizing:border-box;`;
+    // Canvas con dimensiones apaisadas explícitas — Chart.js las lee de los atributos
+    const headerH = 60; // aprox altura del header
+    canvas.width  = H - 24;   // ancho real apaisado menos padding
+    canvas.height = W - headerH;
+    canvas.style.cssText = `width:${H-24}px; height:${W-headerH}px; display:block;`;
+    cWrap.style.cssText  = `width:${H-24}px; height:${W-headerH}px; position:relative; flex-shrink:0;`;
+  } else {
+    inner.style.cssText = `
+      width:100%; height:100%;
+      display:flex; flex-direction:column;
+      padding:1rem 1.2rem 0.8rem; box-sizing:border-box;`;
+    cWrap.style.cssText = `flex:1; position:relative; min-height:0;`;
+    canvas.style.cssText = `width:100%; height:100%; display:block;`;
+  }
+
+  // Crear chart en el siguiente frame para que el DOM haya aplicado los estilos
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const ctx = canvas.getContext('2d');
-      modalChart = new Chart(ctx, {
-        type: 'line',
-        plugins: [todayLinePlugin('chart-modal-canvas')],
-        data: {
-          labels: srcChart.data.labels,
-          datasets: srcChart.data.datasets.map(ds => ({...ds}))
-        },
-        options: JSON.parse(JSON.stringify(CHART_OPTS))
-      });
+    const opts = JSON.parse(JSON.stringify(CHART_OPTS));
+    // En portrait desactivar responsive para que respete el tamaño fijo del canvas
+    if(isPortrait){
+      opts.responsive = false;
+      opts.maintainAspectRatio = false;
+    }
+    modalChart = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      plugins: [todayLinePlugin('chart-modal-canvas')],
+      data: {
+        labels: srcChart.data.labels,
+        datasets: srcChart.data.datasets.map(ds => ({...ds}))
+      },
+      options: opts
     });
   });
 }
