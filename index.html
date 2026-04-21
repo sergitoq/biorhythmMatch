@@ -307,11 +307,24 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
 }
 #chart-modal.open{display:block}
 
-/* inner: manejado por JS según orientación */
+/* inner: por defecto ocupa todo (landscape real o desktop) */
 #chart-modal-inner{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
   display:flex;flex-direction:column;
   padding:1rem 1.2rem 0.8rem;
   box-sizing:border-box;
+  transform-origin:top left;
+}
+
+/* Solo en portrait: rotar el inner 90° y reposicionar
+   para que quede centrado como si fuera landscape        */
+#chart-modal.rotated #chart-modal-inner{
+  width:100vh;
+  height:100vw;
+  transform:rotate(90deg) translateY(-100%);
+  transform-origin:top left;
 }
 
 #chart-modal-header{
@@ -1226,83 +1239,47 @@ function openChartModal(canvasId){
   const srcChart = charts.find(c => c.canvas.id === canvasId);
   if(!srcChart || !meta) return;
 
+  // Título y tag
   document.getElementById('chart-modal-title').innerHTML =
     `${meta.title} <span style="font-size:10px;padding:3px 9px;border-radius:20px;font-weight:600;background:${meta.tagBg};color:${meta.tagColor}">${meta.tag}</span>`;
+
+  // Copiar leyenda
   document.getElementById('chart-modal-legend').innerHTML =
     document.getElementById(meta.legId).innerHTML;
 
+  // Destruir modal chart anterior
   if(modalChart){ modalChart.destroy(); modalChart = null; }
 
-  const modal  = document.getElementById('chart-modal');
-  const inner  = document.getElementById('chart-modal-inner');
-  const cWrap  = document.getElementById('chart-modal-canvas-wrap');
+  const modal = document.getElementById('chart-modal');
 
-  // Reemplazar el canvas por uno nuevo limpio (Chart.js deja estado residual)
-  const oldCanvas = document.getElementById('chart-modal-canvas');
-  const canvas = document.createElement('canvas');
-  canvas.id = 'chart-modal-canvas';
-  oldCanvas.replaceWith(canvas);
-
+  // Rotar si estamos en portrait (ancho < alto)
   const isPortrait = window.innerWidth < window.innerHeight;
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-
-  // Reset
-  inner.style.cssText = '';
-  cWrap.style.cssText = '';
+  if(isPortrait) modal.classList.add('rotated');
+  else           modal.classList.remove('rotated');
 
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  if(isPortrait){
-    // Inner tiene dimensiones apaisadas (H x W) y se rota visualmente
-    inner.style.cssText = `
-      position:absolute; top:0; left:0;
-      width:${H}px; height:${W}px;
-      transform:rotate(90deg) translateY(-${W}px);
-      transform-origin:top left;
-      display:flex; flex-direction:column;
-      padding:0.8rem 1.2rem 0.6rem; box-sizing:border-box;`;
-    // Canvas con dimensiones apaisadas explícitas — Chart.js las lee de los atributos
-    const headerH = 60; // aprox altura del header
-    canvas.width  = H - 24;   // ancho real apaisado menos padding
-    canvas.height = W - headerH;
-    canvas.style.cssText = `width:${H-24}px; height:${W-headerH}px; display:block;`;
-    cWrap.style.cssText  = `width:${H-24}px; height:${W-headerH}px; position:relative; flex-shrink:0;`;
-  } else {
-    inner.style.cssText = `
-      width:100%; height:100%;
-      display:flex; flex-direction:column;
-      padding:1rem 1.2rem 0.8rem; box-sizing:border-box;`;
-    cWrap.style.cssText = `flex:1; position:relative; min-height:0;`;
-    canvas.style.cssText = `width:100%; height:100%; display:block;`;
-  }
-
-  // Crear chart en el siguiente frame para que el DOM haya aplicado los estilos
+  // Crear chart después de que el DOM pinte con las dimensiones correctas
   requestAnimationFrame(() => {
-    const opts = JSON.parse(JSON.stringify(CHART_OPTS));
-    // En portrait desactivar responsive para que respete el tamaño fijo del canvas
-    if(isPortrait){
-      opts.responsive = false;
-      opts.maintainAspectRatio = false;
-    }
-    modalChart = new Chart(canvas.getContext('2d'), {
-      type: 'line',
-      plugins: [todayLinePlugin('chart-modal-canvas')],
-      data: {
-        labels: srcChart.data.labels,
-        datasets: srcChart.data.datasets.map(ds => ({...ds}))
-      },
-      options: opts
+    requestAnimationFrame(() => {
+      const ctx = document.getElementById('chart-modal-canvas').getContext('2d');
+      modalChart = new Chart(ctx, {
+        type: 'line',
+        plugins: [todayLinePlugin('chart-modal-canvas')],
+        data: {
+          labels: srcChart.data.labels,
+          datasets: srcChart.data.datasets.map(ds => ({...ds}))
+        },
+        options: JSON.parse(JSON.stringify(CHART_OPTS))
+      });
     });
   });
 }
 
 function closeChartModal(){
   const modal = document.getElementById('chart-modal');
-  const inner = document.getElementById('chart-modal-inner');
   modal.classList.remove('open','rotated');
-  inner.style.cssText = '';
   document.body.style.overflow = '';
   if(modalChart){ modalChart.destroy(); modalChart = null; }
 }
