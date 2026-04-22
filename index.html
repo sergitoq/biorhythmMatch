@@ -349,7 +349,6 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
   color:var(--muted2);padding:5px 10px;font-size:18px;line-height:1;
   border-radius:var(--radius-xs);flex-shrink:0;width:2.4rem;text-align:center;
 }
-}
 #chart-modal-close:hover{color:var(--text);border-color:var(--border-h);box-shadow:none}
 #chart-modal-canvas-wrap{flex:1;position:relative;min-height:0}
 
@@ -925,10 +924,10 @@ function nearestFullMoon(date){
   // posición dentro del ciclo (0 = luna nueva, SYNODIC/2 = luna llena)
   const cyclePos = ((ms - LUNAR_REF) % SYNODIC + SYNODIC) % SYNODIC;
   const halfCycle = SYNODIC / 2;
-  // ms hasta la próxima llena (puede ser 0 si hoy es llena)
+  // ms hasta la próxima llena (distancia desde cyclePos hasta halfCycle)
   const msToNext = (halfCycle - cyclePos + SYNODIC) % SYNODIC;
-  // ms desde la última llena
-  const msFromPrev = cyclePos <= halfCycle ? cyclePos : cyclePos - halfCycle;
+  // ms desde la última llena (distancia desde halfCycle anterior hasta cyclePos)
+  const msFromPrev = cyclePos >= halfCycle ? cyclePos - halfCycle : cyclePos + halfCycle;
   // elegir la más cercana; si empatan, la futura
   const diffMs = msToNext <= msFromPrev ? msToNext : -msFromPrev;
   const days   = Math.round(diffMs / 86400000);
