@@ -2,1478 +2,1551 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Numerología Conny Méndez</title>
-
-<!-- PWA / Median app meta -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BiorhythmMatch</title>
+<meta name="description" content="Calculadora interactiva de biorritmos que compara ciclos físico, emocional e intelectual de dos personas, con puntaje de compatibilidad y gráficos comparativos.">
+<meta name="theme-color" content="#080a10">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Numerología">
-<meta name="application-name" content="Numerología Conny Méndez">
-<meta name="theme-color" content="#0d0b14">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="description" content="Calculadora de Numerología basada en el método de Conny Méndez. Descubrí tu Ideal, Ser Latente, Expresión y Sendero de Vida.">
-
-<!-- Open Graph -->
-<meta property="og:title" content="Numerología Conny Méndez">
-<meta property="og:description" content="Calculá tu carta numerológica completa: Ideal, Ser Latente, Expresión y Sendero de Vida.">
-<meta property="og:type" content="website">
-
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-title" content="BiorhythmMatch">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --deep: #0d0b14;
-    --ink: #1a1625;
-    --card: #13101e;
-    --muted: #7a6f90;
-    --text: #e8e0f0;
-    --accent: #8b5cf6;
-    --accent2: #d4a8ff;
-  }
+:root{
+  --bg:#080a10;
+  --surface:#0f1118;
+  --surface2:#161b26;
+  --surface3:#1c2232;
+  --border:rgba(255,255,255,0.07);
+  --border-h:rgba(255,255,255,0.14);
+  --text:#dde2f0;
+  --muted:#5a607a;
+  --muted2:#7e86a0;
+  --accent:#5b8dee;
+  --accent2:#ff6eb4;
+  --gold:#f5d842;
+  --green:#4ecda4;
+  --orange:#f59e3f;
+  --red:#f06a6a;
+  --purple:#c77dff;
+  --yellow:#f0c040;
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── Stars ─── */
+.stars{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.stars::before,.stars::after{
+  content:'';position:absolute;inset:0;
+}
+.stars::before{
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,0.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 22% 8%, rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 45% 5%, rgba(255,255,255,0.35) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 68% 10%, rgba(255,255,255,0.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 7%, rgba(255,255,255,0.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 92% 22%, rgba(255,255,255,0.45) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 78% 35%, rgba(255,255,255,0.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 42%, rgba(255,255,255,0.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 33% 55%, rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 58% 60%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 4% 68%, rgba(255,255,255,0.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 72% 80%, rgba(255,255,255,0.3) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 28% 88%, rgba(255,255,255,0.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 50% 93%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 12% 95%, rgba(255,255,255,0.3) 0%,transparent 100%);
+}
+.stars::after{
+  background-image:
+    radial-gradient(1px 1px at 38% 18%, rgba(255,255,255,0.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 62% 28%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 72%, rgba(255,255,255,0.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 82% 52%, rgba(255,255,255,0.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,0.15) 0%,transparent 100%),
+    radial-gradient(2px 2px at 96% 40%, rgba(255,255,255,0.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 7% 30%, rgba(91,141,238,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 94% 85%, rgba(255,110,180,0.35) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 48% 76%, rgba(245,216,66,0.3) 0%,transparent 100%);
+}
 
-  body {
-    background: var(--deep);
-    color: var(--text);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    /* Safe area for notch / home indicator */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+/* Aurora glow behind header */
+.aurora{
+  position:fixed;top:-120px;left:50%;transform:translateX(-50%);
+  width:700px;height:400px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at center, rgba(91,141,238,0.08) 0%, rgba(255,110,180,0.05) 40%, transparent 70%);
+  filter:blur(40px);
+}
 
-  /* Starfield background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 45% 55%, rgba(255,255,255,0.2) 0%, transparent 100%),
-      radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.2) 0%, transparent 100%),
-      radial-gradient(2px 2px at 55% 25%, rgba(201,168,76,0.3) 0%, transparent 100%),
-      radial-gradient(2px 2px at 20% 70%, rgba(201,168,76,0.2) 0%, transparent 100%),
-      radial-gradient(2px 2px at 85% 55%, rgba(139,92,246,0.2) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
+/* ─── Layout ─── */
+.container{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:2.5rem 1.5rem 5rem;
+}
 
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 5rem;
-    position: relative;
-    z-index: 1;
-  }
+/* ─── Header ─── */
+header{text-align:center;margin-bottom:3rem}
+.logo-wrap{
+  display:inline-flex;align-items:center;gap:16px;
+  margin-bottom:1rem;
+}
+header h1{
+  font-family:'DM Serif Display',serif;
+  font-size:2.8rem;font-weight:400;
+  letter-spacing:-0.03em;
+  background:linear-gradient(135deg,#dde2f0 20%,#7aafff 55%,#ff9de2 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.1;
+}
+header .sub{
+  color:var(--muted2);font-size:14px;font-weight:300;
+  letter-spacing:0.03em;margin-top:0.3rem;
+}
 
-  /* Header */
-  header {
-    text-align: center;
-    margin-bottom: 3.5rem;
-    position: relative;
-  }
-  header::after {
-    content: '';
-    display: block;
-    width: 120px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 1.5rem auto 0;
-  }
-  .sigil {
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
-    filter: drop-shadow(0 0 12px rgba(201,168,76,0.5));
-    animation: pulse 4s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { filter: drop-shadow(0 0 12px rgba(201,168,76,0.5)); }
-    50% { filter: drop-shadow(0 0 22px rgba(201,168,76,0.9)); }
-  }
-  h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 6vw, 3.2rem);
-    font-weight: 400;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    text-shadow: 0 0 30px rgba(201,168,76,0.3);
-    line-height: 1.1;
-  }
-  .subtitle {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 0.6rem;
-  }
+/* ─── Cards ─── */
+.card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.6rem;
+  margin-bottom:1.25rem;
+  transition:border-color 0.3s;
+}
+.card:hover{border-color:var(--border-h)}
+.card-title{
+  font-size:10.5px;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.4rem;
+}
 
-  /* Form Card */
-  .form-card {
-    background: linear-gradient(135deg, rgba(26,22,37,0.9), rgba(19,16,30,0.95));
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 2px;
-    padding: 2.5rem;
-    margin-bottom: 2.5rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.1);
-  }
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .field.full { grid-column: 1 / -1; }
-  label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    opacity: 0.8;
-  }
-  input {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: 2px;
-    padding: 0.75rem 1rem;
-    color: var(--text);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    outline: none;
-    width: 100%;
-  }
-  input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
-  }
-  input::placeholder { color: var(--muted); opacity: 0.5; font-style: italic; }
+/* ─── Grid ─── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
 
-  .hint {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-style: italic;
-    margin-bottom: 1rem;
-  }
+/* ─── Person blocks ─── */
+.person-block{
+  background:var(--surface2);
+  border-radius:var(--radius-sm);
+  padding:1.3rem;
+  border:0.5px solid var(--border);
+  transition:border-color 0.3s;
+}
+.person-block:hover{border-color:var(--border-h)}
+.person-label{
+  font-size:12px;margin-bottom:1rem;
+  font-weight:600;letter-spacing:0.07em;
+  text-transform:uppercase;display:flex;align-items:center;gap:8px;
+}
+.person-label::before{
+  content:'';display:inline-block;
+  width:6px;height:6px;border-radius:50%;
+}
+.p1-label{color:var(--accent)}
+.p1-label::before{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.p2-label{color:var(--orange)}
+.p2-label::before{background:var(--orange);box-shadow:0 0 8px var(--orange)}
 
-  button {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-    border: none;
-    border-radius: 2px;
-    color: #fff;
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 20px rgba(139,92,246,0.3);
-    position: relative;
-    overflow: hidden;
-  }
-  button::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  button:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(139,92,246,0.5); }
-  button:hover::before { opacity: 1; }
-  button:active { transform: translateY(0); }
+/* ─── Profile bar ─── */
+.profile-bar{
+  margin-bottom:1rem;padding-bottom:1rem;
+  border-bottom:0.5px solid var(--border);
+}
+.profile-bar-label{
+  font-size:10.5px;color:var(--muted);
+  margin-bottom:7px;letter-spacing:0.08em;text-transform:uppercase;
+}
+.profile-actions{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+select.profile-select{
+  flex:1;min-width:0;
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-xs);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  padding:8px 30px 8px 11px;outline:none;
+  cursor:pointer;transition:border-color 0.2s;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%235a607a' d='M5 7L1 2h8z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+}
+select.profile-select:focus{border-color:var(--accent)}
+select.profile-select option{background:#161b26;color:#dde2f0}
+.profile-toast{font-size:11px;color:var(--green);margin-top:5px;min-height:15px;transition:opacity 0.3s}
 
-  /* Results */
-  #results {
-    display: none;
-    animation: fadeIn 0.8s ease forwards;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* ─── Fields ─── */
+.field{margin-bottom:0.8rem}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:11.5px;color:var(--muted2);margin-bottom:5px;font-weight:500}
+input[type="text"]{
+  width:100%;
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-xs);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  padding:10px 13px;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+input[type="text"]:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(91,141,238,0.12);
+}
+input[type="text"]::placeholder{color:var(--muted)}
+.hint{font-size:11px;color:var(--muted);margin-top:3px}
+.err{font-size:11px;color:var(--red);margin-top:3px;display:none}
 
-  .results-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  .name-display {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(1.3rem, 4vw, 2rem);
-    color: var(--gold-light);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.3rem;
-  }
-  .date-display {
-    font-family: 'Raleway', sans-serif;
-    color: var(--muted);
-    font-size: 0.85rem;
-    letter-spacing: 0.15em;
-  }
+/* ─── Date row ─── */
+.date-row{display:flex;align-items:flex-end;gap:1rem}
+.date-row .field{flex:1;margin-bottom:0}
+.btn-row{display:flex;gap:0.6rem;flex-shrink:0}
 
-  .numbers-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 2.5rem;
-  }
-  @media (max-width: 560px) { .numbers-grid { grid-template-columns: 1fr; } }
+/* ─── Buttons ─── */
+button{
+  background:var(--accent);color:#fff;border:none;
+  border-radius:var(--radius-xs);
+  font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;
+  padding:10px 22px;cursor:pointer;
+  transition:opacity 0.2s,transform 0.1s,box-shadow 0.2s;
+  white-space:nowrap;letter-spacing:0.01em;
+}
+button:hover{opacity:0.88;box-shadow:0 4px 16px rgba(91,141,238,0.25)}
+button:active{transform:scale(0.97)}
+.btn-clear{
+  background:transparent;
+  border:0.5px solid var(--border);
+  color:var(--muted2);
+}
+.btn-clear:hover{border-color:var(--border-h);color:var(--text);opacity:1;box-shadow:none}
+.btn-sm{padding:8px 13px;font-size:12px}
+.btn-save{
+  background:rgba(91,141,238,0.14);color:var(--accent);
+  border:0.5px solid rgba(91,141,238,0.3);
+}
+.btn-save:hover{background:rgba(91,141,238,0.25);opacity:1;box-shadow:0 3px 12px rgba(91,141,238,0.2)}
+.btn-delete{
+  background:rgba(240,106,106,0.1);color:var(--red);
+  border:0.5px solid rgba(240,106,106,0.25);
+}
+.btn-delete:hover{background:rgba(240,106,106,0.2);opacity:1;box-shadow:none}
 
-  .num-card {
-    background: linear-gradient(135deg, rgba(26,22,37,0.9), rgba(19,16,30,0.95));
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 2px;
-    padding: 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.35s;
-    position: relative;
-    overflow: hidden;
-  }
-  .num-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(201,168,76,0.05), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .num-card:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-  .num-card:hover::before { opacity: 1; }
-  .num-card.active { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(201,168,76,0.3), 0 10px 30px rgba(0,0,0,0.4); }
-  .num-card.active::before { opacity: 1; }
+/* ─── Results ─── */
+#results{display:none;animation:fadeUp 0.5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
-  .num-label {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
-  .num-value {
-    font-family: 'Cinzel', serif;
-    font-size: 3rem;
-    font-weight: 600;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: none;
-    margin-bottom: 0.3rem;
-  }
-  .num-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.9rem;
-    font-style: italic;
-    color: var(--accent2);
-    opacity: 0.8;
-  }
+/* ─── Metric cards ─── */
+.metric-card{
+  background:var(--surface2);
+  border-radius:var(--radius-sm);
+  padding:1.1rem 1rem;text-align:center;
+  border:0.5px solid var(--border);
+  transition:transform 0.2s,border-color 0.2s;
+}
+.metric-card:hover{transform:translateY(-2px);border-color:var(--border-h)}
+.metric-label{font-size:10.5px;color:var(--muted);margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase}
+.metric-row{display:flex;align-items:center;justify-content:center;gap:5px}
+.metric-value{font-size:26px;font-weight:400;font-family:'DM Serif Display',serif;line-height:1}
+.arrow{font-size:18px;line-height:1;font-weight:700}
+.metric-tag{font-size:11px;color:var(--muted);margin-top:5px}
 
-  /* Detail Panel */
-  .detail-panel {
-    background: linear-gradient(135deg, rgba(26,22,37,0.95), rgba(19,16,30,0.98));
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 2px;
-    padding: 2.5rem;
-    margin-bottom: 1.5rem;
-    display: none;
-    animation: slideDown 0.5s ease forwards;
-  }
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .detail-panel.visible { display: block; }
-  .detail-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-  }
-  .detail-number {
-    font-family: 'Cinzel', serif;
-    font-size: 3.5rem;
-    font-weight: 600;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .detail-info { flex: 1; }
-  .detail-type {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.2rem;
-  }
-  .detail-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1.2rem;
-    color: var(--gold-light);
-    letter-spacing: 0.05em;
-  }
-  .detail-text {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: rgba(232,224,240,0.88);
-    font-weight: 300;
-  }
-  .detail-text em {
-    color: var(--accent2);
-    font-style: normal;
-    font-weight: 400;
-  }
-  .detail-intro {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    font-style: italic;
-    color: var(--gold-light);
-    opacity: 0.85;
-    margin-bottom: 1.2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(201,168,76,0.1);
-    line-height: 1.6;
-  }
-    margin-top: 1.2rem;
-    padding: 0.8rem 1.2rem;
-    background: rgba(139,92,246,0.1);
-    border-left: 2px solid var(--accent);
-    font-size: 0.95rem;
-    color: var(--accent2);
-    font-style: italic;
-  }
+/* ─── Compat cards ─── */
+.compat-center{text-align:center;padding-top:0.25rem}
+.compat-number{
+  font-family:'DM Serif Display',serif;
+  font-size:5.5rem;font-weight:400;line-height:1;
+  margin:0.5rem 0 0.4rem;
+  letter-spacing:-0.02em;
+}
+.compat-desc{font-size:14px;color:var(--muted2);margin-bottom:1.3rem;font-style:italic}
+.compat-raw{font-size:10.5px;color:var(--muted);margin-top:0.85rem;letter-spacing:0.02em}
 
-  /* Number table viz */
-  .breakdown-row {
-    font-family: 'Raleway', monospace;
-    font-size: 0.85rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 2px;
-    padding: 1rem 1.2rem;
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    color: var(--muted);
-    line-height: 2;
-  }
-  .breakdown-row .letter { color: var(--text); font-weight: 500; }
-  .breakdown-row .num { color: var(--gold); }
-  .breakdown-row .vowel { color: var(--accent2); }
-  .breakdown-row .consonant { color: #7dd3fc; }
+/* ─── Charts ─── */
+.chart-section{margin-bottom:1.6rem}
+.chart-label{
+  font-size:13px;font-weight:600;color:var(--muted2);
+  margin-bottom:9px;display:flex;align-items:center;gap:10px;
+}
+.legend{display:flex;gap:10px 16px;font-size:11px;color:var(--muted2);margin-bottom:9px;flex-wrap:wrap;align-items:center}
+.legend span{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.leg-line{width:18px;height:2px;border-radius:2px;display:inline-block}
+.cycle-tag{
+  display:inline-block;font-size:10px;padding:3px 9px;
+  border-radius:20px;font-weight:600;letter-spacing:0.04em;
+}
+.chart-wrap{position:relative;width:100%;height:190px}
 
-  /* Report Button */
-  .report-btn {
-    width: 100%;
-    padding: 1rem;
-    background: transparent;
-    border: 1px solid rgba(201,168,76,0.35);
-    border-radius: 2px;
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 1.5rem;
-  }
-  .report-btn:hover {
-    background: rgba(201,168,76,0.08);
-    border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(201,168,76,0.15);
-  }
+/* ─── Chart nav (scroll arrows) ─── */
+.chart-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:6px;gap:8px;
+}
+.chart-nav-btns{display:flex;gap:6px;align-items:center}
+.chart-nav-btn{
+  background:rgba(255,255,255,0.04);
+  border:0.5px solid var(--border);
+  color:var(--muted2);
+  padding:4px 12px;font-size:14px;line-height:1;
+  border-radius:var(--radius-xs);
+  cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;
+  font-family:'DM Sans',sans-serif;font-weight:500;
+}
+.chart-nav-btn:hover{background:rgba(255,255,255,0.09);color:var(--text);border-color:var(--border-h);box-shadow:none}
+.chart-nav-btn:disabled{opacity:0.25;cursor:default}
+.chart-nav-label{
+  font-size:10.5px;color:var(--muted);letter-spacing:0.04em;
+  white-space:nowrap;flex:1;text-align:center;
+}
+hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
 
-  /* Modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(13,11,20,0.92);
-    z-index: 100;
-    backdrop-filter: blur(6px);
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2rem 1rem;
-    overflow-y: auto;
-  }
-  .modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
-  .modal {
-    background: linear-gradient(135deg, #1a1625, #13101e);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 2px;
-    width: 100%;
-    max-width: 680px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
-    position: relative;
-    margin: auto;
-  }
-  .modal-header {
-    padding: 1.5rem 2rem 1.2rem;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .modal-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-  }
-  .modal-close {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 1.4rem;
-    cursor: pointer;
-    width: auto;
-    padding: 0.2rem 0.5rem;
-    box-shadow: none;
-    letter-spacing: 0;
-    font-family: sans-serif;
-    transition: color 0.2s;
-  }
-  .modal-close:hover { color: var(--gold); transform: none; background: none; box-shadow: none; }
-  .modal-body { padding: 1.5rem 2rem; }
+/* ─── Chart fullscreen modal ─── */
+.chart-wrap{cursor:pointer}
+.chart-wrap::after{
+  content:'⛶';position:absolute;top:8px;right:8px;
+  font-size:16px;color:rgba(255,255,255,0.2);
+  pointer-events:none;transition:color 0.2s;
+}
+.chart-wrap:hover::after{color:rgba(255,255,255,0.5)}
 
-  .report-textarea {
-    width: 100%;
-    min-height: 420px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 2px;
-    color: var(--text);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 1rem;
-    line-height: 1.7;
-    padding: 1.2rem;
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.3s;
-    margin-bottom: 1rem;
-  }
-  .report-textarea:focus { border-color: rgba(201,168,76,0.5); }
+#chart-modal{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:#080a10;
+  overflow:hidden;
+}
+#chart-modal.open{display:block}
 
-  .report-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
-  }
-  @media (max-width: 480px) { .report-actions { grid-template-columns: 1fr; } }
+/* inner: por defecto ocupa todo (landscape real o desktop) */
+#chart-modal-inner{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  padding:1rem 1.2rem 0.8rem;
+  box-sizing:border-box;
+  transform-origin:top left;
+}
 
-  .btn-copy {
-    padding: 0.85rem;
-    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-    border: none;
-    border-radius: 2px;
-    color: #fff;
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(139,92,246,0.3);
-  }
-  .btn-copy:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,92,246,0.5); }
+/* Solo en portrait: rotar el inner 90° y reposicionar
+   para que quede centrado como si fuera landscape        */
+#chart-modal.rotated #chart-modal-inner{
+  width:100vh;
+  height:100vw;
+  transform:rotate(90deg) translateY(-100%);
+  transform-origin:top left;
+}
 
-  .btn-whatsapp {
-    padding: 0.85rem;
-    background: linear-gradient(135deg, #25d366, #128c7e);
-    border: none;
-    border-radius: 2px;
-    color: #fff;
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(37,211,102,0.25);
-  }
-  .btn-whatsapp:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,211,102,0.4); }
+#chart-modal-header{
+  display:flex;flex-direction:column;
+  margin-bottom:0.7rem;flex-shrink:0;
+  padding-right:2.8rem;/* espacio para el botón cerrar */
+  position:relative;
+}
+#chart-modal-title{
+  font-size:13px;font-weight:600;color:var(--muted2);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+#chart-modal-legend{
+  font-size:11px;color:var(--muted2);
+  display:flex;gap:8px 14px;flex-wrap:wrap;margin-top:5px;
+  align-items:center;
+}
+#chart-modal-legend span{white-space:nowrap;display:flex;align-items:center;gap:5px}
+#chart-modal-close{
+  position:absolute;top:0;right:0;
+  background:transparent;border:0.5px solid var(--border);
+  color:var(--muted2);padding:5px 10px;font-size:18px;line-height:1;
+  border-radius:var(--radius-xs);flex-shrink:0;width:2.4rem;text-align:center;
+}
+#chart-modal-close:hover{color:var(--text);border-color:var(--border-h);box-shadow:none}
+#chart-modal-canvas-wrap{flex:1;position:relative;min-height:0}
+#chart-modal-nav{flex-shrink:0;padding:6px 0 0}
 
-  .btn-email {
-    padding: 0.85rem;
-    background: transparent;
-    border: 1px solid rgba(201,168,76,0.35);
-    border-radius: 2px;
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    grid-column: 1 / -1;
-  }
-  .btn-email:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); transform: translateY(-1px); box-shadow: none; }
+/* ─── Person card accent borders ─── */
+#card-p1{transition:border-color 0.4s}
+#card-p2{transition:border-color 0.4s}
 
-  .copy-feedback {
-    text-align: center;
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.8rem;
-    color: #4ade80;
-    letter-spacing: 0.1em;
-    height: 1.2rem;
-    margin-top: 0.5rem;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .copy-feedback.show { opacity: 1; }
-
-  .report-note {
-    font-size: 0.82rem;
-    color: var(--muted);
-    font-style: italic;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-  }
-
-  /* Footer */
-  footer {
-    text-align: center;
-    padding-top: 2rem;
-    padding-bottom: 1rem;
-    border-top: 1px solid rgba(201,168,76,0.1);
-    color: var(--muted);
-    font-size: 0.8rem;
-    font-style: italic;
-    letter-spacing: 0.05em;
-  }
-  .footer-brand {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    font-style: normal;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    opacity: 0.9;
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-  .footer-by {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.7rem;
-    font-style: normal;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--muted);
-    opacity: 0.7;
-    display: block;
-  }
-  .footer-by span {
-    color: var(--accent2);
-    opacity: 1;
-  }
-
-  .num-desc {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.72rem;
-    color: var(--muted);
-    line-height: 1.4;
-    margin-top: 0.4rem;
-    font-style: italic;
-  }
-
-  .ornament {
-    color: var(--gold);
-    opacity: 0.4;
-    font-size: 1.2rem;
-    margin: 0 0.5rem;
-  }
-
-  /* Perfiles - select estilizado */
-  #perfiles-select option {
-    background: #1a1625;
-    color: var(--text);
-  }
+/* ─── Responsive ─── */
+@media(max-width:620px){
+  .grid2{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  header h1{font-size:2.2rem}
+  .compat-number{font-size:4rem}
+  .date-row{flex-direction:column;align-items:stretch}
+  button{width:100%}
+  .btn-row{flex-direction:column}
+  .profile-actions{flex-direction:column;align-items:stretch}
+  select.profile-select{width:100%}
+}
 </style>
 </head>
 <body>
+<div class="aurora"></div>
+<div class="stars"></div>
 <div class="container">
 
-  <header>
-    <div class="sigil">✦</div>
-    <h1>Numerología</h1>
-    <p class="subtitle">Conny Méndez</p>
-  </header>
-
-  <div class="form-card">
-
-    <!-- Perfiles guardados -->
-    <div id="perfiles-section" style="display:none;margin-bottom:1.5rem">
-      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem">
-        <label style="margin:0;flex-shrink:0">Perfil guardado</label>
-      </div>
-      <div style="display:flex;gap:0.6rem;width:100%;min-width:0">
-        <select id="perfiles-select" onchange="onSelectPerfil(this.value)"
-          style="flex:1;min-width:0;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.25);border-radius:2px;padding:0.7rem 1rem;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1.05rem;outline:none;cursor:pointer;appearance:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-        </select>
-        <button onclick="eliminarPerfilSeleccionado()" title="Eliminar perfil"
-          style="width:44px;min-width:44px;max-width:44px;padding:0.7rem 0;background:transparent;border:1px solid rgba(255,100,100,0.3);color:rgba(255,130,130,0.8);font-size:0.85rem;letter-spacing:0;box-shadow:none;flex-shrink:0;text-align:center">✕</button>
-      </div>
-      <button class="report-btn" style="margin-top:0.7rem;margin-bottom:0;font-size:0.75rem;padding:0.7rem" onclick="mostrarFormNuevo()">+ Calcular persona nueva</button>
-    </div>
-
-    <!-- Formulario -->
-    <div id="form-nuevo">
-      <p class="hint">Ingresá el nombre completo tal como aparece en el documento, y la fecha de nacimiento.</p>
-      <div class="form-grid">
-        <div class="field full">
-          <label>Nombre completo</label>
-          <input type="text" id="nombre" placeholder="Ej: María Elena Fernández García" autocomplete="off">
-        </div>
-        <div class="field full">
-          <label>Fecha de nacimiento</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:0.6rem">
-            <div><input type="number" id="fecha-dia" placeholder="Día" min="1" max="31" inputmode="numeric" style="text-align:center"></div>
-            <div><input type="number" id="fecha-mes" placeholder="Mes" min="1" max="12" inputmode="numeric" style="text-align:center"></div>
-            <div><input type="number" id="fecha-anio" placeholder="Año" min="1900" max="2099" inputmode="numeric" style="text-align:center"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:0.6rem;margin-top:0.3rem">
-            <span style="text-align:center;font-family:Raleway,sans-serif;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em">DÍA</span>
-            <span style="text-align:center;font-family:Raleway,sans-serif;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em">MES</span>
-            <span style="text-align:center;font-family:Raleway,sans-serif;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em">AÑO</span>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
-        <button onclick="calcular(true)" style="flex:1;min-width:180px">✦ Revelar mi carta numerológica</button>
-      </div>
-    </div>
-
+<header>
+  <div class="logo-wrap">
+    <!-- Logo SVG inline -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 192 192" style="flex-shrink:0;filter:drop-shadow(0 0 18px rgba(91,141,238,0.25))">
+      <defs>
+        <radialGradient id="hbg" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#161c30"/>
+          <stop offset="100%" stop-color="#0a0d17"/>
+        </radialGradient>
+        <clipPath id="hrr"><rect width="192" height="192" rx="42"/></clipPath>
+      </defs>
+      <rect width="192" height="192" rx="42" fill="url(#hbg)"/>
+      <g clip-path="url(#hrr)">
+        <circle cx="30" cy="26" r="1.2" fill="rgba(255,255,255,0.5)"/>
+        <circle cx="162" cy="20" r="1" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="172" cy="75" r="1" fill="rgba(255,255,255,0.35)"/>
+        <circle cx="20" cy="128" r="1" fill="rgba(255,255,255,0.3)"/>
+        <circle cx="165" cy="158" r="1.2" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="112" cy="18" r="0.9" fill="rgba(255,255,255,0.45)"/>
+        <!-- Heart 1 (blue) -->
+        <path d="M64 128 C49 116 33 108 33 93 C33 83 41 77 50 77 C57 77 62 81 64 85 C66 81 71 77 78 77 C87 77 95 83 95 93 C95 108 79 116 64 128 Z" fill="rgba(91,141,238,0.18)" stroke="#5b8dee" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M37 94 Q46 85 55 94 Q64 103 73 94 Q82 85 91 94" fill="none" stroke="#5b8dee" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
+        <!-- Heart 2 (pink) -->
+        <path d="M128 128 C113 116 97 108 97 93 C97 83 105 77 114 77 C121 77 126 81 128 85 C130 81 135 77 142 77 C151 77 159 83 159 93 C159 108 143 116 128 128 Z" fill="rgba(255,110,180,0.18)" stroke="#ff6eb4" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M101 94 Q110 85 119 94 Q128 103 137 94 Q146 85 155 94" fill="none" stroke="#ff6eb4" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
+        <!-- Gold dot -->
+        <circle cx="96" cy="96" r="5.5" fill="#f5d842" opacity="0.97"/>
+        <circle cx="96" cy="96" r="10" fill="none" stroke="#f5d842" stroke-width="1" opacity="0.25"/>
+      </g>
+      <rect width="192" height="192" rx="42" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    </svg>
+    <h1>BiorhythmMatch</h1>
   </div>
+  <p class="sub">Calculá los ciclos vitales y la compatibilidad entre dos personas, by SerQtn</p>
+</header>
 
-  <div id="results">
-    <div class="results-header">
-      <div class="name-display" id="res-nombre"></div>
-      <div class="date-display" id="res-fecha"></div>
-    </div>
-
-    <div class="numbers-grid">
-      <div class="num-card" id="card-ideal" onclick="mostrarDetalle('ideal')">
-        <div class="num-label">✦ Deseo del Alma</div>
-        <div class="num-value" id="n-ideal">—</div>
-        <div class="num-name">El Ideal</div>
-        <div class="num-desc">Lo que tu alma desea profundamente que hagas en esta vida</div>
-      </div>
-      <div class="num-card" id="card-latente" onclick="mostrarDetalle('latente')">
-        <div class="num-label">✦ Ser Latente</div>
-        <div class="num-value" id="n-latente">—</div>
-        <div class="num-name">Lo que eres en reposo</div>
-        <div class="num-desc">Quién sos cuando estás sola, tus sueños más íntimos</div>
-      </div>
-      <div class="num-card" id="card-expresion" onclick="mostrarDetalle('expresion')">
-        <div class="num-label">✦ Expresión</div>
-        <div class="num-value" id="n-expresion">—</div>
-        <div class="num-name">Lo que estás expresando</div>
-        <div class="num-desc">Tus capacidades naturales y talentos que el mundo percibe</div>
-      </div>
-      <div class="num-card" id="card-sendero" onclick="mostrarDetalle('sendero')">
-        <div class="num-label">✦ Sendero de Vida</div>
-        <div class="num-value" id="n-sendero">—</div>
-        <div class="num-name">El camino de tu vida</div>
-        <div class="num-desc">La lección principal que viniste a aprender en esta encarnación</div>
-      </div>
-    </div>
-
-    <div id="breakdown-box" class="breakdown-row" style="display:none"></div>
-
-    <button class="report-btn" onclick="abrirReporte()">✦ Generar reporte para enviar</button>
-
-    <div class="detail-panel" id="detail-panel">
-      <div class="detail-header">
-        <div class="detail-number" id="det-num">—</div>
-        <div class="detail-info">
-          <div class="detail-type" id="det-type"></div>
-          <div class="detail-title" id="det-title"></div>
+<!-- Personas -->
+<div class="card">
+  <div class="card-title">Personas</div>
+  <div class="grid2">
+    <!-- Persona 1 -->
+    <div class="person-block">
+      <div class="person-label p1-label">Persona 1</div>
+      <div class="profile-bar">
+        <div class="profile-bar-label">Perfil guardado</div>
+        <div class="profile-actions">
+          <select class="profile-select" id="profile-select-1" onchange="loadProfile('1', this.value)">
+            <option value="">— Ingresar datos nuevos —</option>
+          </select>
+          <button class="btn-sm btn-save" onclick="saveProfile('1')">Guardar</button>
+          <button class="btn-sm btn-delete" onclick="deleteProfile('1')">Eliminar</button>
         </div>
+        <div class="profile-toast" id="profile-toast-1"></div>
       </div>
-      <div class="detail-text" id="det-text"></div>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" id="n1" placeholder="Nombre"/>
+      </div>
+      <div class="field">
+        <label>Fecha de nacimiento</label>
+        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10"/>
+        <div class="hint">DD/MM/AAAA</div>
+        <div class="err" id="err-d1">Fecha inválida</div>
+      </div>
     </div>
-  </div>
-
-  <!-- Modal Reporte -->
-  <div class="modal-overlay" id="modal-reporte">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">✦ Reporte Numerológico Personal</span>
-        <button class="modal-close" onclick="cerrarReporte()">✕</button>
-      </div>
-      <div class="modal-body">
-        <p class="report-note">Podés editar el texto antes de copiarlo o enviarlo. El reporte incluye todos los números y sus interpretaciones.</p>
-        <textarea class="report-textarea" id="report-text" spellcheck="false"></textarea>
-        <div class="report-actions">
-          <button class="btn-copy" onclick="copiarReporte()">📋 Copiar texto</button>
-          <button class="btn-whatsapp" onclick="enviarWhatsApp()">💬 Enviar por WhatsApp</button>
-          <button class="btn-email" onclick="enviarEmail()">✉ Enviar por correo electrónico</button>
+    <!-- Persona 2 -->
+    <div class="person-block">
+      <div class="person-label p2-label">Persona 2</div>
+      <div class="profile-bar">
+        <div class="profile-bar-label">Perfil guardado</div>
+        <div class="profile-actions">
+          <select class="profile-select" id="profile-select-2" onchange="loadProfile('2', this.value)">
+            <option value="">— Ingresar datos nuevos —</option>
+          </select>
+          <button class="btn-sm btn-save" onclick="saveProfile('2')">Guardar</button>
+          <button class="btn-sm btn-delete" onclick="deleteProfile('2')">Eliminar</button>
         </div>
-        <div class="copy-feedback" id="copy-feedback">¡Copiado al portapapeles!</div>
+        <div class="profile-toast" id="profile-toast-2"></div>
+      </div>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" id="n2" placeholder="Nombre"/>
+      </div>
+      <div class="field">
+        <label>Fecha de nacimiento</label>
+        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10"/>
+        <div class="hint">DD/MM/AAAA</div>
+        <div class="err" id="err-d2">Fecha inválida</div>
       </div>
     </div>
   </div>
-
-  <footer>
-    <span class="footer-brand">✦ Conny Méndez ✦</span>
-    <span class="footer-by">by <span>SerQtn</span></span>
-  </footer>
-
 </div>
 
+<!-- Fecha de consulta -->
+<div class="card">
+  <div class="card-title">Fecha de consulta</div>
+  <div class="date-row">
+    <div class="field">
+      <label>Fecha a calcular</label>
+      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10"/>
+      <div class="hint">DD/MM/AAAA</div>
+      <div class="err" id="err-dq">Fecha inválida</div>
+    </div>
+    <div class="btn-row">
+      <button onclick="calcular()">Calcular →</button>
+      <button class="btn-clear" onclick="limpiar()">Limpiar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Resultados -->
+<div id="results">
+
+  <!-- Métricas P1 -->
+  <div class="card" id="card-p1">
+    <div class="card-title" id="title-p1">Persona 1</div>
+    <div class="grid3" id="metrics-p1"></div>
+  </div>
+
+  <!-- Métricas P2 -->
+  <div class="card" id="card-p2">
+    <div class="card-title" id="title-p2">Persona 2</div>
+    <div class="grid3" id="metrics-p2"></div>
+  </div>
+
+  <!-- Compatibilidad (2 columnas) -->
+  <div class="grid2" style="margin-bottom:1.25rem">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Compatibilidad general</div>
+      <div class="compat-center">
+        <div class="compat-number" id="compat-num">—</div>
+        <div class="compat-desc" id="compat-desc"></div>
+        <div class="grid3" id="compat-detail"></div>
+        <div class="compat-raw" id="compat-raw"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Compatibilidad pasión</div>
+      <div class="compat-center">
+        <div class="compat-number" id="compat-passion-num">—</div>
+        <div class="compat-desc" id="compat-passion-desc"></div>
+        <div class="grid2" id="compat-passion-detail"></div>
+        <div class="compat-raw" id="compat-passion-raw"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="card">
+    <div class="card-title">Curvas comparativas — 92 días <span style="font-size:9px;color:var(--muted);font-weight:400;letter-spacing:0.05em">· scroll horizontal para navegar</span></div>
+
+    <!-- Físico -->
+    <div class="chart-section">
+      <div class="chart-label">
+        <span>Ciclo Físico</span>
+        <span class="cycle-tag" style="background:rgba(91,141,238,0.13);color:#5b8dee">23 días</span>
+      </div>
+      <div class="legend" id="leg-f"></div>
+      <div class="chart-wrap"><canvas id="cf" role="img" aria-label="Ciclo físico comparativo"></canvas></div>
+      <div class="chart-nav">
+        <div class="chart-nav-btns">
+          <button class="chart-nav-btn btn-sm" id="nav-prev-cf" onclick="shiftChart('cf',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-cf" onclick="shiftChart('cf', 1)">→</button>
+        </div>
+        <span class="chart-nav-label" id="nav-label-cf"></span>
+      </div>
+    </div>
+    <hr class="divider">
+
+    <!-- Emocional -->
+    <div class="chart-section">
+      <div class="chart-label">
+        <span>Ciclo Emocional</span>
+        <span class="cycle-tag" style="background:rgba(78,205,164,0.13);color:#4ecda4">28 días</span>
+      </div>
+      <div class="legend" id="leg-e"></div>
+      <div class="chart-wrap"><canvas id="ce" role="img" aria-label="Ciclo emocional comparativo"></canvas></div>
+      <div class="chart-nav">
+        <div class="chart-nav-btns">
+          <button class="chart-nav-btn btn-sm" id="nav-prev-ce" onclick="shiftChart('ce',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-ce" onclick="shiftChart('ce', 1)">→</button>
+        </div>
+        <span class="chart-nav-label" id="nav-label-ce"></span>
+      </div>
+    </div>
+    <hr class="divider">
+
+    <!-- Intelectual -->
+    <div class="chart-section">
+      <div class="chart-label">
+        <span>Ciclo Intelectual</span>
+        <span class="cycle-tag" style="background:rgba(199,125,255,0.13);color:#c77dff">33 días</span>
+      </div>
+      <div class="legend" id="leg-i"></div>
+      <div class="chart-wrap"><canvas id="ci" role="img" aria-label="Ciclo intelectual comparativo"></canvas></div>
+      <div class="chart-nav">
+        <div class="chart-nav-btns">
+          <button class="chart-nav-btn btn-sm" id="nav-prev-ci" onclick="shiftChart('ci',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-ci" onclick="shiftChart('ci', 1)">→</button>
+        </div>
+        <span class="chart-nav-label" id="nav-label-ci"></span>
+      </div>
+    </div>
+    <hr class="divider">
+
+    <!-- Pasión -->
+    <div class="chart-section" style="margin-bottom:0">
+      <div class="chart-label">
+        <span>Pasión</span>
+        <span class="cycle-tag" style="background:rgba(245,216,66,0.13);color:#f5d842">Físico + Emocional</span>
+      </div>
+      <div class="legend" id="leg-p"></div>
+      <div class="chart-wrap"><canvas id="cp" role="img" aria-label="Pasión comparativa"></canvas></div>
+      <div class="chart-nav">
+        <div class="chart-nav-btns">
+          <button class="chart-nav-btn btn-sm" id="nav-prev-cp" onclick="shiftChart('cp',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-cp" onclick="shiftChart('cp', 1)">→</button>
+        </div>
+        <span class="chart-nav-label" id="nav-label-cp"></span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /results -->
+</div><!-- /container -->
+
+<!-- Fullscreen chart modal -->
+<div id="chart-modal" role="dialog" aria-modal="true">
+  <div id="chart-modal-inner">
+    <div id="chart-modal-header">
+      <div>
+        <div id="chart-modal-title"></div>
+        <div id="chart-modal-legend"></div>
+      </div>
+      <button id="chart-modal-close" onclick="closeChartModal()">✕</button>
+    </div>
+    <div id="chart-modal-canvas-wrap">
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+    <div class="chart-nav" id="chart-modal-nav" style="padding-top:6px;flex-shrink:0">
+      <div class="chart-nav-btns">
+        <button class="chart-nav-btn btn-sm" id="modal-nav-prev" onclick="shiftModalChart(-1)" disabled>←</button>
+        <button class="chart-nav-btn btn-sm" id="modal-nav-next" onclick="shiftModalChart(1)">→</button>
+      </div>
+      <span class="chart-nav-label" id="modal-nav-label"></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ===================== TABLA NUMEROLÓGICA =====================
-const TABLA = {
-  A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
-  J:1,K:11,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
-  S:1,T:2,U:3,V:22,W:5,X:6,Y:7,Z:8,
-  // con tilde / eñe
-  Á:1,É:5,Í:9,Ó:6,Ú:3,Ü:3,Ñ:5
-};
+// ── Constantes ──────────────────────────────────────────────
+const CYCLES = {F:23, E:28, I:33};
+const C1 = {f:'#5b8dee', e:'#4ecda4', i:'#c77dff', p:'#5b8dee'};
+const C2 = {f:'#f59e3f', e:'#f06a6a', i:'#f0c040', p:'#ff6eb4'};
+const CP  = '#f5d842';
+let charts = [];
 
-const VOCALES = new Set(['A','E','I','O','U','Á','É','Í','Ó','Ú','Ü']);
-
-function esVocal(c) { return VOCALES.has(c.toUpperCase()); }
-function esLetra(c) { return /[A-ZÁÉÍÓÚÜÑ]/i.test(c); }
-
-function valorLetra(c) {
-  return TABLA[c.toUpperCase()] || 0;
-}
-
-function reducir(n, mantenerMaestro = true) {
-  if (mantenerMaestro && (n === 11 || n === 22)) return n;
-  if (n < 10) return n;
-  let suma = 0;
-  String(n).split('').forEach(d => suma += parseInt(d));
-  return reducir(suma, mantenerMaestro);
-}
-
-// Suma dígitos individuales de un número (para fechas)
-function sumarDigitos(n) {
-  if (n === 11 || n === 22) return n;
-  return String(n).split('').reduce((a,d) => a + parseInt(d), 0);
-}
-
-function calcularIdeal(nombre) {
-  // Suma de vocales por nombre, reducir cada nombre, luego sumar y reducir
-  const nombres = nombre.trim().split(/\s+/);
-  let totalFinal = 0;
-  let detalles = [];
-  nombres.forEach(nm => {
-    let suma = 0;
-    let letras = [];
-    for (const c of nm) {
-      if (!esLetra(c)) continue;
-      if (esVocal(c)) {
-        suma += valorLetra(c);
-        letras.push({c, v: valorLetra(c), tipo: 'vocal'});
-      } else {
-        letras.push({c, v: valorLetra(c), tipo: 'consonante'});
-      }
-    }
-    let red = reducir(suma);
-    detalles.push({nombre: nm, suma, reducido: red, letras});
-    totalFinal += red;
+// ── Persistencia de campos ───────────────────────────────────
+const FIELDS = ['n1','d1','n2','d2','dq'];
+FIELDS.forEach(id => {
+  const el = document.getElementById(id);
+  try { const s = localStorage.getItem('bio_'+id); if(s) el.value = s; } catch(e){}
+  el.addEventListener('input', () => {
+    try { localStorage.setItem('bio_'+id, el.value); } catch(e){}
   });
-  return { resultado: reducir(totalFinal), detalles };
-}
+});
 
-function calcularLatente(nombre) {
-  const nombres = nombre.trim().split(/\s+/);
-  let totalFinal = 0;
-  let detalles = [];
-  nombres.forEach(nm => {
-    let suma = 0;
-    let letras = [];
-    for (const c of nm) {
-      if (!esLetra(c)) continue;
-      if (!esVocal(c)) {
-        suma += valorLetra(c);
-        letras.push({c, v: valorLetra(c), tipo: 'consonante'});
-      } else {
-        letras.push({c, v: valorLetra(c), tipo: 'vocal'});
-      }
-    }
-    let red = reducir(suma);
-    detalles.push({nombre: nm, suma, reducido: red, letras});
-    totalFinal += red;
+// ── Prellenar fecha de hoy ───────────────────────────────────
+(function(){
+  const dqEl = document.getElementById('dq');
+  if(!dqEl.value){
+    const t = new Date();
+    const dd = String(t.getDate()).padStart(2,'0');
+    const mm = String(t.getMonth()+1).padStart(2,'0');
+    const yyyy = t.getFullYear();
+    dqEl.value = `${dd}/${mm}/${yyyy}`;
+  }
+})();
+
+// ── Auto-formato DD/MM/AAAA ──────────────────────────────────
+['d1','d2','dq'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function(){
+    let v = this.value.replace(/\D/g,'');
+    if(v.length > 2) v = v.slice(0,2)+'/'+v.slice(2);
+    if(v.length > 5) v = v.slice(0,5)+'/'+v.slice(5);
+    this.value = v.slice(0,10);
+    try { localStorage.setItem('bio_'+id, this.value); } catch(e){}
   });
-  return { resultado: reducir(totalFinal), detalles };
+});
+
+// ── Parseo de fecha ──────────────────────────────────────────
+function parseDate(str){
+  if(!str) return null;
+  const m = str.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(!m) return null;
+  const day=+m[1], mon=+m[2]-1, yr=+m[3];
+  const d = new Date(yr, mon, day, 0,0,0,0);
+  if(isNaN(d)||d.getFullYear()!==yr||d.getMonth()!==mon||d.getDate()!==day) return null;
+  return d;
 }
 
-function calcularExpresion(nombre) {
-  const nombres = nombre.trim().split(/\s+/);
-  let totalFinal = 0;
-  let detalles = [];
-  nombres.forEach(nm => {
-    let suma = 0;
-    let letras = [];
-    for (const c of nm) {
-      if (!esLetra(c)) continue;
-      suma += valorLetra(c);
-      letras.push({c, v: valorLetra(c), tipo: esVocal(c) ? 'vocal' : 'consonante'});
-    }
-    let red = reducir(suma);
-    detalles.push({nombre: nm, suma, reducido: red, letras});
-    totalFinal += red;
+function daysBetween(a, b){
+  const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utcB = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.round((utcB - utcA) / 86400000);
+}
+
+function bio(days, cycle){ return Math.sin(2 * Math.PI * days / cycle); }
+
+function addDays(date, n){
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()+n, 0,0,0,0);
+}
+
+// ── Colores y etiquetas ──────────────────────────────────────
+function colorVal(v){
+  if(v > 0.33)  return '#4ecda4';
+  if(v < -0.33) return '#f06a6a';
+  return '#7a7f96';
+}
+function tagLabel(v){
+  if(v >  0.66) return 'Máximo';
+  if(v >  0.33) return 'Alto';
+  if(v > -0.33) return 'Neutro';
+  if(v > -0.66) return 'Bajo';
+  return 'Mínimo';
+}
+function getArrow(days, cycle){
+  const t  = bio(days,   cycle);
+  const t1 = bio(days+1, cycle);
+  if(t1 > t+0.005) return {s:'↑', c:'#4ecda4'};
+  if(t1 < t-0.005) return {s:'↓', c:'#f06a6a'};
+  return {s:'→', c:'#7a7f96'};
+}
+
+// ── Renderizar métricas ──────────────────────────────────────
+function renderMetrics(containerId, vals, days){
+  const labels = {f:'Físico', e:'Emocional', i:'Intelectual'};
+  const cmap   = {f:CYCLES.F, e:CYCLES.E, i:CYCLES.I};
+  document.getElementById(containerId).innerHTML = ['f','e','i'].map(k => {
+    const arr = getArrow(days, cmap[k]);
+    const v   = vals[k];
+    return `<div class="metric-card">
+      <div class="metric-label">${labels[k]}</div>
+      <div class="metric-row">
+        <span class="metric-value" style="color:${colorVal(v)}">${Math.round(v*100)}%</span>
+        <span class="arrow" style="color:${arr.c}">${arr.s}</span>
+      </div>
+      <div class="metric-tag">${tagLabel(v)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Compatibilidad (fórmula) ─────────────────────────────────
+function calcCompat(birth1, birth2, dq, cycle){
+  let maxVal = -Infinity;
+  for(let d = 0; d < cycle; d++){
+    const v1 = bio(daysBetween(birth1, addDays(dq, d)), cycle);
+    const v2 = bio(daysBetween(birth2, addDays(dq, d)), cycle);
+    const s  = v1 + v2;
+    if(s > maxVal) maxVal = s;
+  }
+  return Math.floor(maxVal * 100 / 2 * 100) / 100;
+}
+
+// ── Series para gráficos ─────────────────────────────────────
+const TOTAL_DAYS = 92;  // datos calculados
+const VIEW_DAYS  = 46;  // ventana visible
+
+function makeSeriesData(birth, dq, cycle){
+  return Array.from({length:TOTAL_DAYS}, (_,k) => {
+    const d = addDays(dq, k-7);
+    return Math.round(bio(daysBetween(birth, d), cycle) * 1000) / 10;
   });
-  return { resultado: reducir(totalFinal), detalles };
 }
-
-function calcularSendero(fechaStr) {
-  // fechaStr: YYYY-MM-DD
-  const [anio, mes, dia] = fechaStr.split('-').map(Number);
-
-  // Mes: número directo (Noviembre=11 maestro)
-  let vMes = mes; // ya es número 1-12
-  if (vMes !== 11) vMes = reducir(vMes);
-  // Día: si es 11 o 22 se mantiene, sino reducir
-  let vDia = (dia === 11 || dia === 22) ? dia : reducir(dia);
-  // Año: sumar dígitos
-  let vAnio = String(anio).split('').reduce((a,d) => a + parseInt(d), 0);
-  vAnio = (vAnio === 11 || vAnio === 22) ? vAnio : reducir(vAnio);
-
-  let total = vMes + vDia + vAnio;
-  let resultado = reducir(total);
-
-  return { resultado, vMes, vDia, vAnio, mes, dia, anio };
-}
-
-
-
-
-// ===================== TEXTOS =====================
-const IDEAL = {
-1: {
-  titulo: "El Ideal · Nº 1",
-  texto: "Desean dirigir, ser guíaas, líaderes, relacionan todo con ellos mismos. Prefieren trabajar solos o con inferiores. Se sienten orgullosos de sus habilidades y quieren que por ello se les alabe. Buscan oportunidades para lucirse. Desean crear y ser originales. Quieren entenderse sólo con las cosas más importantes, dejándoles los detalles a los demás. Quieren sentir que su consorte, sus hijos, su hogar sean prestigiosos para ellos. Que su familia los honre. Quieren dominar cualquier situación en que se encuentren. No son muy emotivos y el amor no es muy necesario para su felicidad. Son capaces de grandes logros, son leales en la amistad, estrictamente justos en los negocios, líaderes seguros, un poco jactanciosos, ególatras, criticones e impacientes en las menudencias.",
-  cultivar: "Todos los Nº 1 necesitan cultivar la bondad y el interés humano"
-},
-
-2: {
-  titulo: "El Ideal · Nº 2",
-  texto: "Quieren y necesitan amor, la sociedad y la compañíaa, quieren trabajar para los demás y junto con ellos. Desean armoníaa y paz. No les importa no brillar, quieren holgura y confort sin exigir fortuna ni lujo. No son ambiciosos, no insisten en el reconocimiento de sus derechos y de su punto de vista. Son bondadosos, considerados, son pacificadores y diplomáticos. Atraen gran cantidad de amigos, aun entre personas enfrentadas, y guardan todos los secretos, los propios y los de los demás. No son demasiado francos por temor a causar desdicha. Son muy sensibles y emotivos, se enamoran fácilmente y lloran con frecuencia. Son indulgentes y delicados, se dejan embaucar fácilmente. No tienen tendencia a la disciplina ni para ellos ni para otros. Bonachones, armoniosos, cariñosos, aman todas las cosas ríatmicas y musicales. No piensan en la puntualidad ni en la rigidez. Se contentan con poco, son a menudo estudiosos y acumulan mucha sabiduríaa, atraen muchas cosas hacia ellos y las absorben fácilmente.",
-  cultivar: "Los Nº 2 necesitan cultivar firmeza de propósito; necesitan definirse."
-},
-
-3: {
-  titulo: "El Ideal · Nº 3",
-  texto: "Quieren dar alegríaa, dicha y felicidad. Quieren derramar su amor, actividades, energíaa y talentos. Quieren popularidad y muchos amigos, quieren belleza en todos sus contornos. Nunca se preocupan ni permiten que la depresión los domine. Toman la vida como ella se presenta y se ríaen de la decepción y el fracaso. Relacionan todo en la vida con lo emocional, pero nunca trágicamente. Nunca se conduelen por errores de matrimonio, de amor o de negocios; vuelven a ensayar. Nunca piden más de lo que encuentran, siempre están interesados y entretenidos. Siempre artíasticos y expresivos; les encanta recibir y que todo el mundo se divierta. Aman a los niños y animales domésticos. Aman y cortejan aunque no son infieles. Hacen de la vida un juego.",
-  cultivar: "Todos los Nº 3 necesitan cultivar concentración y paciencia."
-},
-
-4: {
-  titulo: "El Ideal · Nº 4",
-  texto: "Quieren respetabilidad y solidez, quieren servir y ser una roca de seguridad, siempre están dispuestos a sacrificarse para que otros se beneficien; son disciplinados hacia sía mismos y hacia otros. Aman su hogar, su familia y su paías. Les gusta que les estipulen el trabajo que deben hacer y lo hacen exactamente. Condescienden ante su superior, su conciencia y la tradición. No les agradan las innovaciones. Aman el orden y la regularidad. Son constantes, fieles y seguros. Necesitan y quieren mucho amor, pero a menudo lo rechazan por su propia austeridad. Odian la pretensión y la insinceridad. Son detallistas y metódicos. Tienen gran orgullo familiar y de las convenciones.",
-  cultivar: "Los Nº 4 necesitan cultivar amplitud de criterio y el deshacerse de lo caduco."
-},
-
-5: {
-  titulo: "El Ideal · Nº 5",
-  texto: "Quieren la libertad personal en todas las direcciones. Quieren cambio, variedad y constantes nuevas oportunidades. Un permanente volver a empezar. Quieren saber de la vida en todas sus fases. No los molestan ni las convenciones ni las ideas ajenas. Aman los placeres, viajes, deportes, artes, ciencia, música, idiomas. Odian esperar y quedarse. No pueden someterse a la rutina o al detalle. Aman la gente extraña, las caras, cosas y lugares nuevos. Son progresistas intelectuales, emotivos, versátiles y a menudo espirituales. Se adaptan a cualquier condición, paías o clase de gente, inyectan nueva vida a todo lo que tocan y siguen adelante sin detenerse con rapidez. Necesitan muchos y variados intereses, luz de sol y multitudes. Se deshacen fácilmente, no se atan a nada. Toman las responsabilidades o nada (no les gusta).",
-  cultivar: "Los Nº 5 necesitan cultivar lealtad, paciencia y firmeza de propósito."
-},
-
-6: {
-  titulo: "El Ideal · Nº 6",
-  texto: "Quieren responsabilidad, amor constante, hogar y domesticidad, raíaces. Son buenos consejeros y amigos leales. Son un refugio y un asilo para aquellos que necesitan consuelo o abrigo. Se inclinan al convencionalismo, pero tienen la mente amplia y son comprensivos. Aman la holgura, el confort, la belleza, la música y la armoníaa. Son artíasticos, amables y comprensivos. No tienen ambición de hacerse un gran nombre. Quieren corregir y ajustar todo lo que marcha mal y la vida de todos. Son una especie de padre cósmico o guardián. Tal vez fueron el origen del dicho: deberíaa existir una ley que se ocupara de eso. Son buenos jueces cuando sus emociones no están demasiado involucradas en el asunto. Centran su vida en su casa y sus seres amados. Aman trabajar con los demás, nunca solos; les gusta la alabanza y las gracias, pero rinden servicio con gusto.",
-  cultivar: "Los Nº 6 necesitan cultivar firmeza para balancear sus emociones y su juicio. Una actitud menos personal."
-},
-
-7: {
-  titulo: "El Ideal · Nº 7",
-  texto: "Desean silencio y paz para vivir su vida interior. Quieren poder meditar sus sueños de perfección. Detestan el ruido, el bullicio y la confusión del mundo de los negocios. Son poco comprendidos porque son muy retraíados y solitarios. Detestan lo nuevo, lo repentino o lo efíamero. Aman los viejos jardines, cuadros, muebles patinados por el tiempo. Detestan ensuciarse las manos o establecer contacto cercano con las realidades de la vida. Les gusta analizar, disecar, examinar y considerar desde todos los ángulos. Van a la raíaz de todas las cosas y preguntan la razón del porqué. Les gusta estar solos, pero temen la soledad y la pobreza. Son conservadores, refinados, reservados y espirituales. Son buscados por su sabiduríaa, pero no brillan en sociedad. Son profundamente emotivos, pero les horroriza que se los vea. Someten todo a un análisis mental agudo y quieren que los detalles estén perfectos antes de pasar al próximo.",
-  cultivar: "Todos los Nº 7 necesitan cultivar la comprensión, la compasión, evitar el temor y la melancolíaa. Deben aprender a vivir solos pero no sentirse solitarios."
-},
-
-8: {
-  titulo: "El Ideal · Nº 8",
-  texto: "Ansíaan asuntos grandes y el poder de manipularlos. Quieren éxito en todas las cosas materiales. Aman la organización, la construcción y las finanzas. Aman las grandes operaciones del mundo financiero, les gusta manejar y dirigir, tienen habilidad para los grandes logros y acumulaciones. Son generosos, amplios de mente, poderosos. Se puede confiar en ellos. Tienen fuerza, entusiasmo, valentíaa, ecuanimidad y determinación. Les gusta luchar contra la oposición confiando en su propia victoria. Pueden ser dominantes y exigentes, pero no se economizan ellos mismos. Puede gustarles el dinero y el lucimiento, pero son la piedra angular de la comunidad. Tienen visión e imaginación para hacer que sus esfuerzos produzcan. Son eficaces ejecutivos de excelente criterio; son un poder del bien.",
-  cultivar: "Todo Nº 8 necesita cultivar la justicia y la tolerancia hacia los más débiles."
-},
-
-9: {
-  titulo: "El Ideal · Nº 9",
-  texto: "Quieren servir al mundo entero, quieren darle a todos los beneficios de sus conocimientos y experiencias. Son los intérpretes de la grandeza que hay en la vida, son los grandes amantes. Dan de sía mismos sin pensar en su propio empobrecimiento. Tienen fe ilimitada en su propia fuente de proveeduríaa. Son los hermanos universales: compasivos, comprensivos servidores. Tienen sabiduríaa, intuición, amplitud de mente y de criterio. Quieren amor personal, pero pertenecen al universo. Sufren a través de sus emociones y la eliminación de la personalidad. Son atractivos y amados de todos. Están dispuestos a dar su vida por la humanidad. Son grandes artistas y quieren que su mensaje beneficie al mundo, quieren proyectar a largo alcance sus talentos y sus emociones.",
-  cultivar: "Los Nº 9 necesitan cultivar el balance, el control emocional y necesitan definirse."
-},
-
-11: {
-  titulo: "El Ideal · Nº 11 ✦ Maestro",
-  texto: "Quieren revelar las bellezas que han visto y conocido. Quieren predicar la necesidad de vivir fiel a los ideales. Quieren que todos los hombres aprendan su propia idea de Dios. Son imprácticos, pero aparentan ser prácticos. Proveen remedios universales, pero no comprenden las necesidades humanas. Son siempre universalistas, nunca preocupados por el individuo: son los soñadores y visionarios con la pasión de la salvación y elevación. Aman sus ideales en vez de su prójimo, insisten en el derecho según lo ven sin ocuparse de la ecuación humana. Tienen gran fuerza interior y la devoción del mártir. Quieren escoger sus amigos entre aquellos de su propio nivel, clase o especie. Tienen una mente tipo eléctrica capaz de inventos notables.",
-  cultivar: "Los 11 necesitan cultivar la comprensión humana."
-},
-
-22: {
-  titulo: "El Ideal · Nº 22 ✦ Maestro",
-  texto: "Quieren ser perfectos constructores para el bien y la seguridad de todos. Aman la forma, pero desean que esté perfectamente constituida para el uso. Comprenden la necesidad de ser prácticos en un mundo práctico. Representan el poder al máximo grado y son dueños de toda situación. Son respetados, seguidos y nunca delatan una confidencia. Ellos representan el ideal realizado. Son los verdaderos maestros albañiles, construyendo para la eternidad. Tienen sus ojos colocados en las estrellas, pero sus pies sobre la tierra. Reúnen el liderazgo del 1, la bondad del 2, la imaginación del 3, la paciencia del 4, la libertad del 5, el equilibrio del 6, la espiritualidad del 7, el poder ejecutivo del 8, el amor a la humanidad del 9 y la visión del 11.",
-  cultivar: "Todos los Nº 22 necesitan cultivar la constante adhesión a sus ideales en medio de la materialidad."
-}
-};
-
-
-
-
-const LATENTE = {
-  1: { 
-    titulo: "Ser Latente · Nº 1", 
-    texto: "Valeroso, atrevido, soñando con caminos aún sin conquistar y alturas sin alcanzar. Te imaginas ser el líader, el instigador, el promotor de nuevos proyectos y empresas hasta ahora sin concebir." 
-  },
-
-  2: { 
-    titulo: "Ser Latente · Nº 2", 
-    texto: "Protegido, amado, confortado, rodeado de tus seres queridos, ves tu hogar y tus hijos en atmósfera de paz y armoníaa, contigo como centro, sirviendo y comunicando el confort a todos en formas pequeñas y disimuladas, sin destacarse mucho. (En realidad hace todo y parece que no hiciera nada)." 
-  },
-
-  3: { 
-    titulo: "Ser Latente · Nº 3", 
-    texto: "Tu imaginación te pinta popular, atractiva y muy buscada, siempre tienes un público apreciativo y todos tus dichos y hechos son aplaudidos. Te ves expresándote en el arte, derramando belleza y felicidad por donde vayas." 
-  },
-
-  4: { 
-    titulo: "Ser Latente · Nº 4", 
-    texto: "Eres un pilar de la sociedad del cual todos dependen. Te ves trabajando incansablemente por los premios del logro, del deber, del amor y la apreciación. Eres el patriota firme, reconocido como el salvador de tu paías." 
-  },
-
-  5: { 
-    titulo: "Ser Latente · Nº 5", 
-    texto: "Eres libre de viajar a todos los paíases del mundo, sin ataduras ni responsabilidades, te ves conversando en todos los idiomas, mezclado con nativos de muchas tierras y viviendo sólo para la aventura y la experiencia de la vida." 
-  },
-
-  6: { 
-    titulo: "Ser Latente · Nº 6", 
-    texto: "Eres el centro de una familia que te adora. Tienes un hogar bello y artíastico y mantienes sus puertas hospitalarias de par en par. Estás rodeado de flores y música y amas la responsabilidad de manejar una casa en perfecto orden. Tu panorama del futuro es tu amor y tú, caminando abrazados en tu bello jardían, o de manos cogidas, las cabezas blancas muy juntas sentados frente a la chimenea. Tu 6 superior te hace verte como el consolador y ajustador cósmico." 
-  },
-
-  7: { 
-    titulo: "Ser Latente · Nº 7", 
-    texto: "Te ves en una bella biblioteca llena de raros libros, cuadros selectos y muebles antiguos y tu propio jardían en pleno florecer. Muchos vienen a ti para oíar sabiduríaa de tus labios, pero gran parte de tu tiempo lo pasas callado meditando. Te ves con un traje largo, bellamente bordado con los síambolos que más te gustan. Eres el sacerdote y míastico cuya mente es el depósito de la sabiduríaa antigua." 
-  },
-
-  8: { 
-    titulo: "Ser Latente · Nº 8", 
-    texto: "Estás en muchas juntas directivas, presidente de Bancos y Compañíaas, tu serie de oficinas está ricamente amobladas y tu cuerpo de empleados es muy grande. Conduces tus negocios en gran escala y te ocupas de asuntos internacionales." 
-  },
-
-  9: { 
-    titulo: "Ser Latente · Nº 9", 
-    texto: "Eres una de las grandes artistas mundiales. Estás llena de amor por la humanidad y te entusiasma servir, no importa lo que te cueste. Ansias el amor personal y la felicidad, pero comprendes que tu misión es servicio impersonal y que allía radica tu único chance de felicidad. Altamente emotivo comprendes los sufrimientos ajenos, muchos vienen a ti por consuelo y consejo. Te miras como a espectadora contemplando las luchas y errores que ya has superado." 
-  },
-
-  11: { 
-    titulo: "Ser Latente · Nº 11 ✦ Maestro", 
-    texto: "Eres uno de los mensajeros que tienen que ir a todo el mundo, predicar el evangelio a cada criatura. La luz del fuego divino está en tus ojos y a través de tus exhortaciones inspiradas llevas a muchos a la verdad como la ves tú; tú morirás por tu fe y tu martirio. ." 
-  },
-
-  22: { 
-    titulo: "Ser Latente · Nº 22 ✦ Maestro", 
-    texto: "Sueñas con la unión de todas las naciones y paíases en actividad constructiva. Proyectas grandes ferrocarriles y víaas de agua que aligeren el comercio y el intercambio internacional. Sueñas con maneras de hacer que la tierra dé sus tesoros para beneficiar a todos. Construyes grandes fábricas que son modelo de belleza, maravillas de eficiencia. Tus sueños toman forma." 
-  }
-};
-
-
-
-const EXPRESION = {
-  1: { 
-    titulo: "Expresión · Nº 1", 
-    texto: "Pionero o explorador, creador o engendrador, inventor, líader, director, jefe, jefe ejecutivo, gobernador, general o capitán, cabeza de institución. Dueño o editor de periódicos o revistas, dueño o cabeza de cualquier negocio. Todo Nº 1 puede comprar o vender. Si otras vibraciones destacan sus cualidades mentales, a menudo se encuentran como escritores o abogados. Si se inclinan hacia el lado creador, se encuentran entre las mujeres muchas modistas y diseñadoras, estas insisten en llevar a cabo sus propias ideas." 
-  },
-
-  2: { 
-    titulo: "Expresión · Nº 2", 
-    texto: "Diplomático o políatico, hombre de estado, psicólogo, estudiante o maestro, secretario u operario de oficina, compilador o estadista, obrero especializado, doméstico, artista pero cantor de coro o bailarían de grupo, psíaquico o médium. Todos los 2 se adaptan a ocupaciones en las cuales trabajan asociados con otros. Ellos no guíaan, son seguidores, son voceros de otros y pacificadores de todos por su tacto innato y deseo de armoníaa. Encontramos entre ellos nuestros más grandes diplomáticos y, por su reacción instintiva al ritmo, buenos músicos y bailarines. Se encuentran más cómodos en ocupaciones donde el detalle y la minuciosidad son importantes." 
-  },
-
-  3: { 
-    titulo: "Expresión · Nº 3", 
-    texto: "Artista en palabras, cantor, escritor, poeta, dramaturgo, actor, orador, artista en música, ejecutante en cualquier instrumento. Artista en telas, diseño y dibujo. Críatico de conferencia o escritura. Animador en escena, club o sociedad, organizador o líader social. Trabajador social, sacerdote o misionero, joyero, sombrerero, decorador o modisto. Todos los 3 pueden vender por sus métodos de presentación efectivos e imaginativos. Están más cómodos en las alegres decoraciones. El 3 mental se inclina naturalmente a la escritura, el emocional a la actuación y el canto. Los más fríavolos, a la sociedad y el adorno o decorado de la misma." 
-  },
-
-  4: { 
-    titulo: "Expresión · Nº 4", 
-    texto: "Autor de obras técnicas, economista, técnico y estadista, profesor o instructor, organizador, ejecutivo y comprador. Cientíafico, contador, operario técnico. Médico o cirujano, quíamico en la manufactura, electricista, constructor, maestro de obra, horticultor, músico de orquesta. Todo Nº 4 se expresa mejor en los medios materiales. Es altamente mental; elige escribir o enseñar. Se empeña en la organización, el sistema o la precisión. Entre las mujeres encontramos muchas costureras y muchas son domésticas rutinarias." 
-  },
-
-  5: { 
-    titulo: "Expresión · Nº 5", 
-    texto: "Senador, oficial del servicio civil, líader cíavico, abogado, detective, jefe de servicio secreto, escritor o editor, actor, animador, orador, promotor, críatico dramático, jefe de dirección en teatro, agente viajero, profesional, especialista de minas o eléctrico, inventor cientíafico. Los 5 saben hacer de todo, son hábiles en todo, son los mejores vendedores porque comprenden todos los ángulos de aproximación, son simpáticos, amables y caen bien en todos los grupos. Su mayor éxito es en las ocupaciones que los ponen en contacto con la gente. Se sienten infelices en una oficina y tienen que tener perfecta libertad de palabra y acción y son viajeros natos." 
-  },
-
-  6: { 
-    titulo: "Expresión · Nº 6", 
-    texto: "Artista, actor dramático o músico, médico o enfermera, jefe de hospital, obrero social, jefe de una institución de personal, maestro o escritor, ejecutivo de hotel o restaurante, salón de té, ocupado en alimentos y bebidas, matrona de hospital, ayudante de las madres, guardián profesional. Los 6 necesitan una situación de responsabilidad y confianza. Ellos regulan, armonizan y ajustan, tienen éxito en todas las ocupaciones conectadas con el hogar, instituciones o proyectos que tiendan a mejorar las condiciones materiales, civiles, educacionales. Se interesan en el cuidado de los ancianos, en el entrenamiento de la juventud y el mejoramiento en toda la comunidad." 
-  },
-
-  7: { 
-    titulo: "Expresión · Nº 7", 
-    texto: "Legalista, juez, abogado, cientíafico, experto en electricidad o minas, banquero, contador, experto corredor de bolsa, relojero, tejedor, experto en alfombras, inventor, escritor, escritor técnico, cientíafico o filosófico, editor. Decano de universidad o administrador, clérigo, obispo o papa, naturalista, horticultor, astrónomo, ocultista, autoridad en religiones, ceremonial y música sacra. Los 7 nos dan la palabra final en cualquier forma de expresión en que actúen. Son perfeccionistas y no hablan hasta que no estén seguros. Se sienten cómodos en cualquier líanea de trabajo ejecutivo que no los lleve al campo mecánico de un negocio. Ellos son los pensadores y los sapientes." 
-  },
-
-  8: { 
-    titulo: "Expresión · Nº 8", 
-    texto: "Financiero, corredor de bolsa, banquero, director ejecutivo, magnate comercial, constructor o dueño de valores y ferrocarriles, manufacturero, fabricante, comprador y vendedor en gran escala, jefe de corporación, consultor, promotor ejecutivo, periodista, experto en comercio, navegación, transporte, patrón de arte en lo comercial, organizador de caridades. Negocios grandes es el slogan del Nº 8. Siempre ganará si se mantiene positivo y no admite limitaciones." 
-  },
-
-  9: { 
-    titulo: "Expresión · Nº 9", 
-    texto: "Artista en cualquier líanea. Si es actor se inclina hacia la tragedia. Maestro, sanador, predicador, reformador, escritor, compositor, patrón del arte. Juez, abogado criminal o penal, consejero, médico cirujano, filántropo, humanitario. El 9 da libremente de sus emociones en todas las formas de expresión, trabaja mejor en aquellos departamentos de la vida donde la inspiración, la bondad y la comprensión humana son esenciales." 
-  },
-
-  11: { 
-    titulo: "Expresión · Nº 11 ✦ Maestro", 
-    texto: "Evangelista, ministro protestante, reformador, trabajador social, psicoanalista, psicólogo, filósofo, maestro, escritor religioso, trabajador de caridad, líader de movimientos ideales, actor inspirado, explorador, inventor. Todos los 11 buscan expresar sus ideales y son más felices cuando pueden encender la luz de su propia visión e inspiración. No están adaptados al mundo de los negocios." 
-  },
-
-  22: { 
-    titulo: "Expresión · Nº 22 ✦ Maestro", 
-    texto: "Constructor maríatimo, comprador en grandes empresas, maestro, escritor, reformador práctico, líader, gobernador, estadista, mandatario, experto en eficiencia, director de asuntos mundiales, organizador de obras públicas y utilidades, benefactor público. Los 22 abren nuevos campos y construyen los caminos que hacen fácil el acceso a ellos. Establecen comunicaciones internacionales y controlan eficazmente el todo y las partes. Embellecen mientras construyen." 
-  }
-};
-
-
-
-
-const SENDERO = {
-  1: {
-    titulo: "Sendero · Nº 1 -- Individualización",
-    texto: "Tiene que aprender independencia y adquirir la habilidad de manejarse solo; tiene que fortificar sus propios poderes, usar su cabeza para inventar sistemas originales, nuevos, es decir, crear. Debe rechazar limitaciones, debe saber colaborar o cooperar sin perder la individualidad, guiar, controlar y dirigir. Tiene que desarrollar el cuerpo, la mente, el espíaritu a su más alto punto de eficacia. Encontrará su oportunidad haciéndose invaluable en cualquier situación en que se encuentre y asía tendrá rápido avance al punto de ser líader. La atracción en el Sendero Nº 1 no es hacia las masas sino hacia los individuos. Su elemento es el Fuego y se siente bien en el Norte."
-  },
-
-  2: {
-    titulo: "Sendero · Nº 2 -- Asociación",
-    texto: "Tiene que aprender a sumergirse y a seguir las indicaciones de otros. Tiene que ser el pacificador, diplomático y mediador. Tiene que trabajar cuidadosa y pacientemente en los más míanimos detalles, dominado por la idea del servicio y la cooperación. Tiene que aprender el poder del silencio, debe aprender a mezclarse con todo el mundo. No debe buscar reconocimiento ni alabanza personal. Debe considerar como importante la bondad, la simpatíaa y los sentimientos ajenos. Tiene que cultivar la amistad y ser leal a ella. Debe ponerse bajo la Ley de Dar y Recibir. Debe aprender a expresarse a través de la paciencia y la persistencia, nunca por el dominio. Aprende a escuchar y a absorber. Encontrará su oportunidad en la diplomacia y entre los muchos amigos quienes se encargarán de pelear por usted La atracción del sendero Nº 2 es sobre los grupos o comunidades. Su elemento es el Agua, es adaptable a todas partes pero más feliz cerca del mar."
-  },
-
-  3: {
-    titulo: "Sendero · Nº 3 -- Expresión Personal",
-    texto: "Tiene que aprender a dar de sía mismo, libre y gozosamente. Tiene que cultivar contactos sociales y ser un agregado bienvenido en todas las reuniones. Tiene que hacerse muy valioso por su habilidad de iluminar la oscuridad. Debe aprender a expresarse a través del arte, la belleza, los amigos y la felicidad. Encontrará su oportunidad en el lado ligero de la vida mezclándose en sociedad y ocupándose de cosas agradables. Debe buscar la ocupación que le da la oportunidad de expresarse artíasticamente. Debe aprovechar toda ocasión para usar palabras, sea hablando, actuando, cantando o escribiendo. La atracción en el sendero Nº 3 es sobre individuos y masas. Su elemento es el Fuego y se encuentra mejor en el Norte."
-  },
-
-  4: {
-    titulo: "Sendero · Nº 4 -- Estabilidad",
-    texto: "Debe aprender la atención estricta en el deber. Esta iniciación rara vez incluye los viajes o expansiones. Tiene que aprender a servir y a producir. Tiene que aprender a superar la aparente limitación y hacer sustancial y perfecta la forma en la que está trabajando. Encontrará su oportunidad profunda si no variada. Tendrá la oportunidad de construir lo benéfico y duradero y a enseñar a otros menos evolucionados que él. Este sendero tiene posibilidades de grandes logros. La paciencia, servicio y dependencia tendrán los premios y la confianza que él inspira a otros. La atracción del sendero Nº 4 es sobre comunidades. Su elemento es Tierra. Trabaja donde quiera que lo mandan y allía se queda."
-  },
-
-  5: {
-    titulo: "Sendero · Nº 5 -- Libertad",
-    texto: "Debe esperar cambios frecuentes, variedad, viajes y lo inesperado. Tiene que aprender el uso correcto de la libertad. Tiene que aprender idiomas y comprender a todas las clases y condiciones de gentes. Debe estar alerta para usar todo lo nuevo y progresivo. Tiene que adaptarse a circunstancias y condiciones poco comunes. Debe ejercer ingenio y seguir varios ángulos de desarrollo. Tiene que estar constantemente buscando lo nuevo, lo desconocido, beneficiándose en cada experiencia. Encontrará su oportunidad lejos del camino trillado si aprende la lección del descarte y que no se quede en la rutina. Encontrará a personas cientíaficas, inventivas de muchos recursos que le beneficiarán si hace el esfuerzo de encontrarlas. Crecerá por medio de la adaptación al cambio y a la inseguridad. La atracción en el sendero Nº 5 es sobre las masas y los públicos. Su elemento es el Aire. Sólo puede trabajar cuando está libre, asía sea en el desierto, en las altas montañas o viajando."
-  },
-
-  6: {
-    titulo: "Sendero · Nº 6 -- Ajuste y Armoníaa",
-    texto: "Tiene que aprender el significado de la responsabilidad. Debe poder ajustar situaciones y condiciones desarmónicas en su propia vida y en las vidas de aquellos con quienes entra en contacto. Debe servir con alegríaa y contento, con eficacia, reposadamente y aprendiendo a equilibrar los opuestos. Debe enfrentarse a los problemas de la domesticidad y asumir muchas cargas que le pertenecen a aquellos más débiles por quienes es responsable. Debe estar preparado para dar ayuda material o espiritual cuando le sea pedido. Tiene que mantener en todo momento sus propios ideales pero nunca buscar el ajuste obligando a otros a aceptar los suyos. Debe estar preparado para servir a la familia, la comunidad o el universo si fuera necesario. Encontrará su oportunidad en el valioso servicio que rendirá a aquellos que necesitan ajuste espiritual o material. La atracción del sendero Nº 6 es sobre la familia, comunidad, el estado o el mundo. Es gobernado por dos elementos: Tierra y Aire, bienestar material o amor impersonal transmutado."
-  },
-
-  7: {
-    titulo: "Sendero · Nº 7 -- Sabiduríaa y Soledad",
-    texto: "Debe aprender del análisis mental. Debe buscar la sabiduríaa y las verdades ocultas. Debe desarrollarse subjetivamente de manera de ser un alto sacerdote o buen consejero. Debe aprender a estar solo pero no sentirse solitario. Debe trabajar en teoríaas y fundamentos. Debe constantemente aumentar su provisión de conocimientos útiles. No debe ocuparse de acumular posesiones materiales y debe aprender aquello de que aquel que pierde su vida material, la encontrará en el espíaritu. Debe aplicar leyes espirituales a asuntos materiales. Debe reposar, estudiar, meditar, adorar, estar en silencio y conocerse a sía mismo. No debe insistir en asociarse a otros o ser líader de algo. Debe aprender a conocer el mundo invisible. Encontrará su oportunidad en aquello que le es traíado más bien que en lo que busca por sía mismo en lugares callados lejos del ruido y la confusión del bullicio. La atracción del sendero Nº 7 es sobre individuos que necesitan teoríaas o verdades sobre la vida. Su elemento es el Agua profunda y tranquila."
-  },
-
-  8: {
-    titulo: "Sendero · Nº 8 -- Poder",
-    texto: "Libertad material, sin ataduras. Debe estar en un mundo de actividad comercial, asuntos de negocios, poder y logros. Debe cultivar un horizonte amplio y rehusar toda limitación. Debe desarrollar eficacia y el saber dirigir. Debe aprender tanto a aceitar como a manejar la maquinaria. Debe tratar con aquello que no es inspirado con lo práctico y las cosas materiales de la vida, evitando sueños, visiones y cosas imprácticas. Debe aprender las leyes que rigen el dinero, su acumulación, su poder y su uso. Encontrará su oportunidad entre personas y condiciones de riquezas y aquellos que necesitan de eficacia y habilidad ejecutiva. La atracción del sendero Nº 8 es sobre las grandes corporaciones y organizaciones. Su elemento es Tierra."
-  },
-
-  9: {
-    titulo: "Sendero · Nº 9 -- Universalidad y Fraternidad del Hombre",
-    texto: "Tiene que aprender a ser el humanitario completo, el trabajador social. Tiene que aprender a amar y a servir a su prójimo. Tiene que aprender a abandonar todo prejuicio de raza o casta, realizando la unidad básica de toda la gente. Tiene que colocar a los demás antes que a sía mismo. Debe esperar ser usado y renunciar a la ambición personal y a las posesiones si el bien general lo exige. Debe atraer todas las cosas pero no atarse a ninguna. No puede estacionarse en ninguna parte pero considerará el mundo entero su hogar. Tendrá que aprender la Ley del cumplimiento o realización o estar colmado de cumplir su misión porque éste es el final de una serie de iniciaciones. Tiene que dar amor, compasión, ayuda y comprensión sin líamite. Encontrará su oportunidad entre la gente emotiva, artíastica e inspirada, pues tiene que aprender de la más alta vibración del artista. La atracción del sendero Nº 9 es hacia los muchos o hacia todos. Su elemento es el Fuego."
-  },
-
-  11: {
-    titulo: "Sendero · Nº 11 ✦ Maestro -- Revelación",
-    texto: "Tiene que especializarse en la subjetividad, tiene que llevar todo al plano de la inspiración, tiene que ser el ultra-especialista, desarrollando talentos de invención o buscando descubrir nuevos principios. Tiene que investigar el misticismo y aplicarlo al más alto de los usos. Tiene que confiar en sus intuiciones y tener fe en una guíaa superior. Debe estar siempre alerta para aprender o saber el tipo de iluminación y revelación que tiene que darle al mundo. No debe tratar jamás de acumular (el Nº 2) y debe evitar toda tendencia a reunir dinero, reconociendo que el Nº 11 tiene que derramar su propia luz. Tiene que inspirar por su propio ejemplo, viviendo la verdad que le es revelada. Tiene que vivir humildemente en plenas candilejas. Encontrará su oportunidad predicando el evangelio, sea esto en las líaneas espirituales, en el reino de la invención o la actuación teatral. Es posible que logre gran fama si no la busca por motivos ulteriores. La atracción del sendero Nº 11 es hacia lo inspirado, los idealistas artíasticos hacia aquellos que necesitan elevación espiritual. Su elemento es el Aire."
-  },
-
-  22: {
-    titulo: "Sendero · Nº 22 ✦ Maestro -- Maestro Material",
-    texto: "Debe aprender a servir en una escala amplia y constructiva. Tiene que hacer uso de su poder desde un ángulo espiritual e idealista. Tiene que hacer de lo útil y lo práctico o de lo de abajo enaltecerlo (la serpiente de Moisés que la elevó en su vara). Tiene que basar la construcción y organización sobre los principios sociales. Encontrará su oportunidad en grandes movimientos internacionales, comerciales o instituciones filantrópicas o políaticas, en asuntos de gobierno, etc. Tendrá la oportunidad de hacer real el sueño de paz, amor, felicidad, trabajo y prosperidad. La atracción del sendero Nº 22 es sobre las masas, gobiernos, paíases y razas que necesitan desarrollo y expresión. Su elemento es el agua."
-  }
-};
-
-
-
-
-
-
-
-
-
-
-
-// Estado actual
-let currentData = {};
-let activePanel = null;
-
-function calcular(guardar = true) {
-  const nombre = document.getElementById('nombre').value.trim();
-  const dia   = parseInt(document.getElementById('fecha-dia').value);
-  const mes   = parseInt(document.getElementById('fecha-mes').value);
-  const anio  = parseInt(document.getElementById('fecha-anio').value);
-
-  if (!nombre) { alert('Por favor ingresá tu nombre completo.'); return; }
-  if (!dia || !mes || !anio || dia < 1 || dia > 31 || mes < 1 || mes > 12 || anio < 1900 || anio > 2099) {
-    alert('Por favor ingresá una fecha de nacimiento válida (día, mes y año).'); return;
-  }
-
-  // Build ISO string for sendero calc
-  const mesStr  = String(mes).padStart(2,'0');
-  const diaStr  = String(dia).padStart(2,'0');
-  const fecha   = `${anio}-${mesStr}-${diaStr}`;
-
-  // Calcular
-  const ideal     = calcularIdeal(nombre);
-  const latente   = calcularLatente(nombre);
-  const expresion = calcularExpresion(nombre);
-  const sendero   = calcularSendero(fecha);
-
-  currentData = { ideal, latente, expresion, sendero, nombre, fecha };
-
-  // Mostrar encabezado
-  document.getElementById('res-nombre').textContent = nombre.toUpperCase();
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  document.getElementById('res-fecha').textContent = `${dia} de ${meses[mes-1]} de ${anio}`;
-
-  // Mostrar números
-  document.getElementById('n-ideal').textContent     = ideal.resultado;
-  document.getElementById('n-latente').textContent   = latente.resultado;
-  document.getElementById('n-expresion').textContent = expresion.resultado;
-  document.getElementById('n-sendero').textContent   = sendero.resultado;
-
-  // Mostrar breakdown
-  mostrarBreakdown(nombre, sendero);
-
-  // Mostrar resultados
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  // Reset panel
-  activePanel = null;
-  document.getElementById('detail-panel').classList.remove('visible');
-  document.querySelectorAll('.num-card').forEach(c => c.classList.remove('active'));
-
-  // Guardar perfil
-  if (guardar) guardarPerfilActual();
-}
-
-function mostrarBreakdown(nombre, sendero) {
-  const box = document.getElementById('breakdown-box');
-  let html = '<b style="color:var(--gold-light);font-family:Cinzel,serif;font-size:0.8rem;letter-spacing:0.15em;">TABLA DE VALORES DEL NOMBRE</b>\n\n';
-
-  const letrasNombre = nombre.toUpperCase().split('');
-  let lineaLetras = '';
-  let lineaNumeros = '';
-
-  letrasNombre.forEach(c => {
-    if (!esLetra(c)) {
-      lineaLetras += '   ';
-      lineaNumeros += '   ';
-      return;
-    }
-    const v = valorLetra(c);
-    const isVocal = esVocal(c);
-    const color = isVocal ? 'var(--accent2)' : '#7dd3fc';
-    lineaLetras += `<span style="color:${color}">${c} </span> `;
-    lineaNumeros += `<span style="color:${color}">${v > 9 ? v : v+' '} </span> `;
+function makePassionData(birth, dq){
+  return Array.from({length:TOTAL_DAYS}, (_,k) => {
+    const d    = addDays(dq, k-7);
+    const days = daysBetween(birth, d);
+    const f    = bio(days, CYCLES.F);
+    const e    = bio(days, CYCLES.E);
+    return Math.round((f+e)/2 * 1000) / 10;
   });
-
-  html += `Letras:  ${lineaLetras}\nValores: ${lineaNumeros}\n\n`;
-  html += `<span style="color:var(--accent2)">■ Vocales (Ideal)</span>   <span style="color:#7dd3fc">■ Consonantes (Ser Latente)</span>\n\n`;
-  html += `<b style="color:var(--gold)">Sendero de Vida:</b>  Mes ${sendero.vMes}  +  Día ${sendero.vDia}  +  Año ${sendero.vAnio}  =  ${sendero.vMes + sendero.vDia + sendero.vAnio}  →  <b style="color:var(--gold-light)">${sendero.resultado}</b>`;
-
-  box.innerHTML = html;
-  box.style.display = 'block';
+}
+function makeCombinedPassionData(birth1, birth2, dq){
+  const ds1 = makePassionData(birth1, dq);
+  const ds2 = makePassionData(birth2, dq);
+  return ds1.map((v,i) => Math.round((v+ds2[i])/2 * 10) / 10);
+}
+function makeLabels(dq){
+  return Array.from({length:TOTAL_DAYS}, (_,k) => {
+    const d = addDays(dq, k-7);
+    return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+  });
 }
 
-function mostrarDetalle(tipo) {
-  const tipos = { ideal: 'Deseo del Alma', latente: 'Ser Latente', expresion: 'Expresión', sendero: 'Sendero de Vida' };
-  const tablas = { ideal: IDEAL, latente: LATENTE, expresion: EXPRESION, sendero: SENDERO };
-  const numeros = {
-    ideal: currentData.ideal?.resultado,
-    latente: currentData.latente?.resultado,
-    expresion: currentData.expresion?.resultado,
-    sendero: currentData.sendero?.resultado
+// ── Línea vertical en el día consultado ─────────────────────
+// chartOffsets maps canvasId -> current offset (how many days we've scrolled)
+const chartOffsets = {};
+
+function todayLinePlugin(canvasId){
+  return {
+    id: 'todayLine_'+canvasId,
+    afterDraw(chart){
+      const offset   = chartOffsets[canvasId] || 0;
+      const todayIdx = 7 - offset; // "hoy" está en posición 7 de los datos totales
+      if(todayIdx < 0 || todayIdx >= VIEW_DAYS) return; // "hoy" está fuera de la ventana visible
+      const meta = chart.getDatasetMeta(0);
+      if(!meta.data[todayIdx]) return;
+      const x = meta.data[todayIdx].x;
+      const c = chart.ctx;
+      c.save();
+      c.strokeStyle = 'rgba(255,255,255,0.2)';
+      c.lineWidth   = 1.5;
+      c.setLineDash([4,3]);
+      c.beginPath();
+      c.moveTo(x, chart.chartArea.top);
+      c.lineTo(x, chart.chartArea.bottom);
+      c.stroke();
+      c.setLineDash([]);
+      c.fillStyle   = 'rgba(255,255,255,0.25)';
+      c.font        = '10px DM Sans, sans-serif';
+      c.textAlign   = 'center';
+      c.fillText('hoy', x, chart.chartArea.top - 4);
+      c.restore();
+    }
   };
-
-  const INTRO = {
-    ideal:    'El Deseo del Alma (o Ideal) se obtiene sumando las <b>vocales</b> de tu nombre completo. Las vocales son el alma del lenguaje: revelan lo que tu Yo Superior desea que hagas en esta vida, tu motivación más profunda, aquello que te impulsa desde adentro aunque a veces no lo sepas expresar.',
-    latente:  'El Ser Latente se obtiene sumando las <b>consonantes</b> de tu nombre. Es quien sos cuando estás sola, sin necesidad de responder al mundo. Tus sueños más íntimos, lo que imaginás cuando nadie te observa. No está activo en tu vida diaria, pero es la raíz silenciosa de tu carácter.',
-    expresion:'La Expresión se obtiene sumando <b>todas las letras</b> de tu nombre completo. Representa tus capacidades naturales, lo que proyectás hacia el mundo, el tipo de trabajo donde te sentís más cómoda y los talentos que los demás perciben en vos.',
-    sendero:  'El Sendero de Vida se obtiene sumando los números de tu <b>fecha de nacimiento</b> (día + mes + año). Es la lección principal que viniste a aprender en esta encarnación, el camino que tu alma eligió recorrer. No es lo que tenés, sino lo que viniste a desarrollar.'
-  };
-
-  const n = numeros[tipo];
-  const tabla = tablas[tipo];
-  const info = tabla[n];
-
-  // Toggle
-  if (activePanel === tipo) {
-    activePanel = null;
-    document.getElementById('detail-panel').classList.remove('visible');
-    document.querySelectorAll('.num-card').forEach(c => c.classList.remove('active'));
-    return;
-  }
-
-  activePanel = tipo;
-  document.querySelectorAll('.num-card').forEach(c => c.classList.remove('active'));
-  document.getElementById('card-' + tipo).classList.add('active');
-
-  document.getElementById('det-num').textContent = n;
-  document.getElementById('det-type').textContent = tipos[tipo];
-  document.getElementById('det-title').textContent = info ? info.titulo : 'Número ' + n;
-
-  let textoHTML = `<div class="detail-intro">${INTRO[tipo]}</div>`;
-  textoHTML += info ? info.texto : 'Información no disponible para este número.';
-  if (info && info.cultivar) {
-    textoHTML += `<div class="cultivar">${info.cultivar}</div>`;
-  }
-  document.getElementById('det-text').innerHTML = textoHTML;
-
-  const panel = document.getElementById('detail-panel');
-  panel.classList.remove('visible');
-  void panel.offsetWidth; // reflow para re-trigger animación
-  panel.classList.add('visible');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-
-// ===================== REPORTE =====================
-const INTRO_TEXTO = {
-  ideal:    'El Deseo del Alma (o Ideal) se obtiene sumando las vocales del nombre completo. Las vocales son el alma del lenguaje: revelan lo que el Yo Superior desea hacer en esta vida, la motivación más profunda, aquello que impulsa desde adentro aunque a veces no se sepa expresar.',
-  latente:  'El Ser Latente se obtiene sumando las consonantes del nombre. Es quien se es cuando se está sola, sin necesidad de responder al mundo. Los sueños más íntimos, lo que se imagina cuando nadie observa. No está activo en la vida diaria, pero es la raíz silenciosa del carácter.',
-  expresion:'La Expresión se obtiene sumando todas las letras del nombre completo. Representa las capacidades naturales, lo que se proyecta hacia el mundo, el tipo de trabajo donde se encuentra mayor comodidad y los talentos que los demás perciben.',
-  sendero:  'El Sendero de Vida se obtiene sumando los números de la fecha de nacimiento (día + mes + año). Es la lección principal que el alma vino a aprender en esta encarnación, el camino elegido para recorrer. No es lo que se tiene, sino lo que se vino a desarrollar.'
+const CHART_OPTS = {
+  responsive:true, maintainAspectRatio:false,
+  interaction:{mode:'index', intersect:false},
+  plugins:{
+    legend:{display:false},
+    tooltip:{
+      mode:'index', intersect:false,
+      backgroundColor:'#161b26',
+      borderColor:'rgba(255,255,255,0.1)',borderWidth:0.5,
+      titleColor:'#5a607a',bodyColor:'#dde2f0',
+      padding:10, cornerRadius:8,
+      callbacks:{label: ctx => ` ${ctx.raw>0?'+':''}${ctx.raw}%`}
+    }
+  },
+  scales:{
+    x:{
+      ticks:{color:'#5a607a',font:{size:10},maxTicksLimit:10,autoSkip:true},
+      grid:{color:'rgba(255,255,255,0.035)'},
+      border:{color:'rgba(255,255,255,0.07)'}
+    },
+    y:{
+      min:-105, max:105,
+      ticks:{color:'#5a607a',font:{size:10},callback:v=>v+'%',stepSize:50},
+      grid:{color:'rgba(255,255,255,0.05)'},
+      border:{color:'rgba(255,255,255,0.07)'}
+    }
+  }
 };
 
-function generarTextoReporte() {
-  const d = currentData;
-  if (!d.nombre) return '';
+function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
+  const ctx       = document.getElementById(canvasId).getContext('2d');
+  const allLabels = makeLabels(dq);
+  const allDs1    = makeSeriesData(d1, dq, cycle);
+  const allDs2    = makeSeriesData(d2, dq, cycle);
 
-  const [anio, mes, dia] = d.fecha.split('-').map(Number);
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const fechaStr = `${dia} de ${meses[mes-1]} de ${anio}`;
+  chartOffsets[canvasId] = 0;
+  const labels = allLabels.slice(0, VIEW_DAYS);
+  const ds1    = allDs1.slice(0, VIEW_DAYS);
+  const ds2    = allDs2.slice(0, VIEW_DAYS);
 
-  const getTexto = (tabla, n) => {
-    const info = tabla[n];
-    if (!info) return 'Información no disponible.';
-    let t = info.texto;
-    if (info.cultivar) t += '\n→ ' + info.cultivar;
-    return t;
-  };
-
-  const ni = d.ideal.resultado;
-  const nl = d.latente.resultado;
-  const ne = d.expresion.resultado;
-  const ns = d.sendero.resultado;
-
-  const linea = '─'.repeat(52);
-
-  let r = '';
-  r += '✦ CARTA NUMEROLÓGICA PERSONAL ✦\n';
-  r += 'Basada en el método de Conny Méndez\n';
-  r += linea + '\n\n';
-  r += `Nombre:           ${d.nombre}\n`;
-  r += `Fecha de Nac.:    ${fechaStr}\n\n`;
-  r += linea + '\n\n';
-
-  r += `★ DESEO DEL ALMA (El Ideal) — Nº ${ni}\n\n`;
-  r += INTRO_TEXTO.ideal + '\n\n';
-  r += getTexto(IDEAL, ni) + '\n\n';
-  r += linea + '\n\n';
-
-  r += `★ SER LATENTE — Nº ${nl}\n\n`;
-  r += INTRO_TEXTO.latente + '\n\n';
-  r += getTexto(LATENTE, nl) + '\n\n';
-  r += linea + '\n\n';
-
-  r += `★ EXPRESIÓN — Nº ${ne}\n\n`;
-  r += INTRO_TEXTO.expresion + '\n\n';
-  r += getTexto(EXPRESION, ne) + '\n\n';
-  r += linea + '\n\n';
-
-  r += `★ SENDERO DE VIDA — Nº ${ns}\n`;
-  r += `   Mes ${d.sendero.vMes} + Día ${d.sendero.vDia} + Año ${d.sendero.vAnio} = ${d.sendero.resultado}\n\n`;
-  r += INTRO_TEXTO.sendero + '\n\n';
-  r += getTexto(SENDERO, ns) + '\n\n';
-  r += linea + '\n';
-  r += '✦ Que estos números iluminen tu camino ✦\n\n';
-  r += 'Numerología Conny Méndez · by SerQtn';
-
-  return r;
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2', data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  // Store full data for windowing
+  ch._fullLabels = allLabels;
+  ch._fullDatasets = [allDs1, allDs2];
+  charts.push(ch);
+  updateNavLabel(canvasId, 0);
+  initChartTouch(canvasId);
 }
 
-// ===================== PERFILES =====================
-const STORAGE_KEY = 'numerologia_perfiles';
+function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
+  const ctx       = document.getElementById(canvasId).getContext('2d');
+  const allLabels = makeLabels(dq);
+  const allDs1    = makePassionData(d1, dq);
+  const allDs2    = makePassionData(d2, dq);
+  const allDs3    = makeCombinedPassionData(d1, d2, dq);
 
-function cargarPerfiles() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
+  chartOffsets[canvasId] = 0;
+  const labels = allLabels.slice(0, VIEW_DAYS);
+  const ds1    = allDs1.slice(0, VIEW_DAYS);
+  const ds2    = allDs2.slice(0, VIEW_DAYS);
+  const ds3    = allDs3.slice(0, VIEW_DAYS);
+
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1',     data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2',     data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]},
+        {label:'Pasión', data:ds3, borderColor:c3, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[2,2]}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  ch._fullLabels = allLabels;
+  ch._fullDatasets = [allDs1, allDs2, allDs3];
+  charts.push(ch);
+  updateNavLabel(canvasId, 0);
+  initChartTouch(canvasId);
 }
 
-function guardarPerfiles(perfiles) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(perfiles));
+// ── Leyendas ─────────────────────────────────────────────────
+function buildLegend(elId, l1, l2, c1, c2){
+  document.getElementById(elId).innerHTML = `
+    <span><span class="leg-line" style="background:${c1}"></span>${l1}</span>
+    <span style="display:flex;align-items:center;gap:6px">
+      <svg width="18" height="8" style="flex-shrink:0"><line x1="0" y1="4" x2="18" y2="4" stroke="${c2}" stroke-width="2" stroke-dasharray="5,3"/></svg>
+      ${l2}
+    </span>`;
+}
+function buildLegend3(elId, l1, l2, l3, c1, c2, c3){
+  document.getElementById(elId).innerHTML = `
+    <span><span class="leg-line" style="background:${c1}"></span>${l1}</span>
+    <span style="display:flex;align-items:center;gap:6px">
+      <svg width="18" height="8" style="flex-shrink:0"><line x1="0" y1="4" x2="18" y2="4" stroke="${c2}" stroke-width="2" stroke-dasharray="5,3"/></svg>
+      ${l2}
+    </span>
+    <span style="display:flex;align-items:center;gap:6px">
+      <svg width="18" height="8" style="flex-shrink:0"><line x1="0" y1="4" x2="18" y2="4" stroke="${c3}" stroke-width="2" stroke-dasharray="2,2"/></svg>
+      ${l3}
+    </span>`;
 }
 
-function renderizarPerfiles() {
-  const perfiles = cargarPerfiles();
-  const section  = document.getElementById('perfiles-section');
-  const select   = document.getElementById('perfiles-select');
+// ── Manejo de errores de fecha ────────────────────────────────
+function setErr(id, show){
+  document.getElementById('err-'+id).style.display = show ? 'block' : 'none';
+  document.getElementById(id).style.borderColor    = show ? '#f06a6a' : '';
+  if(show)
+    document.getElementById(id).style.boxShadow = '0 0 0 3px rgba(240,106,106,0.12)';
+  else
+    document.getElementById(id).style.boxShadow = '';
+}
 
-  if (perfiles.length === 0) {
-    section.style.display = 'none';
-    return;
+// ── Edad, signo zodiacal, signo chino ────────────────────────
+function calcAge(birth, refDate){
+  let age = refDate.getFullYear() - birth.getFullYear();
+  const m = refDate.getMonth() - birth.getMonth();
+  if(m < 0 || (m === 0 && refDate.getDate() < birth.getDate())) age--;
+  return age;
+}
+function MOD(n, d){ return ((n % d) + d) % d; }
+
+function getZodiac(date){
+  const signs  = ['Capri','Acuario','Piscis','Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capri'];
+  const limits = [0,20,50,80,110,141,172,204,235,266,296,326,356];
+  const start  = new Date(date.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((date - start) / 86400000);
+  let idx = 0;
+  for(let i = 0; i < limits.length; i++){ if(dayOfYear >= limits[i]) idx = i; }
+  return signs[idx];
+}
+function getChineseSign(date){
+  const animals = ['Rata','Buey','Tigre','Gato','Dragón','Serpiente','Caballo','Cabra','Mono','Gallo','Perro','Jabalí'];
+  const yr = date.getFullYear();
+  const correction = MOD(38 + Math.floor(0.2422*(yr-1900)) - Math.floor((yr-1900)/4), 30);
+  const chineseNewYear = new Date(yr, 0, 21 + correction);
+  const effectiveYear  = date < chineseNewYear ? yr - 1 : yr;
+  return animals[MOD(effectiveYear - 2020, 12)];
+}
+
+// ── Fase lunar y luna llena más cercana ──────────────────────
+// Referencia: luna nueva el 6 de enero de 2000 (J2000 simplificado)
+const LUNAR_REF = Date.UTC(2000, 0, 6, 18, 14, 0); // ms
+const SYNODIC   = 29.530588853 * 86400000;           // ms
+
+function lunarAge(date){
+  const ms = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - LUNAR_REF;
+  return ((ms % SYNODIC) + SYNODIC) % SYNODIC / 86400000; // días en el ciclo 0–29.53
+}
+
+function lunarPhaseInfo(date){
+  const age = lunarAge(date);
+  const pct = age / 29.530588853; // 0–1
+  // 8 fases
+  const phases = [
+    {name:'Luna nueva',        emoji:'🌑', min:0,      max:0.0625},
+    {name:'Creciente inicial', emoji:'🌒', min:0.0625, max:0.1875},
+    {name:'Cuarto creciente',  emoji:'🌓', min:0.1875, max:0.3125},
+    {name:'Gibosa creciente',  emoji:'🌔', min:0.3125, max:0.4375},
+    {name:'Luna llena',        emoji:'🌕', min:0.4375, max:0.5625},
+    {name:'Gibosa menguante',  emoji:'🌖', min:0.5625, max:0.6875},
+    {name:'Cuarto menguante',  emoji:'🌗', min:0.6875, max:0.8125},
+    {name:'Menguante final',   emoji:'🌘', min:0.8125, max:1},
+  ];
+  const phase = phases.find(p => pct >= p.min && pct < p.max) || phases[0];
+  return {age: age.toFixed(1), emoji: phase.emoji, name: phase.name};
+}
+
+function nearestFullMoon(date){
+  const ms = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  // posición dentro del ciclo (0 = luna nueva, SYNODIC/2 = luna llena)
+  const cyclePos = ((ms - LUNAR_REF) % SYNODIC + SYNODIC) % SYNODIC;
+  const halfCycle = SYNODIC / 2;
+  // ms hasta la próxima llena (distancia desde cyclePos hasta halfCycle)
+  const msToNext = (halfCycle - cyclePos + SYNODIC) % SYNODIC;
+  // ms desde la última llena (distancia desde halfCycle anterior hasta cyclePos)
+  const msFromPrev = cyclePos >= halfCycle ? cyclePos - halfCycle : cyclePos + halfCycle;
+  // elegir la más cercana; si empatan, la futura
+  const diffMs = msToNext <= msFromPrev ? msToNext : -msFromPrev;
+  const days   = Math.round(diffMs / 86400000);
+  const fullMs = ms + days * 86400000;
+  // Formatear desde UTC para evitar desfase por zona horaria
+  const fd   = new Date(fullMs);
+  const dd   = String(fd.getUTCDate()).padStart(2,'0');
+  const mmm  = String(fd.getUTCMonth()+1).padStart(2,'0');
+  const yyyy = fd.getUTCFullYear();
+  const label = `${dd}/${mmm}/${yyyy}`;
+  const absDays = Math.abs(days);
+  if(absDays === 0) return `🌕 Luna llena ese día`;
+  const dir = days > 0 ? `en ${absDays} día${absDays>1?'s':''}` : `hace ${absDays} día${absDays>1?'s':''}`;
+  return `🌕 Llena el ${label} (${dir})`;
+}
+
+// ── Calcular ─────────────────────────────────────────────────
+function calcular(){
+  const sv1 = document.getElementById('d1').value;
+  const sv2 = document.getElementById('d2').value;
+  const svq = document.getElementById('dq').value;
+  const d1  = parseDate(sv1), d2 = parseDate(sv2), dq = parseDate(svq);
+
+  // P1 y fecha son obligatorios; P2 es opcional
+  setErr('d1', !d1); setErr('dq', !dq);
+  setErr('d2', false); // P2 nunca marca error: es opcional
+  if(!d1 || !dq) return;
+
+  const soloP1 = !d2; // modo una sola persona
+
+  const n1 = document.getElementById('n1').value.trim() || 'Persona 1';
+  const n2 = document.getElementById('n2').value.trim() || 'Persona 2';
+
+  // ── Persona 1 ──
+  const age1  = calcAge(d1, dq);
+  const days1 = daysBetween(d1, dq);
+  const v1    = {f:bio(days1,CYCLES.F), e:bio(days1,CYCLES.E), i:bio(days1,CYCLES.I)};
+  const z1    = getZodiac(d1), ch1 = getChineseSign(d1);
+  const moon1 = lunarPhaseInfo(d1), nfm1 = nearestFullMoon(d1);
+  const DAYS  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const dow1  = DAYS[new Date(Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate())).getUTCDay()];
+
+  document.getElementById('title-p1').innerHTML =
+    `${n1} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age1} años · ${dow1} · ${z1} · ${ch1} · ${moon1.emoji} ${moon1.name}</span>`+
+    `<div style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:3px;letter-spacing:0">${nfm1}</div>`;
+  document.getElementById('card-p1').style.borderColor = 'rgba(91,141,238,0.3)';
+  renderMetrics('metrics-p1', v1, days1);
+
+  // ── Persona 2 ──
+  const card2 = document.getElementById('card-p2');
+  if(!soloP1){
+    const age2  = calcAge(d2, dq);
+    const days2 = daysBetween(d2, dq);
+    const v2    = {f:bio(days2,CYCLES.F), e:bio(days2,CYCLES.E), i:bio(days2,CYCLES.I)};
+    const z2    = getZodiac(d2), ch2 = getChineseSign(d2);
+    const moon2 = lunarPhaseInfo(d2), nfm2 = nearestFullMoon(d2);
+    const dow2  = DAYS[new Date(Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate())).getUTCDay()];
+    document.getElementById('title-p2').innerHTML =
+      `${n2} <span style="font-size:12px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0">${age2} años · ${dow2} · ${z2} · ${ch2} · ${moon2.emoji} ${moon2.name}</span>`+
+      `<div style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:3px;letter-spacing:0">${nfm2}</div>`;
+    card2.style.borderColor = 'rgba(245,158,63,0.3)';
+    card2.style.display = '';
+    renderMetrics('metrics-p2', v2, days2);
+  } else {
+    card2.style.display = 'none';
   }
 
-  section.style.display = 'block';
+  // ── Compatibilidad ──
+  const compatGrid  = document.querySelector('.grid2[style*="margin-bottom"]');
 
-  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  select.innerHTML = '<option value="">— Seleccioná un perfil guardado —</option>' +
-    perfiles.map((p, i) => {
-      const [anio, mes, dia] = p.fecha.split('-').map(Number);
-      const fechaCorta = `${dia} ${meses[mes-1]} ${anio}`;
-      return `<option value="${i}">${p.nombre}  ·  ${fechaCorta}</option>`;
-    }).join('');
-}
+  if(!soloP1){
+    compatGrid.style.display = '';
+    const rawF = calcCompat(d1, d2, dq, CYCLES.F);
+    const rawE = calcCompat(d1, d2, dq, CYCLES.E);
+    const rawI = calcCompat(d1, d2, dq, CYCLES.I);
+    const pctF = Math.min(100, Math.max(0, Math.round(rawF)));
+    const pctE = Math.min(100, Math.max(0, Math.round(rawE)));
+    const pctI = Math.min(100, Math.max(0, Math.round(rawI)));
+    const total = Math.round((pctF+pctE+pctI)/3);
 
-function onSelectPerfil(val) {
-  if (val === '') return;
-  const i = parseInt(val);
-  const perfiles = cargarPerfiles();
-  const p = perfiles[i];
-  if (!p) return;
+    const ccolor = total>=70 ? '#4ecda4' : total>=45 ? '#f59e3f' : '#f06a6a';
+    const ctxt   = total>=70 ? 'Alta compatibilidad' : total>=45 ? 'Compatibilidad moderada' : 'Baja compatibilidad';
+    document.getElementById('compat-num').textContent  = total+'%';
+    document.getElementById('compat-num').style.color  = ccolor;
+    document.getElementById('compat-desc').textContent = ctxt;
+    document.getElementById('compat-raw').textContent  =
+      `Valores crudos — Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}  ·  Intelectual: ${rawI.toFixed(2)}`;
+    document.getElementById('compat-detail').innerHTML = [
+      {lbl:'Físico', p:pctF},
+      {lbl:'Emocional', p:pctE},
+      {lbl:'Intelectual', p:pctI}
+    ].map(x => `<div class="metric-card">
+      <div class="metric-label">${x.lbl}</div>
+      <div class="metric-row" style="justify-content:center">
+        <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
+      </div>
+    </div>`).join('');
 
-  const [anio, mes, dia] = p.fecha.split('-').map(Number);
-  document.getElementById('nombre').value      = p.nombre;
-  document.getElementById('fecha-dia').value   = dia;
-  document.getElementById('fecha-mes').value   = mes;
-  document.getElementById('fecha-anio').value  = anio;
-
-  calcular(false);
-}
-
-function eliminarPerfilSeleccionado() {
-  const select = document.getElementById('perfiles-select');
-  const val    = select.value;
-  if (val === '') { alert('Seleccioná un perfil para eliminar.'); return; }
-  const i      = parseInt(val);
-  const perfiles = cargarPerfiles();
-  const nombre = perfiles[i]?.nombre || '';
-  if (!confirm(`¿Eliminar el perfil de ${nombre}?`)) return;
-  perfiles.splice(i, 1);
-  guardarPerfiles(perfiles);
-  renderizarPerfiles();
-  // Si no quedan perfiles, limpiar resultados
-  if (perfiles.length === 0) document.getElementById('results').style.display = 'none';
-}
-
-function guardarPerfilActual() {
-  if (!currentData.nombre) return;
-  const perfiles = cargarPerfiles();
-  const existe   = perfiles.find(p => p.nombre === currentData.nombre && p.fecha === currentData.fecha);
-  if (!existe) {
-    perfiles.unshift({ nombre: currentData.nombre, fecha: currentData.fecha });
-    guardarPerfiles(perfiles);
+    const totalPassion = Math.round((pctF + pctE) / 2);
+    const cpColor = totalPassion>=70 ? '#4ecda4' : totalPassion>=45 ? '#f59e3f' : '#f06a6a';
+    const cpTxt   = totalPassion>=70 ? 'Alta pasión' : totalPassion>=45 ? 'Pasión moderada' : 'Baja pasión';
+    document.getElementById('compat-passion-num').textContent  = totalPassion+'%';
+    document.getElementById('compat-passion-num').style.color  = cpColor;
+    document.getElementById('compat-passion-desc').textContent = cpTxt;
+    document.getElementById('compat-passion-raw').textContent  =
+      `Físico: ${rawF.toFixed(2)}  ·  Emocional: ${rawE.toFixed(2)}`;
+    document.getElementById('compat-passion-detail').innerHTML = [
+      {lbl:'Físico', p:pctF},
+      {lbl:'Emocional', p:pctE}
+    ].map(x => `<div class="metric-card">
+      <div class="metric-label">${x.lbl}</div>
+      <div class="metric-row" style="justify-content:center">
+        <span style="font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:${x.p>=70?'#4ecda4':x.p>=45?'#f59e3f':'#f06a6a'}">${x.p}%</span>
+      </div>
+    </div>`).join('');
+  } else {
+    // Solo P1: compatibilidad oculta; pasión de P1 sola
+    compatGrid.style.display = 'none';
   }
-  renderizarPerfiles();
-  // Seleccionar el perfil recién guardado en el dropdown
-  const select = document.getElementById('perfiles-select');
-  if (select) select.value = '0';
+
+  // ── Mostrar resultados y crear charts ──
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+
+  charts.forEach(ch => ch.destroy()); charts = [];
+
+  if(!soloP1){
+    // Modo dos personas: gráficos comparativos normales
+    buildLegend('leg-f', n1, n2, C1.f, C2.f);
+    buildLegend('leg-e', n1, n2, C1.e, C2.e);
+    buildLegend('leg-i', n1, n2, C1.i, C2.i);
+    buildLegend3('leg-p', n1, n2, 'Pasión', C1.p, C2.p, CP);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        mkChart('cf', d1, d2, dq, CYCLES.F, C1.f, C2.f);
+        mkChart('ce', d1, d2, dq, CYCLES.E, C1.e, C2.e);
+        mkChart('ci', d1, d2, dq, CYCLES.I, C1.i, C2.i);
+        mkPassionChart('cp', d1, d2, dq, C1.p, C2.p, CP);
+        setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+      });
+    });
+  } else {
+    // Modo una persona: solo P1, P2 muestra "--"
+    buildLegendSolo('leg-f', n1, C1.f);
+    buildLegendSolo('leg-e', n1, C1.e);
+    buildLegendSolo('leg-i', n1, C1.i);
+    buildLegendSolo('leg-p', n1, C1.p);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        mkChartSolo('cf', d1, dq, CYCLES.F, C1.f);
+        mkChartSolo('ce', d1, dq, CYCLES.E, C1.e);
+        mkChartSolo('ci', d1, dq, CYCLES.I, C1.i);
+        mkPassionChartSolo('cp', d1, dq, C1.p);
+        setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+      });
+    });
+  }
 }
 
-function mostrarFormNuevo() {
-  document.getElementById('nombre').value      = '';
-  document.getElementById('fecha-dia').value   = '';
-  document.getElementById('fecha-mes').value   = '';
-  document.getElementById('fecha-anio').value  = '';
-  document.getElementById('perfiles-select').value = '';
+// ── Helpers modo una persona ─────────────────────────────────
+function buildLegendSolo(elId, l1, c1){
+  document.getElementById(elId).innerHTML =
+    `<span><span class="leg-line" style="background:${c1}"></span>${l1}</span>
+     <span style="color:var(--muted)">— P2: sin datos —</span>`;
+}
+
+function mkChartSolo(canvasId, d1, dq, cycle, c1){
+  const ctx       = document.getElementById(canvasId).getContext('2d');
+  const allLabels = makeLabels(dq);
+  const allDs1    = makeSeriesData(d1, dq, cycle);
+
+  chartOffsets[canvasId] = 0;
+  const labels = allLabels.slice(0, VIEW_DAYS);
+  const ds1    = allDs1.slice(0, VIEW_DAYS);
+
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4},
+        {label:'P2', data:Array(VIEW_DAYS).fill(null), borderColor:'transparent', backgroundColor:'transparent', borderWidth:0, pointRadius:0}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  ch._fullLabels = allLabels;
+  ch._fullDatasets = [allDs1, Array(TOTAL_DAYS).fill(null)];
+  charts.push(ch);
+  updateNavLabel(canvasId, 0);
+  initChartTouch(canvasId);
+}
+
+function mkPassionChartSolo(canvasId, d1, dq, c1){
+  const ctx       = document.getElementById(canvasId).getContext('2d');
+  const allLabels = makeLabels(dq);
+  const allDs1    = makePassionData(d1, dq);
+
+  chartOffsets[canvasId] = 0;
+  const labels = allLabels.slice(0, VIEW_DAYS);
+  const ds1    = allDs1.slice(0, VIEW_DAYS);
+
+  const ch = new Chart(ctx, {
+    type:'line',
+    plugins:[todayLinePlugin(canvasId)],
+    data:{
+      labels,
+      datasets:[
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4}
+      ]
+    },
+    options: JSON.parse(JSON.stringify(CHART_OPTS))
+  });
+  ch._fullLabels = allLabels;
+  ch._fullDatasets = [allDs1];
+  charts.push(ch);
+  updateNavLabel(canvasId, 0);
+  initChartTouch(canvasId);
+}
+
+// ── Chart windowed navigation ─────────────────────────────────
+function shiftChart(canvasId, direction){
+  const ch = charts.find(c => c.canvas.id === canvasId);
+  if(!ch || !ch._fullLabels) return;
+
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS; // 46
+  const current   = chartOffsets[canvasId] || 0;
+  const next      = Math.max(0, Math.min(maxOffset, current + direction * 7));
+  if(next === current) return;
+
+  chartOffsets[canvasId] = next;
+  ch.data.labels = ch._fullLabels.slice(next, next + VIEW_DAYS);
+  ch._fullDatasets.forEach((fullDs, i) => {
+    ch.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
+  });
+  ch.update('none');
+
+  updateNavLabel(canvasId, next);
+}
+
+function updateNavLabel(canvasId, offset){
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
+  const ch = charts.find(c => c.canvas.id === canvasId);
+
+  const prevBtn = document.getElementById('nav-prev-'+canvasId);
+  const nextBtn = document.getElementById('nav-next-'+canvasId);
+  const label   = document.getElementById('nav-label-'+canvasId);
+
+  if(prevBtn) prevBtn.disabled = (offset <= 0);
+  if(nextBtn) nextBtn.disabled = (offset >= maxOffset);
+
+  if(label && ch && ch._fullLabels){
+    const from = ch._fullLabels[offset];
+    const to   = ch._fullLabels[Math.min(offset + VIEW_DAYS - 1, TOTAL_DAYS - 1)];
+    label.textContent = `${from} → ${to}`;
+  }
+}
+
+// Touch/mouse drag to scroll charts
+function initChartTouch(canvasId){
+  const wrap = document.querySelector(`canvas#${canvasId}`)?.parentElement;
+  if(!wrap) return;
+
+  let startX = null;
+  let moved  = false;
+
+  wrap.addEventListener('pointerdown', e => {
+    startX = e.clientX;
+    moved  = false;
+  }, {passive:true});
+
+  wrap.addEventListener('pointermove', e => {
+    if(startX === null) return;
+    const dx = startX - e.clientX;
+    if(Math.abs(dx) > 30){
+      shiftChart(canvasId, dx > 0 ? 1 : -1);
+      startX = e.clientX;
+      moved  = true;
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('pointerup', e => {
+    if(moved) e.stopPropagation();
+    startX = null;
+  }, {passive:true});
+
+  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
+}
+
+// ── Gestión de perfiles compartidos ─────────────────────────
+const PROFILES_KEY = 'bio_profiles_shared';
+
+function getProfiles(){
+  try { return JSON.parse(localStorage.getItem(PROFILES_KEY)) || {}; } catch(e){ return {}; }
+}
+function setProfiles(obj){
+  try { localStorage.setItem(PROFILES_KEY, JSON.stringify(obj)); } catch(e){}
+}
+
+function renderAllSelects(selectedKey, changedSlot){
+  ['1','2'].forEach(slot => {
+    const sel      = document.getElementById('profile-select-'+slot);
+    const profiles = getProfiles();
+    const keys     = Object.keys(profiles).sort((a,b) => profiles[a].name.localeCompare(profiles[b].name));
+    const active   = (slot === changedSlot) ? selectedKey : sel.value;
+    sel.innerHTML  = '<option value="">— Ingresar datos nuevos —</option>' +
+      keys.map(k => `<option value="${k}"${k===active?' selected':''}>${profiles[k].name} (${profiles[k].date})</option>`).join('');
+  });
+}
+
+function saveProfile(slot){
+  const name = document.getElementById('n'+slot).value.trim();
+  const date = document.getElementById('d'+slot).value.trim();
+  if(!name){ showToast(slot, 'Ingresá un nombre para guardar.', true); return; }
+  if(!parseDate(date)){ showToast(slot, 'Fecha inválida.', true); return; }
+  const key = name.toLowerCase().replace(/\s+/g,'_') + '_' + date.replace(/\//g,'');
+  const profiles = getProfiles();
+  profiles[key] = {name, date};
+  setProfiles(profiles);
+  renderAllSelects(key, slot);
+  showToast(slot, 'Perfil guardado ✓');
+}
+
+function loadProfile(slot, key){
+  if(!key) return;
+  const profiles = getProfiles();
+  const p = profiles[key];
+  if(!p) return;
+  document.getElementById('n'+slot).value = p.name;
+  document.getElementById('d'+slot).value = p.date;
+  try {
+    localStorage.setItem('bio_n'+slot, p.name);
+    localStorage.setItem('bio_d'+slot, p.date);
+  } catch(e){}
+  setErr('d'+slot, false);
+}
+
+function deleteProfile(slot){
+  const sel = document.getElementById('profile-select-'+slot);
+  const key = sel.value;
+  if(!key){ showToast(slot, 'Seleccioná un perfil para eliminar.', true); return; }
+  const profiles = getProfiles();
+  const name = profiles[key]?.name || key;
+  delete profiles[key];
+  setProfiles(profiles);
+  renderAllSelects('', slot);
+  showToast(slot, `"${name}" eliminado.`);
+}
+
+function showToast(slot, msg, isErr){
+  const t = document.getElementById('profile-toast-'+slot);
+  t.textContent    = msg;
+  t.style.color    = isErr ? '#f06a6a' : '#4ecda4';
+  t.style.opacity  = '1';
+  setTimeout(() => {
+    t.style.opacity = '0';
+    setTimeout(() => t.textContent = '', 400);
+  }, 2600);
+}
+
+// ── Limpiar ──────────────────────────────────────────────────
+function limpiar(){
+  FIELDS.forEach(id => {
+    document.getElementById(id).value = '';
+    try { localStorage.removeItem('bio_'+id); } catch(e){}
+  });
+  ['d1','d2','dq'].forEach(id => setErr(id, false));
+  charts.forEach(ch => ch.destroy()); charts = [];
   document.getElementById('results').style.display = 'none';
-  document.getElementById('nombre').focus();
+  document.getElementById('card-p1').style.borderColor = '';
+  document.getElementById('card-p2').style.borderColor = '';
+  document.getElementById('card-p2').style.display = '';
+  const compatGrid = document.querySelector('.grid2[style*="margin-bottom"]');
+  if(compatGrid) compatGrid.style.display = '';
 }
 
-// Inicializar perfiles al cargar
-window.addEventListener('DOMContentLoaded', renderizarPerfiles);
+// ── Init ─────────────────────────────────────────────────────
+renderAllSelects('', null);
 
+// ── Fullscreen chart modal ────────────────────────────────────
+let modalChart = null;
 
-function abrirReporte() {
-  if (!currentData.nombre) { alert('Primero calculá tu carta numerológica.'); return; }
-  document.getElementById('report-text').value = generarTextoReporte();
-  document.getElementById('modal-reporte').classList.add('open');
+// Metadata de cada gráfico para reconstruirlo en el modal
+const CHART_META = {
+  cf: { title:'Ciclo Físico',      tag:'23 días',           tagColor:'#5b8dee', tagBg:'rgba(91,141,238,0.13)',  legId:'leg-f' },
+  ce: { title:'Ciclo Emocional',   tag:'28 días',           tagColor:'#4ecda4', tagBg:'rgba(78,205,164,0.13)',  legId:'leg-e' },
+  ci: { title:'Ciclo Intelectual', tag:'33 días',           tagColor:'#c77dff', tagBg:'rgba(199,125,255,0.13)', legId:'leg-i' },
+  cp: { title:'Pasión',            tag:'Físico + Emocional',tagColor:'#f5d842', tagBg:'rgba(245,216,66,0.13)',  legId:'leg-p' },
+};
+
+// Agregar tap listener a cada chart-wrap
+document.querySelectorAll('.chart-wrap').forEach(wrap => {
+  const canvas = wrap.querySelector('canvas');
+  if(!canvas) return;
+  wrap.addEventListener('click', () => openChartModal(canvas.id));
+});
+
+let modalSourceCanvasId = null; // which chart opened the modal
+
+function openChartModal(canvasId){
+  const meta     = CHART_META[canvasId];
+  const srcChart = charts.find(c => c.canvas.id === canvasId);
+  if(!srcChart || !meta) return;
+
+  modalSourceCanvasId = canvasId;
+
+  // Título y tag
+  document.getElementById('chart-modal-title').innerHTML =
+    `${meta.title} <span style="font-size:10px;padding:3px 9px;border-radius:20px;font-weight:600;background:${meta.tagBg};color:${meta.tagColor}">${meta.tag}</span>`;
+
+  // Copiar leyenda
+  document.getElementById('chart-modal-legend').innerHTML =
+    document.getElementById(meta.legId).innerHTML;
+
+  // Destruir modal chart anterior
+  if(modalChart){ modalChart.destroy(); modalChart = null; }
+
+  const modal = document.getElementById('chart-modal');
+
+  // Rotar si estamos en portrait (ancho < alto)
+  const isPortrait = window.innerWidth < window.innerHeight;
+  if(isPortrait) modal.classList.add('rotated');
+  else           modal.classList.remove('rotated');
+
+  modal.classList.add('open');
   document.body.style.overflow = 'hidden';
-}
 
-function cerrarReporte() {
-  document.getElementById('modal-reporte').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function copiarReporte() {
-  const textarea = document.getElementById('report-text');
-  navigator.clipboard.writeText(textarea.value).then(() => {
-    const fb = document.getElementById('copy-feedback');
-    fb.classList.add('show');
-    setTimeout(() => fb.classList.remove('show'), 2500);
-  }).catch(() => {
-    textarea.select();
-    document.execCommand('copy');
-    const fb = document.getElementById('copy-feedback');
-    fb.classList.add('show');
-    setTimeout(() => fb.classList.remove('show'), 2500);
+  // Crear chart después de que el DOM pinte con las dimensiones correctas
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const ctx = document.getElementById('chart-modal-canvas').getContext('2d');
+      // Sync offset from source chart
+      const srcOffset = chartOffsets[canvasId] || 0;
+      chartOffsets['chart-modal-canvas'] = srcOffset;
+      modalChart = new Chart(ctx, {
+        type: 'line',
+        plugins: [todayLinePlugin('chart-modal-canvas')],
+        data: {
+          labels: srcChart.data.labels.slice(),
+          datasets: srcChart.data.datasets.map(ds => ({...ds, data: ds.data.slice()}))
+        },
+        options: JSON.parse(JSON.stringify(CHART_OPTS))
+      });
+      // Copy full data reference from source chart
+      modalChart._fullLabels   = srcChart._fullLabels;
+      modalChart._fullDatasets = srcChart._fullDatasets;
+      // Update modal nav buttons/label
+      updateModalNavLabel(srcOffset);
+      // Init touch on modal canvas wrap
+      initModalTouch();
+    });
   });
 }
 
-function enviarWhatsApp() {
-  const texto = document.getElementById('report-text').value;
-  const encoded = encodeURIComponent(texto);
-  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+function shiftModalChart(direction){
+  if(!modalChart || !modalChart._fullLabels) return;
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
+  const current   = chartOffsets['chart-modal-canvas'] || 0;
+  const next      = Math.max(0, Math.min(maxOffset, current + direction * 7));
+  if(next === current) return;
+
+  chartOffsets['chart-modal-canvas'] = next;
+  modalChart.data.labels = modalChart._fullLabels.slice(next, next + VIEW_DAYS);
+  modalChart._fullDatasets.forEach((fullDs, i) => {
+    if(modalChart.data.datasets[i])
+      modalChart.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
+  });
+  modalChart.update('none');
+  updateModalNavLabel(next);
+
+  // Sync back to the source chart so they stay in step
+  if(modalSourceCanvasId){
+    const srcChart = charts.find(c => c.canvas.id === modalSourceCanvasId);
+    if(srcChart){
+      chartOffsets[modalSourceCanvasId] = next;
+      srcChart.data.labels = modalChart._fullLabels.slice(next, next + VIEW_DAYS);
+      srcChart._fullDatasets.forEach((fullDs, i) => {
+        if(srcChart.data.datasets[i])
+          srcChart.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
+      });
+      srcChart.update('none');
+      updateNavLabel(modalSourceCanvasId, next);
+    }
+  }
 }
 
-function enviarEmail() {
-  const texto = document.getElementById('report-text').value;
-  const nombre = currentData.nombre || 'Consulta Numerológica';
-  const asunto = encodeURIComponent(`Carta Numerológica de ${nombre}`);
-  const cuerpo = encodeURIComponent(texto);
-  window.location.href = `mailto:?subject=${asunto}&body=${cuerpo}`;
+function updateModalNavLabel(offset){
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
+  document.getElementById('modal-nav-prev').disabled = (offset <= 0);
+  document.getElementById('modal-nav-next').disabled = (offset >= maxOffset);
+  if(modalChart && modalChart._fullLabels){
+    const from = modalChart._fullLabels[offset];
+    const to   = modalChart._fullLabels[Math.min(offset + VIEW_DAYS - 1, TOTAL_DAYS - 1)];
+    document.getElementById('modal-nav-label').textContent = `${from} → ${to}`;
+  }
 }
 
-// Cerrar modal con Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') cerrarReporte();
-  if (e.key === 'Enter' && !document.getElementById('modal-reporte').classList.contains('open')) calcular();
-});
+let _modalTouchInit = false;
+function initModalTouch(){
+  if(_modalTouchInit) return;
+  _modalTouchInit = true;
+  const wrap = document.getElementById('chart-modal-canvas-wrap');
+  let startX = null, moved = false;
+  wrap.addEventListener('pointerdown', e => { startX = e.clientX; moved = false; }, {passive:true});
+  wrap.addEventListener('pointermove', e => {
+    if(startX === null) return;
+    const dx = startX - e.clientX;
+    if(Math.abs(dx) > 30){
+      shiftModalChart(dx > 0 ? 1 : -1);
+      startX = e.clientX;
+      moved = true;
+    }
+  }, {passive:true});
+  wrap.addEventListener('pointerup',     () => { startX = null; }, {passive:true});
+  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
+}
 
-// Cerrar modal al click en overlay
-document.getElementById('modal-reporte').addEventListener('click', function(e) {
-  if (e.target === this) cerrarReporte();
-});
+function closeChartModal(){
+  const modal = document.getElementById('chart-modal');
+  modal.classList.remove('open','rotated');
+  document.body.style.overflow = '';
+  if(modalChart){ modalChart.destroy(); modalChart = null; }
+}
 
+// Cerrar con tecla Escape
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeChartModal(); });
+// Cerrar tocando el fondo oscuro
+document.getElementById('chart-modal').addEventListener('click', function(e){
+  if(e.target === this) closeChartModal();
+});
 </script>
 </body>
 </html>
