@@ -832,14 +832,7 @@ const CHART_OPTS = {
   interaction:{mode:'index', intersect:false},
   plugins:{
     legend:{display:false},
-    tooltip:{
-      mode:'index', intersect:false,
-      backgroundColor:'#161b26',
-      borderColor:'rgba(255,255,255,0.1)',borderWidth:0.5,
-      titleColor:'#5a607a',bodyColor:'#dde2f0',
-      padding:10, cornerRadius:8,
-      callbacks:{label: ctx => ` ${ctx.raw>0?'+':''}${ctx.raw}%`}
-    }
+    tooltip:{enabled:false}
   },
   scales:{
     x:{
