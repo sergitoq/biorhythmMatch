@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>BiorhythmMatch</title>
 <meta name="description" content="Calculadora interactiva de biorritmos que compara ciclos físico, emocional e intelectual de dos personas, con puntaje de compatibilidad y gráficos comparativos.">
 <meta name="theme-color" content="#080a10">
@@ -393,10 +393,14 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
 }
 
 /* ─── Touch-action fixes para Median / WebView ─── */
-body{touch-action:pan-y}
-canvas{touch-action:pan-y}
-.chart-wrap{touch-action:pan-y}
-#chart-modal-canvas-wrap{touch-action:pan-x}
+html, body { touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+canvas { touch-action: pan-y; }
+.chart-wrap { touch-action: pan-y; }
+#chart-modal-canvas-wrap { touch-action: pan-x pinch-zoom; }
+
+/* Modal: permitir scroll Y y zoom dentro */
+#chart-modal { touch-action: manipulation; }
+#chart-modal-inner { touch-action: manipulation; }
 </style>
 </head>
 <body>
@@ -1440,7 +1444,12 @@ function openChartModal(canvasId){
   else           modal.classList.remove('rotated');
 
   modal.classList.add('open');
+  // Guardar posición de scroll antes de bloquear
+  document.body.dataset.scrollY = window.scrollY || 0;
   document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + (document.body.dataset.scrollY) + 'px';
+  document.body.style.width = '100%';
 
   // Crear chart después de que el DOM pinte con las dimensiones correctas
   requestAnimationFrame(() => {
@@ -1517,8 +1526,14 @@ function initModalTouch(){
   if(_modalTouchInit) return;
   _modalTouchInit = true;
   const wrap = document.getElementById('chart-modal-canvas-wrap');
+  const canvas = document.getElementById('chart-modal-canvas');
+
+  // ── Swipe horizontal para navegar ──
   let startX = null, moved = false;
-  wrap.addEventListener('pointerdown', e => { startX = e.clientX; moved = false; }, {passive:true});
+  wrap.addEventListener('pointerdown', e => {
+    if(e.pointerType === 'touch') return; // dejar a touch events para pinch
+    startX = e.clientX; moved = false;
+  }, {passive:true});
   wrap.addEventListener('pointermove', e => {
     if(startX === null) return;
     const dx = startX - e.clientX;
@@ -1530,13 +1545,84 @@ function initModalTouch(){
   }, {passive:true});
   wrap.addEventListener('pointerup',     () => { startX = null; }, {passive:true});
   wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
+
+  // ── Touch: swipe + pinch zoom ──
+  let touches = {};
+  let lastDist = null;
+  let zoomScale = 1;
+  let touchStartX = null;
+
+  wrap.addEventListener('touchstart', e => {
+    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
+    const ids = Object.keys(touches);
+    if(ids.length === 1){
+      touchStartX = touches[ids[0]].x;
+    }
+    if(ids.length === 2){
+      touchStartX = null;
+      const t0 = touches[ids[0]], t1 = touches[ids[1]];
+      lastDist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('touchmove', e => {
+    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
+    const ids = Object.keys(touches);
+
+    if(ids.length === 1 && touchStartX !== null){
+      // Swipe single finger
+      const dx = touchStartX - touches[ids[0]].x;
+      if(Math.abs(dx) > 40){
+        shiftModalChart(dx > 0 ? 1 : -1);
+        touchStartX = touches[ids[0]].x;
+      }
+    }
+
+    if(ids.length === 2 && lastDist !== null){
+      // Pinch zoom
+      const t0 = touches[ids[0]], t1 = touches[ids[1]];
+      const dist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
+      const ratio = dist / lastDist;
+      zoomScale = Math.min(3, Math.max(0.5, zoomScale * ratio));
+      canvas.style.transform = `scale(${zoomScale})`;
+      canvas.style.transformOrigin = 'center center';
+      lastDist = dist;
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('touchend', e => {
+    Array.from(e.changedTouches).forEach(t => { delete touches[t.identifier]; });
+    if(Object.keys(touches).length < 2){ lastDist = null; }
+    if(Object.keys(touches).length === 0){ touchStartX = null; }
+  }, {passive:true});
+
+  // Reset zoom on double-tap
+  let lastTap = 0;
+  wrap.addEventListener('touchend', e => {
+    const now = Date.now();
+    if(now - lastTap < 300){
+      zoomScale = 1;
+      canvas.style.transform = '';
+    }
+    lastTap = now;
+  }, {passive:true});
 }
 
 function closeChartModal(){
   const modal = document.getElementById('chart-modal');
   modal.classList.remove('open','rotated');
+  // Restaurar scroll position correctamente
+  const scrollY = parseInt(document.body.dataset.scrollY || 0);
   document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, scrollY);
+  // Resetear zoom del canvas modal
+  const mc = document.getElementById('chart-modal-canvas');
+  if(mc){ mc.style.transform = ''; }
   if(modalChart){ modalChart.destroy(); modalChart = null; }
+  _modalTouchInit = false; // reinit next time so zoom resets
 }
 
 // Cerrar con tecla Escape
