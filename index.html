@@ -216,31 +216,6 @@ input[type="text"]::placeholder{color:var(--muted)}
 .date-row .field{flex:1;margin-bottom:0}
 .btn-row{display:flex;gap:0.6rem;flex-shrink:0}
 
-/* ─── Date picker (día / mes / año) ─── */
-.date-picker{display:flex;gap:6px;align-items:center}
-.date-picker select{
-  background:var(--bg);
-  border:0.5px solid var(--border);
-  border-radius:var(--radius-xs);
-  color:var(--text);
-  font-family:'DM Sans',sans-serif;font-size:14px;
-  padding:10px 28px 10px 11px;outline:none;
-  cursor:pointer;
-  transition:border-color 0.2s,box-shadow 0.2s;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%235a607a' d='M5 7L1 2h8z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 8px center;
-}
-.date-picker select:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(91,141,238,0.12);
-}
-.date-picker select option{background:#161b26;color:#dde2f0}
-.date-picker-sep{color:var(--muted);font-size:16px;font-weight:300;line-height:1;flex-shrink:0}
-.dp-day{width:72px}
-.dp-month{width:118px}
-.dp-year{width:90px}
-
 /* ─── Buttons ─── */
 button{
   background:var(--accent);color:#fff;border:none;
@@ -415,21 +390,36 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
   .btn-row{flex-direction:column}
   .profile-actions{flex-direction:column;align-items:stretch}
   select.profile-select{width:100%}
-  .date-picker{flex-wrap:wrap}
-  .dp-day{width:64px}
-  .dp-month{flex:1;min-width:90px}
-  .dp-year{width:82px}
 }
 
 /* ─── Touch-action fixes para Median / WebView ─── */
 html, body { touch-action: pan-y; -webkit-overflow-scrolling: touch; }
-canvas { touch-action: pan-y; }
-.chart-wrap { touch-action: pan-y; }
-#chart-modal-canvas-wrap { touch-action: pan-x pinch-zoom; }
+canvas { touch-action: none; }
+.chart-wrap { touch-action: none; overflow: hidden; }
+#chart-modal-canvas-wrap { touch-action: none; overflow: hidden; }
 
-/* Modal: permitir scroll Y y zoom dentro */
-#chart-modal { touch-action: manipulation; }
-#chart-modal-inner { touch-action: manipulation; }
+/* Modal: bloquear scroll del body */
+#chart-modal { touch-action: none; }
+#chart-modal-inner { touch-action: none; }
+
+/* Zoom buttons */
+.zoom-bar {
+  display:flex; align-items:center; justify-content:flex-end;
+  gap:6px; margin-top:5px;
+}
+.zoom-btn {
+  background:rgba(255,255,255,0.06);
+  border:0.5px solid var(--border);
+  color:var(--muted2);
+  padding:3px 11px; font-size:16px; line-height:1;
+  border-radius:var(--radius-xs);
+  cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600;
+  transition:background 0.15s,color 0.15s;
+}
+.zoom-btn:hover{background:rgba(255,255,255,0.12);color:var(--text);box-shadow:none}
+.zoom-label {
+  font-size:10.5px; color:var(--muted); min-width:36px; text-align:center;
+}
 </style>
 </head>
 <body>
@@ -497,14 +487,8 @@ canvas { touch-action: pan-y; }
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <div class="date-picker">
-          <select class="dp-day" id="d1-day" onchange="syncDatePicker('d1')"><option value="">DD</option></select>
-          <span class="date-picker-sep">/</span>
-          <select class="dp-month" id="d1-month" onchange="syncDatePicker('d1')"><option value="">Mes</option></select>
-          <span class="date-picker-sep">/</span>
-          <select class="dp-year" id="d1-year" onchange="syncDatePicker('d1')"><option value="">AAAA</option></select>
-        </div>
-        <input type="hidden" id="d1"/>
+        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric"/>
+        <div class="hint">DD/MM/AAAA</div>
         <div class="err" id="err-d1">Fecha inválida</div>
       </div>
     </div>
@@ -528,14 +512,8 @@ canvas { touch-action: pan-y; }
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <div class="date-picker">
-          <select class="dp-day" id="d2-day" onchange="syncDatePicker('d2')"><option value="">DD</option></select>
-          <span class="date-picker-sep">/</span>
-          <select class="dp-month" id="d2-month" onchange="syncDatePicker('d2')"><option value="">Mes</option></select>
-          <span class="date-picker-sep">/</span>
-          <select class="dp-year" id="d2-year" onchange="syncDatePicker('d2')"><option value="">AAAA</option></select>
-        </div>
-        <input type="hidden" id="d2"/>
+        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric"/>
+        <div class="hint">DD/MM/AAAA</div>
         <div class="err" id="err-d2">Fecha inválida</div>
       </div>
     </div>
@@ -548,14 +526,8 @@ canvas { touch-action: pan-y; }
   <div class="date-row">
     <div class="field">
       <label>Fecha a calcular</label>
-      <div class="date-picker">
-        <select class="dp-day" id="dq-day" onchange="syncDatePicker('dq')"><option value="">DD</option></select>
-        <span class="date-picker-sep">/</span>
-        <select class="dp-month" id="dq-month" onchange="syncDatePicker('dq')"><option value="">Mes</option></select>
-        <span class="date-picker-sep">/</span>
-        <select class="dp-year" id="dq-year" onchange="syncDatePicker('dq')"><option value="">AAAA</option></select>
-      </div>
-      <input type="hidden" id="dq"/>
+      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric"/>
+      <div class="hint">DD/MM/AAAA</div>
       <div class="err" id="err-dq">Fecha inválida</div>
     </div>
     <div class="btn-row">
@@ -604,7 +576,7 @@ canvas { touch-action: pan-y; }
 
   <!-- Gráficos -->
   <div class="card">
-    <div class="card-title">Curvas comparativas — 92 días <span style="font-size:9px;color:var(--muted);font-weight:400;letter-spacing:0.05em">· scroll para navegar · Ctrl+scroll para zoom · doble tap para resetear</span></div>
+    <div class="card-title">Curvas comparativas — 92 días <span style="font-size:9px;color:var(--muted);font-weight:400;letter-spacing:0.05em">· deslizá para navegar · ± para zoom</span></div>
 
     <!-- Físico -->
     <div class="chart-section">
@@ -616,10 +588,15 @@ canvas { touch-action: pan-y; }
       <div class="chart-wrap"><canvas id="cf" role="img" aria-label="Ciclo físico comparativo"></canvas></div>
       <div class="chart-nav">
         <div class="chart-nav-btns">
-          <button class="chart-nav-btn btn-sm" id="nav-prev-cf" onclick="shiftChart('cf',-1,7)" disabled>←</button>
-          <button class="chart-nav-btn btn-sm" id="nav-next-cf" onclick="shiftChart('cf', 1,7)">→</button>
+          <button class="chart-nav-btn btn-sm" id="nav-prev-cf" onclick="shiftChart('cf',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-cf" onclick="shiftChart('cf', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-cf"></span>
+        <div class="zoom-bar">
+          <button class="zoom-btn" onclick="zoomChart('cf',-1)">−</button>
+          <span class="zoom-label" id="zoom-label-cf">100%</span>
+          <button class="zoom-btn" onclick="zoomChart('cf', 1)">+</button>
+        </div>
       </div>
     </div>
     <hr class="divider">
@@ -634,10 +611,15 @@ canvas { touch-action: pan-y; }
       <div class="chart-wrap"><canvas id="ce" role="img" aria-label="Ciclo emocional comparativo"></canvas></div>
       <div class="chart-nav">
         <div class="chart-nav-btns">
-          <button class="chart-nav-btn btn-sm" id="nav-prev-ce" onclick="shiftChart('ce',-1,7)" disabled>←</button>
-          <button class="chart-nav-btn btn-sm" id="nav-next-ce" onclick="shiftChart('ce', 1,7)">→</button>
+          <button class="chart-nav-btn btn-sm" id="nav-prev-ce" onclick="shiftChart('ce',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-ce" onclick="shiftChart('ce', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-ce"></span>
+        <div class="zoom-bar">
+          <button class="zoom-btn" onclick="zoomChart('ce',-1)">−</button>
+          <span class="zoom-label" id="zoom-label-ce">100%</span>
+          <button class="zoom-btn" onclick="zoomChart('ce', 1)">+</button>
+        </div>
       </div>
     </div>
     <hr class="divider">
@@ -652,10 +634,15 @@ canvas { touch-action: pan-y; }
       <div class="chart-wrap"><canvas id="ci" role="img" aria-label="Ciclo intelectual comparativo"></canvas></div>
       <div class="chart-nav">
         <div class="chart-nav-btns">
-          <button class="chart-nav-btn btn-sm" id="nav-prev-ci" onclick="shiftChart('ci',-1,7)" disabled>←</button>
-          <button class="chart-nav-btn btn-sm" id="nav-next-ci" onclick="shiftChart('ci', 1,7)">→</button>
+          <button class="chart-nav-btn btn-sm" id="nav-prev-ci" onclick="shiftChart('ci',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-ci" onclick="shiftChart('ci', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-ci"></span>
+        <div class="zoom-bar">
+          <button class="zoom-btn" onclick="zoomChart('ci',-1)">−</button>
+          <span class="zoom-label" id="zoom-label-ci">100%</span>
+          <button class="zoom-btn" onclick="zoomChart('ci', 1)">+</button>
+        </div>
       </div>
     </div>
     <hr class="divider">
@@ -670,10 +657,15 @@ canvas { touch-action: pan-y; }
       <div class="chart-wrap"><canvas id="cp" role="img" aria-label="Pasión comparativa"></canvas></div>
       <div class="chart-nav">
         <div class="chart-nav-btns">
-          <button class="chart-nav-btn btn-sm" id="nav-prev-cp" onclick="shiftChart('cp',-1,7)" disabled>←</button>
-          <button class="chart-nav-btn btn-sm" id="nav-next-cp" onclick="shiftChart('cp', 1,7)">→</button>
+          <button class="chart-nav-btn btn-sm" id="nav-prev-cp" onclick="shiftChart('cp',-1)" disabled>←</button>
+          <button class="chart-nav-btn btn-sm" id="nav-next-cp" onclick="shiftChart('cp', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-cp"></span>
+        <div class="zoom-bar">
+          <button class="zoom-btn" onclick="zoomChart('cp',-1)">−</button>
+          <span class="zoom-label" id="zoom-label-cp">100%</span>
+          <button class="zoom-btn" onclick="zoomChart('cp', 1)">+</button>
+        </div>
       </div>
     </div>
   </div>
@@ -696,10 +688,15 @@ canvas { touch-action: pan-y; }
     </div>
     <div class="chart-nav" id="chart-modal-nav" style="padding-top:6px;flex-shrink:0">
       <div class="chart-nav-btns">
-        <button class="chart-nav-btn btn-sm" id="modal-nav-prev" onclick="shiftModalChart(-1,7)" disabled>←</button>
-        <button class="chart-nav-btn btn-sm" id="modal-nav-next" onclick="shiftModalChart(1,7)">→</button>
+        <button class="chart-nav-btn btn-sm" id="modal-nav-prev" onclick="shiftModalChart(-1)" disabled>←</button>
+        <button class="chart-nav-btn btn-sm" id="modal-nav-next" onclick="shiftModalChart(1)">→</button>
       </div>
       <span class="chart-nav-label" id="modal-nav-label"></span>
+      <div class="zoom-bar">
+        <button class="zoom-btn" onclick="zoomModalChart(-1)">−</button>
+        <span class="zoom-label" id="modal-zoom-label">100%</span>
+        <button class="zoom-btn" onclick="zoomModalChart(1)">+</button>
+      </div>
     </div>
   </div>
 </div>
@@ -713,70 +710,8 @@ const C2 = {f:'#f59e3f', e:'#f06a6a', i:'#f0c040', p:'#ff6eb4'};
 const CP  = '#f5d842';
 let charts = [];
 
-// ── Poblar selectores de fecha ───────────────────────────────
-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-
-function populateDatePickers(){
-  const currentYear = new Date().getFullYear();
-  ['d1','d2','dq'].forEach(id => {
-    const dayEl   = document.getElementById(id+'-day');
-    const monthEl = document.getElementById(id+'-month');
-    const yearEl  = document.getElementById(id+'-year');
-
-    // Días 1–31
-    for(let d = 1; d <= 31; d++){
-      const o = document.createElement('option');
-      o.value = String(d).padStart(2,'0');
-      o.textContent = String(d).padStart(2,'0');
-      dayEl.appendChild(o);
-    }
-    // Meses
-    MESES.forEach((m, i) => {
-      const o = document.createElement('option');
-      o.value = String(i+1).padStart(2,'0');
-      o.textContent = m;
-      monthEl.appendChild(o);
-    });
-    // Años: nacimiento 1920–hoy, consulta hoy±5
-    const isQuery = (id === 'dq');
-    const fromYear = isQuery ? currentYear - 5 : 1920;
-    const toYear   = isQuery ? currentYear + 5 : currentYear;
-    for(let y = toYear; y >= fromYear; y--){
-      const o = document.createElement('option');
-      o.value = String(y);
-      o.textContent = String(y);
-      yearEl.appendChild(o);
-    }
-  });
-}
-populateDatePickers();
-
-// Sincronizar picker → hidden input y localStorage
-function syncDatePicker(id){
-  const d = document.getElementById(id+'-day').value;
-  const m = document.getElementById(id+'-month').value;
-  const y = document.getElementById(id+'-year').value;
-  const val = (d && m && y) ? `${d}/${m}/${y}` : '';
-  document.getElementById(id).value = val;
-  try { localStorage.setItem('bio_'+id, val); } catch(e){}
-}
-
-// Cargar picker desde string DD/MM/YYYY
-function loadPickerFromString(id, str){
-  if(!str) return;
-  const m = str.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if(!m) return;
-  const dayEl   = document.getElementById(id+'-day');
-  const monthEl = document.getElementById(id+'-month');
-  const yearEl  = document.getElementById(id+'-year');
-  dayEl.value   = m[1];
-  monthEl.value = m[2];
-  yearEl.value  = m[3];
-  document.getElementById(id).value = str;
-}
-
 // ── Persistencia de campos ───────────────────────────────────
-const FIELDS = ['n1','n2'];
+const FIELDS = ['n1','d1','n2','d2','dq'];
 FIELDS.forEach(id => {
   const el = document.getElementById(id);
   try { const s = localStorage.getItem('bio_'+id); if(s) el.value = s; } catch(e){}
@@ -784,26 +719,29 @@ FIELDS.forEach(id => {
     try { localStorage.setItem('bio_'+id, el.value); } catch(e){}
   });
 });
-// Restaurar fechas desde localStorage
-['d1','d2','dq'].forEach(id => {
-  try {
-    const s = localStorage.getItem('bio_'+id);
-    if(s) loadPickerFromString(id, s);
-  } catch(e){}
-});
 
-// ── Prellenar fecha de hoy en dq ────────────────────────────
+// ── Prellenar fecha de hoy ───────────────────────────────────
 (function(){
-  const dqVal = document.getElementById('dq').value;
-  if(!dqVal){
-    const t  = new Date();
-    const dd   = String(t.getDate()).padStart(2,'0');
-    const mm   = String(t.getMonth()+1).padStart(2,'0');
-    const yyyy = String(t.getFullYear());
-    loadPickerFromString('dq', `${dd}/${mm}/${yyyy}`);
-    try { localStorage.setItem('bio_dq', `${dd}/${mm}/${yyyy}`); } catch(e){}
+  const dqEl = document.getElementById('dq');
+  if(!dqEl.value){
+    const t = new Date();
+    const dd = String(t.getDate()).padStart(2,'0');
+    const mm = String(t.getMonth()+1).padStart(2,'0');
+    const yyyy = t.getFullYear();
+    dqEl.value = `${dd}/${mm}/${yyyy}`;
   }
 })();
+
+// ── Auto-formato DD/MM/AAAA ──────────────────────────────────
+['d1','d2','dq'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function(){
+    let v = this.value.replace(/\D/g,'');
+    if(v.length > 2) v = v.slice(0,2)+'/'+v.slice(2);
+    if(v.length > 5) v = v.slice(0,5)+'/'+v.slice(5);
+    this.value = v.slice(0,10);
+    try { localStorage.setItem('bio_'+id, this.value); } catch(e){}
+  });
+});
 
 // ── Parseo de fecha ──────────────────────────────────────────
 function parseDate(str){
@@ -972,6 +910,7 @@ function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
   const allDs2    = makeSeriesData(d2, dq, cycle);
 
   chartOffsets[canvasId] = 0;
+  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
   const ds2    = allDs2.slice(0, VIEW_DAYS);
@@ -992,7 +931,8 @@ function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1, allDs2];
   charts.push(ch);
-  updateNavLabel(canvasId, 0);
+  updateNavLabel(canvasId, 0, VIEW_DAYS);
+  updateZoomLabel(canvasId, VIEW_DAYS);
   initChartTouch(canvasId);
 }
 
@@ -1004,6 +944,7 @@ function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
   const allDs3    = makeCombinedPassionData(d1, d2, dq);
 
   chartOffsets[canvasId] = 0;
+  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
   const ds2    = allDs2.slice(0, VIEW_DAYS);
@@ -1025,7 +966,8 @@ function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1, allDs2, allDs3];
   charts.push(ch);
-  updateNavLabel(canvasId, 0);
+  updateNavLabel(canvasId, 0, VIEW_DAYS);
+  updateZoomLabel(canvasId, VIEW_DAYS);
   initChartTouch(canvasId);
 }
 
@@ -1054,14 +996,11 @@ function buildLegend3(elId, l1, l2, l3, c1, c2, c3){
 // ── Manejo de errores de fecha ────────────────────────────────
 function setErr(id, show){
   document.getElementById('err-'+id).style.display = show ? 'block' : 'none';
-  // Apply error style to all selects in the date picker
-  const picker = document.getElementById(id+'-day')?.closest('.date-picker');
-  if(picker){
-    picker.querySelectorAll('select').forEach(sel => {
-      sel.style.borderColor = show ? '#f06a6a' : '';
-      sel.style.boxShadow   = show ? '0 0 0 3px rgba(240,106,106,0.12)' : '';
-    });
-  }
+  document.getElementById(id).style.borderColor    = show ? '#f06a6a' : '';
+  if(show)
+    document.getElementById(id).style.boxShadow = '0 0 0 3px rgba(240,106,106,0.12)';
+  else
+    document.getElementById(id).style.boxShadow = '';
 }
 
 // ── Edad, signo zodiacal, signo chino ────────────────────────
@@ -1300,6 +1239,7 @@ function mkChartSolo(canvasId, d1, dq, cycle, c1){
   const allDs1    = makeSeriesData(d1, dq, cycle);
 
   chartOffsets[canvasId] = 0;
+  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
 
@@ -1318,7 +1258,8 @@ function mkChartSolo(canvasId, d1, dq, cycle, c1){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1, Array(TOTAL_DAYS).fill(null)];
   charts.push(ch);
-  updateNavLabel(canvasId, 0);
+  updateNavLabel(canvasId, 0, VIEW_DAYS);
+  updateZoomLabel(canvasId, VIEW_DAYS);
   initChartTouch(canvasId);
 }
 
@@ -1328,6 +1269,7 @@ function mkPassionChartSolo(canvasId, d1, dq, c1){
   const allDs1    = makePassionData(d1, dq);
 
   chartOffsets[canvasId] = 0;
+  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
 
@@ -1345,33 +1287,65 @@ function mkPassionChartSolo(canvasId, d1, dq, c1){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1];
   charts.push(ch);
-  updateNavLabel(canvasId, 0);
+  updateNavLabel(canvasId, 0, VIEW_DAYS);
+  updateZoomLabel(canvasId, VIEW_DAYS);
   initChartTouch(canvasId);
 }
 
 // ── Chart windowed navigation ─────────────────────────────────
-function shiftChart(canvasId, direction, step){
-  step = step || 1;
-  const ch = charts.find(c => c.canvas.id === canvasId);
-  if(!ch || !ch._fullLabels) return;
+// Per-chart zoom: stores current VIEW_DAYS for each chart
+const chartZoom = {}; // canvasId -> viewDays (default VIEW_DAYS)
+const ZOOM_STEPS = [46, 30, 21, 14, 7]; // zoom levels: 100%, 65%, 46%, 30%, 15%
 
-  const maxOffset = TOTAL_DAYS - VIEW_DAYS; // 46
-  const current   = chartOffsets[canvasId] || 0;
-  const next      = Math.max(0, Math.min(maxOffset, current + direction * step));
-  if(next === current) return;
-
-  chartOffsets[canvasId] = next;
-  ch.data.labels = ch._fullLabels.slice(next, next + VIEW_DAYS);
-  ch._fullDatasets.forEach((fullDs, i) => {
-    ch.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
-  });
-  ch.update('none');
-
-  updateNavLabel(canvasId, next);
+function getZoomIdx(canvasId){
+  const vd = chartZoom[canvasId] || VIEW_DAYS;
+  let best = 0;
+  for(let i=0;i<ZOOM_STEPS.length;i++) if(ZOOM_STEPS[i]===vd) best=i;
+  return best;
 }
 
-function updateNavLabel(canvasId, offset){
-  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
+function applyChartWindow(ch, canvasId, offset, viewDays){
+  const maxOffset = TOTAL_DAYS - viewDays;
+  const safeOffset = Math.max(0, Math.min(maxOffset, offset));
+  chartOffsets[canvasId] = safeOffset;
+  chartZoom[canvasId] = viewDays;
+  ch.data.labels = ch._fullLabels.slice(safeOffset, safeOffset + viewDays);
+  ch._fullDatasets.forEach((fullDs, i) => {
+    if(ch.data.datasets[i]) ch.data.datasets[i].data = fullDs.slice(safeOffset, safeOffset + viewDays);
+  });
+  ch.update('none');
+  updateNavLabel(canvasId, safeOffset, viewDays);
+  updateZoomLabel(canvasId, viewDays);
+}
+
+function shiftChart(canvasId, direction){
+  const ch = charts.find(c => c.canvas.id === canvasId);
+  if(!ch || !ch._fullLabels) return;
+  const viewDays  = chartZoom[canvasId] || VIEW_DAYS;
+  const maxOffset = TOTAL_DAYS - viewDays;
+  const current   = chartOffsets[canvasId] || 0;
+  const next      = Math.max(0, Math.min(maxOffset, current + direction * Math.max(1, Math.floor(viewDays/4))));
+  if(next === current) return;
+  applyChartWindow(ch, canvasId, next, viewDays);
+}
+
+function zoomChart(canvasId, direction){
+  const ch = charts.find(c => c.canvas.id === canvasId);
+  if(!ch || !ch._fullLabels) return;
+  const idx = getZoomIdx(canvasId);
+  const newIdx = Math.max(0, Math.min(ZOOM_STEPS.length-1, idx + direction));
+  if(newIdx === idx) return;
+  const newViewDays = ZOOM_STEPS[newIdx];
+  // Keep "today" (day 7 of full data) near the center when zooming
+  const currentOffset = chartOffsets[canvasId] || 0;
+  const currentCenter = currentOffset + (chartZoom[canvasId]||VIEW_DAYS)/2;
+  const newOffset = Math.round(currentCenter - newViewDays/2);
+  applyChartWindow(ch, canvasId, newOffset, newViewDays);
+}
+
+function updateNavLabel(canvasId, offset, viewDays){
+  viewDays = viewDays || chartZoom[canvasId] || VIEW_DAYS;
+  const maxOffset = TOTAL_DAYS - viewDays;
   const ch = charts.find(c => c.canvas.id === canvasId);
 
   const prevBtn = document.getElementById('nav-prev-'+canvasId);
@@ -1383,133 +1357,61 @@ function updateNavLabel(canvasId, offset){
 
   if(label && ch && ch._fullLabels){
     const from = ch._fullLabels[offset];
-    const to   = ch._fullLabels[Math.min(offset + VIEW_DAYS - 1, TOTAL_DAYS - 1)];
+    const to   = ch._fullLabels[Math.min(offset + viewDays - 1, TOTAL_DAYS - 1)];
     label.textContent = `${from} → ${to}`;
   }
 }
 
-// Touch/mouse drag + wheel to scroll charts
+function updateZoomLabel(canvasId, viewDays){
+  const pct = Math.round(ZOOM_STEPS[0] / viewDays * 100);
+  const el = document.getElementById('zoom-label-'+canvasId);
+  if(el) el.textContent = pct + '%';
+}
+
+// ── Touch swipe to scroll charts (Median/WebView compatible) ──
 function initChartTouch(canvasId){
-  const wrap = document.querySelector(`canvas#${canvasId}`)?.parentElement;
+  const canvas = document.getElementById(canvasId);
+  const wrap = canvas?.parentElement;
   if(!wrap) return;
 
-  // ── Mouse wheel: Ctrl+wheel = zoom, plain wheel = scroll ──
-  wrap.addEventListener('wheel', e => {
+  let t0x = 0, t0id = -1, dragging = false, accumulated = 0;
+
+  function onTouchStart(e){
+    if(e.touches.length !== 1) return;
+    t0x   = e.touches[0].clientX;
+    t0id  = e.touches[0].identifier;
+    dragging = true;
+    accumulated = 0;
+  }
+
+  function onTouchMove(e){
+    if(!dragging || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    if(t.identifier !== t0id) return;
+    const dx = t0x - t.clientX;
+    accumulated += dx;
+    t0x = t.clientX;
+
+    const viewDays = chartZoom[canvasId] || VIEW_DAYS;
+    // One step per ~24px of drag, proportional to zoom level
+    const threshold = Math.max(12, 24 * viewDays / ZOOM_STEPS[0]);
+    if(Math.abs(accumulated) >= threshold){
+      shiftChart(canvasId, accumulated > 0 ? 1 : -1);
+      accumulated = 0;
+    }
+    // Prevent page scroll while dragging chart
     e.preventDefault();
-    if(e.ctrlKey || e.metaKey){
-      // Zoom: accumulate scale on the canvas
-      const canvas = wrap.querySelector('canvas');
-      let zs = parseFloat(canvas.dataset.zoom || '1');
-      zs = Math.min(4, Math.max(0.5, zs * (e.deltaY < 0 ? 1.1 : 0.9)));
-      canvas.dataset.zoom = zs;
-      const rect = canvas.getBoundingClientRect();
-      const ox = e.clientX - rect.left;
-      const oy = e.clientY - rect.top;
-      canvas.style.transformOrigin = `${ox}px ${oy}px`;
-      canvas.style.transform = zs === 1 ? '' : `scale(${zs})`;
-    } else {
-      const dir = e.deltaX !== 0 ? Math.sign(e.deltaX) : Math.sign(e.deltaY);
-      shiftChart(canvasId, dir);
-    }
-  }, {passive:false});
+  }
 
-  // ── Pointer drag: scroll ──
-  let startX = null, moved = false, dragThreshold = 8;
+  function onTouchEnd(){
+    dragging = false;
+    accumulated = 0;
+  }
 
-  wrap.addEventListener('pointerdown', e => {
-    if(e.pointerType === 'touch') return;
-    wrap.setPointerCapture(e.pointerId);
-    startX = e.clientX;
-    moved  = false;
-  }, {passive:true});
-
-  wrap.addEventListener('pointermove', e => {
-    if(e.pointerType === 'touch' || startX === null) return;
-    const dx = startX - e.clientX;
-    if(Math.abs(dx) > dragThreshold){
-      shiftChart(canvasId, dx > 0 ? 1 : -1);
-      startX = e.clientX;
-      moved  = true;
-    }
-  }, {passive:true});
-
-  wrap.addEventListener('pointerup', e => {
-    if(moved) e.stopPropagation();
-    startX = null;
-  }, {passive:true});
-  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
-
-  // ── Touch: swipe + pinch zoom ──
-  const canvas = wrap.querySelector('canvas');
-  let touches = {};
-  let lastDist = null;
-  let zoomScale = 1;
-  let touchStartX = null;
-  let accDx = 0; // accumulate small swipes for smoother scroll
-
-  wrap.addEventListener('touchstart', e => {
-    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x:t.clientX, y:t.clientY}; });
-    const ids = Object.keys(touches);
-    if(ids.length === 1){
-      touchStartX = touches[ids[0]].x;
-      accDx = 0;
-    }
-    if(ids.length === 2){
-      touchStartX = null;
-      const t0 = touches[ids[0]], t1 = touches[ids[1]];
-      lastDist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
-    }
-  }, {passive:true});
-
-  wrap.addEventListener('touchmove', e => {
-    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x:t.clientX, y:t.clientY}; });
-    const ids = Object.keys(touches);
-
-    if(ids.length === 1 && touchStartX !== null){
-      const dx = touchStartX - touches[ids[0]].x;
-      accDx += dx;
-      // Shift every ~28px of movement for smooth scroll
-      if(Math.abs(accDx) > 28){
-        shiftChart(canvasId, accDx > 0 ? 1 : -1);
-        accDx = 0;
-      }
-      touchStartX = touches[ids[0]].x;
-    }
-
-    if(ids.length === 2 && lastDist !== null){
-      e.preventDefault();
-      const t0 = touches[ids[0]], t1 = touches[ids[1]];
-      const dist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
-      const ratio = dist / lastDist;
-      zoomScale = Math.min(4, Math.max(0.5, zoomScale * ratio));
-      const midX = (t0.x + t1.x) / 2;
-      const midY = (t0.y + t1.y) / 2;
-      const rect = canvas.getBoundingClientRect();
-      const ox = midX - rect.left;
-      const oy = midY - rect.top;
-      canvas.style.transformOrigin = `${ox}px ${oy}px`;
-      canvas.style.transform = `scale(${zoomScale})`;
-      lastDist = dist;
-    }
-  }, {passive:false});
-
-  wrap.addEventListener('touchend', e => {
-    Array.from(e.changedTouches).forEach(t => { delete touches[t.identifier]; });
-    if(Object.keys(touches).length < 2){ lastDist = null; }
-    if(Object.keys(touches).length === 0){ touchStartX = null; accDx = 0; }
-  }, {passive:true});
-
-  // Reset zoom on double-tap
-  let lastTap = 0;
-  wrap.addEventListener('touchend', e => {
-    const now = Date.now();
-    if(now - lastTap < 300){
-      zoomScale = 1;
-      canvas.style.transform = '';
-      canvas.style.transformOrigin = '';
-    }
-    lastTap = now;
-  }, {passive:true});
+  wrap.addEventListener('touchstart',  onTouchStart,  {passive:true});
+  wrap.addEventListener('touchmove',   onTouchMove,   {passive:false});
+  wrap.addEventListener('touchend',    onTouchEnd,    {passive:true});
+  wrap.addEventListener('touchcancel', onTouchEnd,    {passive:true});
 }
 
 // ── Gestión de perfiles compartidos ─────────────────────────
@@ -1552,7 +1454,7 @@ function loadProfile(slot, key){
   const p = profiles[key];
   if(!p) return;
   document.getElementById('n'+slot).value = p.name;
-  loadPickerFromString('d'+slot, p.date);
+  document.getElementById('d'+slot).value = p.date;
   try {
     localStorage.setItem('bio_n'+slot, p.name);
     localStorage.setItem('bio_d'+slot, p.date);
@@ -1585,18 +1487,11 @@ function showToast(slot, msg, isErr){
 
 // ── Limpiar ──────────────────────────────────────────────────
 function limpiar(){
-  ['n1','n2'].forEach(id => {
+  FIELDS.forEach(id => {
     document.getElementById(id).value = '';
     try { localStorage.removeItem('bio_'+id); } catch(e){}
   });
-  ['d1','d2','dq'].forEach(id => {
-    document.getElementById(id+'-day').value   = '';
-    document.getElementById(id+'-month').value = '';
-    document.getElementById(id+'-year').value  = '';
-    document.getElementById(id).value = '';
-    try { localStorage.removeItem('bio_'+id); } catch(e){}
-    setErr(id, false);
-  });
+  ['d1','d2','dq'].forEach(id => setErr(id, false));
   charts.forEach(ch => ch.destroy()); charts = [];
   document.getElementById('results').style.display = 'none';
   document.getElementById('card-p1').style.borderColor = '';
@@ -1666,9 +1561,11 @@ function openChartModal(canvasId){
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const ctx = document.getElementById('chart-modal-canvas').getContext('2d');
-      // Sync offset from source chart
+      // Sync offset AND zoom from source chart
       const srcOffset = chartOffsets[canvasId] || 0;
+      const srcViewDays = chartZoom[canvasId] || VIEW_DAYS;
       chartOffsets['chart-modal-canvas'] = srcOffset;
+      chartZoom['chart-modal-canvas'] = srcViewDays;
       modalChart = new Chart(ctx, {
         type: 'line',
         plugins: [todayLinePlugin('chart-modal-canvas')],
@@ -1682,55 +1579,96 @@ function openChartModal(canvasId){
       modalChart._fullLabels   = srcChart._fullLabels;
       modalChart._fullDatasets = srcChart._fullDatasets;
       // Update modal nav buttons/label
-      updateModalNavLabel(srcOffset);
+      updateModalNavLabel(srcOffset, srcViewDays);
       // Init touch on modal canvas wrap
       initModalTouch();
     });
   });
 }
 
-function shiftModalChart(direction, step){
-  step = step || 1;
+function shiftModalChart(direction){
   if(!modalChart || !modalChart._fullLabels) return;
-  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
+  const viewDays  = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
+  const maxOffset = TOTAL_DAYS - viewDays;
   const current   = chartOffsets['chart-modal-canvas'] || 0;
-  const next      = Math.max(0, Math.min(maxOffset, current + direction * step));
+  const next      = Math.max(0, Math.min(maxOffset, current + direction * Math.max(1, Math.floor(viewDays/4))));
   if(next === current) return;
 
   chartOffsets['chart-modal-canvas'] = next;
-  modalChart.data.labels = modalChart._fullLabels.slice(next, next + VIEW_DAYS);
+  modalChart.data.labels = modalChart._fullLabels.slice(next, next + viewDays);
   modalChart._fullDatasets.forEach((fullDs, i) => {
     if(modalChart.data.datasets[i])
-      modalChart.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
+      modalChart.data.datasets[i].data = fullDs.slice(next, next + viewDays);
   });
   modalChart.update('none');
-  updateModalNavLabel(next);
+  updateModalNavLabel(next, viewDays);
 
-  // Sync back to the source chart so they stay in step
+  // Sync back to source chart
   if(modalSourceCanvasId){
     const srcChart = charts.find(c => c.canvas.id === modalSourceCanvasId);
     if(srcChart){
       chartOffsets[modalSourceCanvasId] = next;
-      srcChart.data.labels = modalChart._fullLabels.slice(next, next + VIEW_DAYS);
+      chartZoom[modalSourceCanvasId] = viewDays;
+      srcChart.data.labels = modalChart._fullLabels.slice(next, next + viewDays);
       srcChart._fullDatasets.forEach((fullDs, i) => {
         if(srcChart.data.datasets[i])
-          srcChart.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
+          srcChart.data.datasets[i].data = fullDs.slice(next, next + viewDays);
       });
       srcChart.update('none');
-      updateNavLabel(modalSourceCanvasId, next);
+      updateNavLabel(modalSourceCanvasId, next, viewDays);
+      updateZoomLabel(modalSourceCanvasId, viewDays);
     }
   }
 }
 
-function updateModalNavLabel(offset){
-  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
+function zoomModalChart(direction){
+  if(!modalChart || !modalChart._fullLabels) return;
+  const idx = (() => {
+    const vd = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
+    let best = 0;
+    for(let i=0;i<ZOOM_STEPS.length;i++) if(ZOOM_STEPS[i]===vd) best=i;
+    return best;
+  })();
+  const newIdx = Math.max(0, Math.min(ZOOM_STEPS.length-1, idx + direction));
+  if(newIdx === idx) return;
+  const newViewDays = ZOOM_STEPS[newIdx];
+  const currentOffset = chartOffsets['chart-modal-canvas'] || 0;
+  const currentVD = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
+  const currentCenter = currentOffset + currentVD / 2;
+  const newOffset = Math.max(0, Math.min(TOTAL_DAYS - newViewDays, Math.round(currentCenter - newViewDays/2)));
+
+  chartOffsets['chart-modal-canvas'] = newOffset;
+  chartZoom['chart-modal-canvas'] = newViewDays;
+  modalChart.data.labels = modalChart._fullLabels.slice(newOffset, newOffset + newViewDays);
+  modalChart._fullDatasets.forEach((fullDs, i) => {
+    if(modalChart.data.datasets[i])
+      modalChart.data.datasets[i].data = fullDs.slice(newOffset, newOffset + newViewDays);
+  });
+  modalChart.update('none');
+  updateModalNavLabel(newOffset, newViewDays);
+
+  // Sync back to source chart
+  if(modalSourceCanvasId){
+    const srcChart = charts.find(c => c.canvas.id === modalSourceCanvasId);
+    if(srcChart){
+      applyChartWindow(srcChart, modalSourceCanvasId, newOffset, newViewDays);
+    }
+  }
+}
+
+function updateModalNavLabel(offset, viewDays){
+  viewDays = viewDays || chartZoom['chart-modal-canvas'] || VIEW_DAYS;
+  const maxOffset = TOTAL_DAYS - viewDays;
   document.getElementById('modal-nav-prev').disabled = (offset <= 0);
   document.getElementById('modal-nav-next').disabled = (offset >= maxOffset);
   if(modalChart && modalChart._fullLabels){
     const from = modalChart._fullLabels[offset];
-    const to   = modalChart._fullLabels[Math.min(offset + VIEW_DAYS - 1, TOTAL_DAYS - 1)];
+    const to   = modalChart._fullLabels[Math.min(offset + viewDays - 1, TOTAL_DAYS - 1)];
     document.getElementById('modal-nav-label').textContent = `${from} → ${to}`;
   }
+  const pct = Math.round(ZOOM_STEPS[0] / viewDays * 100);
+  const zlabel = document.getElementById('modal-zoom-label');
+  if(zlabel) zlabel.textContent = pct + '%';
 }
 
 let _modalTouchInit = false;
@@ -1738,114 +1676,43 @@ function initModalTouch(){
   if(_modalTouchInit) return;
   _modalTouchInit = true;
   const wrap = document.getElementById('chart-modal-canvas-wrap');
-  const canvas = document.getElementById('chart-modal-canvas');
 
-  // ── Mouse wheel scroll + Ctrl+wheel zoom ──
-  wrap.addEventListener('wheel', e => {
+  let t0x = 0, t0id = -1, dragging = false, accumulated = 0;
+
+  function onTouchStart(e){
+    if(e.touches.length !== 1) return;
+    t0x  = e.touches[0].clientX;
+    t0id = e.touches[0].identifier;
+    dragging = true;
+    accumulated = 0;
+  }
+
+  function onTouchMove(e){
+    if(!dragging || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    if(t.identifier !== t0id) return;
+    const dx = t0x - t.clientX;
+    accumulated += dx;
+    t0x = t.clientX;
+
+    const viewDays = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
+    const threshold = Math.max(12, 24 * viewDays / ZOOM_STEPS[0]);
+    if(Math.abs(accumulated) >= threshold){
+      shiftModalChart(accumulated > 0 ? 1 : -1);
+      accumulated = 0;
+    }
     e.preventDefault();
-    if(e.ctrlKey || e.metaKey){
-      let zs = parseFloat(canvas.dataset.zoom || '1');
-      zs = Math.min(4, Math.max(0.5, zs * (e.deltaY < 0 ? 1.1 : 0.9)));
-      canvas.dataset.zoom = zs;
-      const rect = canvas.getBoundingClientRect();
-      const ox = e.clientX - rect.left;
-      const oy = e.clientY - rect.top;
-      canvas.style.transformOrigin = `${ox}px ${oy}px`;
-      canvas.style.transform = zs === 1 ? '' : `scale(${zs})`;
-    } else {
-      const dir = e.deltaX !== 0 ? Math.sign(e.deltaX) : Math.sign(e.deltaY);
-      shiftModalChart(dir);
-    }
-  }, {passive:false});
+  }
 
-  // ── Pointer drag (mouse/stylus) ──
-  let startX = null, moved = false;
-  wrap.addEventListener('pointerdown', e => {
-    if(e.pointerType === 'touch') return;
-    wrap.setPointerCapture(e.pointerId);
-    startX = e.clientX; moved = false;
-  }, {passive:true});
-  wrap.addEventListener('pointermove', e => {
-    if(startX === null || e.pointerType === 'touch') return;
-    const dx = startX - e.clientX;
-    if(Math.abs(dx) > 8){
-      shiftModalChart(dx > 0 ? 1 : -1);
-      startX = e.clientX;
-      moved = true;
-    }
-  }, {passive:true});
-  wrap.addEventListener('pointerup',     () => { startX = null; }, {passive:true});
-  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
+  function onTouchEnd(){
+    dragging = false;
+    accumulated = 0;
+  }
 
-  // ── Touch: swipe + pinch zoom ──
-  let touches = {};
-  let lastDist = null;
-  let zoomScale = 1;
-  let touchStartX = null;
-  let accDx = 0;
-
-  wrap.addEventListener('touchstart', e => {
-    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
-    const ids = Object.keys(touches);
-    if(ids.length === 1){
-      touchStartX = touches[ids[0]].x;
-      accDx = 0;
-    }
-    if(ids.length === 2){
-      touchStartX = null;
-      const t0 = touches[ids[0]], t1 = touches[ids[1]];
-      lastDist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
-    }
-  }, {passive:true});
-
-  wrap.addEventListener('touchmove', e => {
-    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
-    const ids = Object.keys(touches);
-
-    if(ids.length === 1 && touchStartX !== null){
-      const dx = touchStartX - touches[ids[0]].x;
-      accDx += dx;
-      if(Math.abs(accDx) > 28){
-        shiftModalChart(accDx > 0 ? 1 : -1);
-        accDx = 0;
-      }
-      touchStartX = touches[ids[0]].x;
-    }
-
-    if(ids.length === 2 && lastDist !== null){
-      e.preventDefault();
-      const t0 = touches[ids[0]], t1 = touches[ids[1]];
-      const dist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
-      const ratio = dist / lastDist;
-      zoomScale = Math.min(4, Math.max(0.5, zoomScale * ratio));
-      const midX = (t0.x + t1.x) / 2;
-      const midY = (t0.y + t1.y) / 2;
-      const rect = canvas.getBoundingClientRect();
-      const ox = midX - rect.left;
-      const oy = midY - rect.top;
-      canvas.style.transformOrigin = `${ox}px ${oy}px`;
-      canvas.style.transform = `scale(${zoomScale})`;
-      lastDist = dist;
-    }
-  }, {passive:false});
-
-  wrap.addEventListener('touchend', e => {
-    Array.from(e.changedTouches).forEach(t => { delete touches[t.identifier]; });
-    if(Object.keys(touches).length < 2){ lastDist = null; }
-    if(Object.keys(touches).length === 0){ touchStartX = null; accDx = 0; }
-  }, {passive:true});
-
-  // Reset zoom on double-tap
-  let lastTap = 0;
-  wrap.addEventListener('touchend', e => {
-    const now = Date.now();
-    if(now - lastTap < 300){
-      zoomScale = 1;
-      canvas.style.transform = '';
-      canvas.style.transformOrigin = '';
-    }
-    lastTap = now;
-  }, {passive:true});
+  wrap.addEventListener('touchstart',  onTouchStart,  {passive:true});
+  wrap.addEventListener('touchmove',   onTouchMove,   {passive:false});
+  wrap.addEventListener('touchend',    onTouchEnd,    {passive:true});
+  wrap.addEventListener('touchcancel', onTouchEnd,    {passive:true});
 }
 
 function closeChartModal(){
@@ -1858,11 +1725,8 @@ function closeChartModal(){
   document.body.style.top = '';
   document.body.style.width = '';
   window.scrollTo(0, scrollY);
-  // Resetear zoom del canvas modal
-  const mc = document.getElementById('chart-modal-canvas');
-  if(mc){ mc.style.transform = ''; mc.style.transformOrigin = ''; mc.dataset.zoom = '1'; }
   if(modalChart){ modalChart.destroy(); modalChart = null; }
-  _modalTouchInit = false; // reinit next time so zoom resets
+  _modalTouchInit = false;
 }
 
 // Cerrar con tecla Escape
