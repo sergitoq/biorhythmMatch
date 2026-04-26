@@ -394,32 +394,13 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
 
 /* ─── Touch-action fixes para Median / WebView ─── */
 html, body { touch-action: pan-y; -webkit-overflow-scrolling: touch; }
-canvas { touch-action: none; }
-.chart-wrap { touch-action: none; overflow: hidden; }
-#chart-modal-canvas-wrap { touch-action: none; overflow: hidden; }
+canvas { touch-action: pan-y; }
+.chart-wrap { touch-action: pan-y; }
+#chart-modal-canvas-wrap { touch-action: pan-x pinch-zoom; }
 
-/* Modal: bloquear scroll del body */
-#chart-modal { touch-action: none; }
-#chart-modal-inner { touch-action: none; }
-
-/* Zoom buttons */
-.zoom-bar {
-  display:flex; align-items:center; justify-content:flex-end;
-  gap:6px; margin-top:5px;
-}
-.zoom-btn {
-  background:rgba(255,255,255,0.06);
-  border:0.5px solid var(--border);
-  color:var(--muted2);
-  padding:3px 11px; font-size:16px; line-height:1;
-  border-radius:var(--radius-xs);
-  cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600;
-  transition:background 0.15s,color 0.15s;
-}
-.zoom-btn:hover{background:rgba(255,255,255,0.12);color:var(--text);box-shadow:none}
-.zoom-label {
-  font-size:10.5px; color:var(--muted); min-width:36px; text-align:center;
-}
+/* Modal: permitir scroll Y y zoom dentro */
+#chart-modal { touch-action: manipulation; }
+#chart-modal-inner { touch-action: manipulation; }
 </style>
 </head>
 <body>
@@ -487,7 +468,7 @@ canvas { touch-action: none; }
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric"/>
+        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10"/>
         <div class="hint">DD/MM/AAAA</div>
         <div class="err" id="err-d1">Fecha inválida</div>
       </div>
@@ -512,7 +493,7 @@ canvas { touch-action: none; }
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric"/>
+        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10"/>
         <div class="hint">DD/MM/AAAA</div>
         <div class="err" id="err-d2">Fecha inválida</div>
       </div>
@@ -526,7 +507,7 @@ canvas { touch-action: none; }
   <div class="date-row">
     <div class="field">
       <label>Fecha a calcular</label>
-      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric"/>
+      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10"/>
       <div class="hint">DD/MM/AAAA</div>
       <div class="err" id="err-dq">Fecha inválida</div>
     </div>
@@ -576,7 +557,7 @@ canvas { touch-action: none; }
 
   <!-- Gráficos -->
   <div class="card">
-    <div class="card-title">Curvas comparativas — 92 días <span style="font-size:9px;color:var(--muted);font-weight:400;letter-spacing:0.05em">· deslizá para navegar · ± para zoom</span></div>
+    <div class="card-title">Curvas comparativas — 92 días <span style="font-size:9px;color:var(--muted);font-weight:400;letter-spacing:0.05em">· scroll horizontal para navegar</span></div>
 
     <!-- Físico -->
     <div class="chart-section">
@@ -592,11 +573,6 @@ canvas { touch-action: none; }
           <button class="chart-nav-btn btn-sm" id="nav-next-cf" onclick="shiftChart('cf', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-cf"></span>
-        <div class="zoom-bar">
-          <button class="zoom-btn" onclick="zoomChart('cf',-1)">−</button>
-          <span class="zoom-label" id="zoom-label-cf">100%</span>
-          <button class="zoom-btn" onclick="zoomChart('cf', 1)">+</button>
-        </div>
       </div>
     </div>
     <hr class="divider">
@@ -615,11 +591,6 @@ canvas { touch-action: none; }
           <button class="chart-nav-btn btn-sm" id="nav-next-ce" onclick="shiftChart('ce', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-ce"></span>
-        <div class="zoom-bar">
-          <button class="zoom-btn" onclick="zoomChart('ce',-1)">−</button>
-          <span class="zoom-label" id="zoom-label-ce">100%</span>
-          <button class="zoom-btn" onclick="zoomChart('ce', 1)">+</button>
-        </div>
       </div>
     </div>
     <hr class="divider">
@@ -638,11 +609,6 @@ canvas { touch-action: none; }
           <button class="chart-nav-btn btn-sm" id="nav-next-ci" onclick="shiftChart('ci', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-ci"></span>
-        <div class="zoom-bar">
-          <button class="zoom-btn" onclick="zoomChart('ci',-1)">−</button>
-          <span class="zoom-label" id="zoom-label-ci">100%</span>
-          <button class="zoom-btn" onclick="zoomChart('ci', 1)">+</button>
-        </div>
       </div>
     </div>
     <hr class="divider">
@@ -661,11 +627,6 @@ canvas { touch-action: none; }
           <button class="chart-nav-btn btn-sm" id="nav-next-cp" onclick="shiftChart('cp', 1)">→</button>
         </div>
         <span class="chart-nav-label" id="nav-label-cp"></span>
-        <div class="zoom-bar">
-          <button class="zoom-btn" onclick="zoomChart('cp',-1)">−</button>
-          <span class="zoom-label" id="zoom-label-cp">100%</span>
-          <button class="zoom-btn" onclick="zoomChart('cp', 1)">+</button>
-        </div>
       </div>
     </div>
   </div>
@@ -692,11 +653,6 @@ canvas { touch-action: none; }
         <button class="chart-nav-btn btn-sm" id="modal-nav-next" onclick="shiftModalChart(1)">→</button>
       </div>
       <span class="chart-nav-label" id="modal-nav-label"></span>
-      <div class="zoom-bar">
-        <button class="zoom-btn" onclick="zoomModalChart(-1)">−</button>
-        <span class="zoom-label" id="modal-zoom-label">100%</span>
-        <button class="zoom-btn" onclick="zoomModalChart(1)">+</button>
-      </div>
     </div>
   </div>
 </div>
@@ -910,7 +866,6 @@ function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
   const allDs2    = makeSeriesData(d2, dq, cycle);
 
   chartOffsets[canvasId] = 0;
-  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
   const ds2    = allDs2.slice(0, VIEW_DAYS);
@@ -931,8 +886,7 @@ function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1, allDs2];
   charts.push(ch);
-  updateNavLabel(canvasId, 0, VIEW_DAYS);
-  updateZoomLabel(canvasId, VIEW_DAYS);
+  updateNavLabel(canvasId, 0);
   initChartTouch(canvasId);
 }
 
@@ -944,7 +898,6 @@ function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
   const allDs3    = makeCombinedPassionData(d1, d2, dq);
 
   chartOffsets[canvasId] = 0;
-  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
   const ds2    = allDs2.slice(0, VIEW_DAYS);
@@ -966,8 +919,7 @@ function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1, allDs2, allDs3];
   charts.push(ch);
-  updateNavLabel(canvasId, 0, VIEW_DAYS);
-  updateZoomLabel(canvasId, VIEW_DAYS);
+  updateNavLabel(canvasId, 0);
   initChartTouch(canvasId);
 }
 
@@ -1239,7 +1191,6 @@ function mkChartSolo(canvasId, d1, dq, cycle, c1){
   const allDs1    = makeSeriesData(d1, dq, cycle);
 
   chartOffsets[canvasId] = 0;
-  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
 
@@ -1258,8 +1209,7 @@ function mkChartSolo(canvasId, d1, dq, cycle, c1){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1, Array(TOTAL_DAYS).fill(null)];
   charts.push(ch);
-  updateNavLabel(canvasId, 0, VIEW_DAYS);
-  updateZoomLabel(canvasId, VIEW_DAYS);
+  updateNavLabel(canvasId, 0);
   initChartTouch(canvasId);
 }
 
@@ -1269,7 +1219,6 @@ function mkPassionChartSolo(canvasId, d1, dq, c1){
   const allDs1    = makePassionData(d1, dq);
 
   chartOffsets[canvasId] = 0;
-  chartZoom[canvasId] = VIEW_DAYS;
   const labels = allLabels.slice(0, VIEW_DAYS);
   const ds1    = allDs1.slice(0, VIEW_DAYS);
 
@@ -1287,65 +1236,32 @@ function mkPassionChartSolo(canvasId, d1, dq, c1){
   ch._fullLabels = allLabels;
   ch._fullDatasets = [allDs1];
   charts.push(ch);
-  updateNavLabel(canvasId, 0, VIEW_DAYS);
-  updateZoomLabel(canvasId, VIEW_DAYS);
+  updateNavLabel(canvasId, 0);
   initChartTouch(canvasId);
 }
 
 // ── Chart windowed navigation ─────────────────────────────────
-// Per-chart zoom: stores current VIEW_DAYS for each chart
-const chartZoom = {}; // canvasId -> viewDays (default VIEW_DAYS)
-const ZOOM_STEPS = [46, 30, 21, 14, 7]; // zoom levels: 100%, 65%, 46%, 30%, 15%
-
-function getZoomIdx(canvasId){
-  const vd = chartZoom[canvasId] || VIEW_DAYS;
-  let best = 0;
-  for(let i=0;i<ZOOM_STEPS.length;i++) if(ZOOM_STEPS[i]===vd) best=i;
-  return best;
-}
-
-function applyChartWindow(ch, canvasId, offset, viewDays){
-  const maxOffset = TOTAL_DAYS - viewDays;
-  const safeOffset = Math.max(0, Math.min(maxOffset, offset));
-  chartOffsets[canvasId] = safeOffset;
-  chartZoom[canvasId] = viewDays;
-  ch.data.labels = ch._fullLabels.slice(safeOffset, safeOffset + viewDays);
-  ch._fullDatasets.forEach((fullDs, i) => {
-    if(ch.data.datasets[i]) ch.data.datasets[i].data = fullDs.slice(safeOffset, safeOffset + viewDays);
-  });
-  ch.update('none');
-  updateNavLabel(canvasId, safeOffset, viewDays);
-  updateZoomLabel(canvasId, viewDays);
-}
-
 function shiftChart(canvasId, direction){
   const ch = charts.find(c => c.canvas.id === canvasId);
   if(!ch || !ch._fullLabels) return;
-  const viewDays  = chartZoom[canvasId] || VIEW_DAYS;
-  const maxOffset = TOTAL_DAYS - viewDays;
+
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS; // 46
   const current   = chartOffsets[canvasId] || 0;
-  const next      = Math.max(0, Math.min(maxOffset, current + direction * Math.max(1, Math.floor(viewDays/4))));
+  const next      = Math.max(0, Math.min(maxOffset, current + direction * 7));
   if(next === current) return;
-  applyChartWindow(ch, canvasId, next, viewDays);
+
+  chartOffsets[canvasId] = next;
+  ch.data.labels = ch._fullLabels.slice(next, next + VIEW_DAYS);
+  ch._fullDatasets.forEach((fullDs, i) => {
+    ch.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
+  });
+  ch.update('none');
+
+  updateNavLabel(canvasId, next);
 }
 
-function zoomChart(canvasId, direction){
-  const ch = charts.find(c => c.canvas.id === canvasId);
-  if(!ch || !ch._fullLabels) return;
-  const idx = getZoomIdx(canvasId);
-  const newIdx = Math.max(0, Math.min(ZOOM_STEPS.length-1, idx + direction));
-  if(newIdx === idx) return;
-  const newViewDays = ZOOM_STEPS[newIdx];
-  // Keep "today" (day 7 of full data) near the center when zooming
-  const currentOffset = chartOffsets[canvasId] || 0;
-  const currentCenter = currentOffset + (chartZoom[canvasId]||VIEW_DAYS)/2;
-  const newOffset = Math.round(currentCenter - newViewDays/2);
-  applyChartWindow(ch, canvasId, newOffset, newViewDays);
-}
-
-function updateNavLabel(canvasId, offset, viewDays){
-  viewDays = viewDays || chartZoom[canvasId] || VIEW_DAYS;
-  const maxOffset = TOTAL_DAYS - viewDays;
+function updateNavLabel(canvasId, offset){
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
   const ch = charts.find(c => c.canvas.id === canvasId);
 
   const prevBtn = document.getElementById('nav-prev-'+canvasId);
@@ -1357,61 +1273,39 @@ function updateNavLabel(canvasId, offset, viewDays){
 
   if(label && ch && ch._fullLabels){
     const from = ch._fullLabels[offset];
-    const to   = ch._fullLabels[Math.min(offset + viewDays - 1, TOTAL_DAYS - 1)];
+    const to   = ch._fullLabels[Math.min(offset + VIEW_DAYS - 1, TOTAL_DAYS - 1)];
     label.textContent = `${from} → ${to}`;
   }
 }
 
-function updateZoomLabel(canvasId, viewDays){
-  const pct = Math.round(ZOOM_STEPS[0] / viewDays * 100);
-  const el = document.getElementById('zoom-label-'+canvasId);
-  if(el) el.textContent = pct + '%';
-}
-
-// ── Touch swipe to scroll charts (Median/WebView compatible) ──
+// Touch/mouse drag to scroll charts
 function initChartTouch(canvasId){
-  const canvas = document.getElementById(canvasId);
-  const wrap = canvas?.parentElement;
+  const wrap = document.querySelector(`canvas#${canvasId}`)?.parentElement;
   if(!wrap) return;
 
-  let t0x = 0, t0id = -1, dragging = false, accumulated = 0;
+  let startX = null, moved = false;
 
-  function onTouchStart(e){
-    if(e.touches.length !== 1) return;
-    t0x   = e.touches[0].clientX;
-    t0id  = e.touches[0].identifier;
-    dragging = true;
-    accumulated = 0;
-  }
+  wrap.addEventListener('pointerdown', e => {
+    startX = e.clientX;
+    moved  = false;
+  }, {passive:true});
 
-  function onTouchMove(e){
-    if(!dragging || e.touches.length !== 1) return;
-    const t = e.touches[0];
-    if(t.identifier !== t0id) return;
-    const dx = t0x - t.clientX;
-    accumulated += dx;
-    t0x = t.clientX;
-
-    const viewDays = chartZoom[canvasId] || VIEW_DAYS;
-    // One step per ~24px of drag, proportional to zoom level
-    const threshold = Math.max(12, 24 * viewDays / ZOOM_STEPS[0]);
-    if(Math.abs(accumulated) >= threshold){
-      shiftChart(canvasId, accumulated > 0 ? 1 : -1);
-      accumulated = 0;
+  wrap.addEventListener('pointermove', e => {
+    if(startX === null) return;
+    const dx = startX - e.clientX;
+    if(Math.abs(dx) > 30){
+      shiftChart(canvasId, dx > 0 ? 1 : -1);
+      startX = e.clientX;
+      moved  = true;
     }
-    // Prevent page scroll while dragging chart
-    e.preventDefault();
-  }
+  }, {passive:true});
 
-  function onTouchEnd(){
-    dragging = false;
-    accumulated = 0;
-  }
+  wrap.addEventListener('pointerup', e => {
+    if(moved) e.stopPropagation();
+    startX = null;
+  }, {passive:true});
 
-  wrap.addEventListener('touchstart',  onTouchStart,  {passive:true});
-  wrap.addEventListener('touchmove',   onTouchMove,   {passive:false});
-  wrap.addEventListener('touchend',    onTouchEnd,    {passive:true});
-  wrap.addEventListener('touchcancel', onTouchEnd,    {passive:true});
+  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
 }
 
 // ── Gestión de perfiles compartidos ─────────────────────────
@@ -1561,11 +1455,9 @@ function openChartModal(canvasId){
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const ctx = document.getElementById('chart-modal-canvas').getContext('2d');
-      // Sync offset AND zoom from source chart
+      // Sync offset from source chart
       const srcOffset = chartOffsets[canvasId] || 0;
-      const srcViewDays = chartZoom[canvasId] || VIEW_DAYS;
       chartOffsets['chart-modal-canvas'] = srcOffset;
-      chartZoom['chart-modal-canvas'] = srcViewDays;
       modalChart = new Chart(ctx, {
         type: 'line',
         plugins: [todayLinePlugin('chart-modal-canvas')],
@@ -1579,7 +1471,7 @@ function openChartModal(canvasId){
       modalChart._fullLabels   = srcChart._fullLabels;
       modalChart._fullDatasets = srcChart._fullDatasets;
       // Update modal nav buttons/label
-      updateModalNavLabel(srcOffset, srcViewDays);
+      updateModalNavLabel(srcOffset);
       // Init touch on modal canvas wrap
       initModalTouch();
     });
@@ -1588,87 +1480,45 @@ function openChartModal(canvasId){
 
 function shiftModalChart(direction){
   if(!modalChart || !modalChart._fullLabels) return;
-  const viewDays  = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
-  const maxOffset = TOTAL_DAYS - viewDays;
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
   const current   = chartOffsets['chart-modal-canvas'] || 0;
-  const next      = Math.max(0, Math.min(maxOffset, current + direction * Math.max(1, Math.floor(viewDays/4))));
+  const next      = Math.max(0, Math.min(maxOffset, current + direction * 7));
   if(next === current) return;
 
   chartOffsets['chart-modal-canvas'] = next;
-  modalChart.data.labels = modalChart._fullLabels.slice(next, next + viewDays);
+  modalChart.data.labels = modalChart._fullLabels.slice(next, next + VIEW_DAYS);
   modalChart._fullDatasets.forEach((fullDs, i) => {
     if(modalChart.data.datasets[i])
-      modalChart.data.datasets[i].data = fullDs.slice(next, next + viewDays);
+      modalChart.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
   });
   modalChart.update('none');
-  updateModalNavLabel(next, viewDays);
+  updateModalNavLabel(next);
 
-  // Sync back to source chart
+  // Sync back to the source chart so they stay in step
   if(modalSourceCanvasId){
     const srcChart = charts.find(c => c.canvas.id === modalSourceCanvasId);
     if(srcChart){
       chartOffsets[modalSourceCanvasId] = next;
-      chartZoom[modalSourceCanvasId] = viewDays;
-      srcChart.data.labels = modalChart._fullLabels.slice(next, next + viewDays);
+      srcChart.data.labels = modalChart._fullLabels.slice(next, next + VIEW_DAYS);
       srcChart._fullDatasets.forEach((fullDs, i) => {
         if(srcChart.data.datasets[i])
-          srcChart.data.datasets[i].data = fullDs.slice(next, next + viewDays);
+          srcChart.data.datasets[i].data = fullDs.slice(next, next + VIEW_DAYS);
       });
       srcChart.update('none');
-      updateNavLabel(modalSourceCanvasId, next, viewDays);
-      updateZoomLabel(modalSourceCanvasId, viewDays);
+      updateNavLabel(modalSourceCanvasId, next);
     }
   }
 }
 
-function zoomModalChart(direction){
-  if(!modalChart || !modalChart._fullLabels) return;
-  const idx = (() => {
-    const vd = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
-    let best = 0;
-    for(let i=0;i<ZOOM_STEPS.length;i++) if(ZOOM_STEPS[i]===vd) best=i;
-    return best;
-  })();
-  const newIdx = Math.max(0, Math.min(ZOOM_STEPS.length-1, idx + direction));
-  if(newIdx === idx) return;
-  const newViewDays = ZOOM_STEPS[newIdx];
-  const currentOffset = chartOffsets['chart-modal-canvas'] || 0;
-  const currentVD = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
-  const currentCenter = currentOffset + currentVD / 2;
-  const newOffset = Math.max(0, Math.min(TOTAL_DAYS - newViewDays, Math.round(currentCenter - newViewDays/2)));
-
-  chartOffsets['chart-modal-canvas'] = newOffset;
-  chartZoom['chart-modal-canvas'] = newViewDays;
-  modalChart.data.labels = modalChart._fullLabels.slice(newOffset, newOffset + newViewDays);
-  modalChart._fullDatasets.forEach((fullDs, i) => {
-    if(modalChart.data.datasets[i])
-      modalChart.data.datasets[i].data = fullDs.slice(newOffset, newOffset + newViewDays);
-  });
-  modalChart.update('none');
-  updateModalNavLabel(newOffset, newViewDays);
-
-  // Sync back to source chart
-  if(modalSourceCanvasId){
-    const srcChart = charts.find(c => c.canvas.id === modalSourceCanvasId);
-    if(srcChart){
-      applyChartWindow(srcChart, modalSourceCanvasId, newOffset, newViewDays);
-    }
-  }
-}
-
-function updateModalNavLabel(offset, viewDays){
-  viewDays = viewDays || chartZoom['chart-modal-canvas'] || VIEW_DAYS;
-  const maxOffset = TOTAL_DAYS - viewDays;
+function updateModalNavLabel(offset){
+  const maxOffset = TOTAL_DAYS - VIEW_DAYS;
   document.getElementById('modal-nav-prev').disabled = (offset <= 0);
   document.getElementById('modal-nav-next').disabled = (offset >= maxOffset);
   if(modalChart && modalChart._fullLabels){
     const from = modalChart._fullLabels[offset];
-    const to   = modalChart._fullLabels[Math.min(offset + viewDays - 1, TOTAL_DAYS - 1)];
+    const to   = modalChart._fullLabels[Math.min(offset + VIEW_DAYS - 1, TOTAL_DAYS - 1)];
     document.getElementById('modal-nav-label').textContent = `${from} → ${to}`;
   }
-  const pct = Math.round(ZOOM_STEPS[0] / viewDays * 100);
-  const zlabel = document.getElementById('modal-zoom-label');
-  if(zlabel) zlabel.textContent = pct + '%';
 }
 
 let _modalTouchInit = false;
@@ -1676,43 +1526,86 @@ function initModalTouch(){
   if(_modalTouchInit) return;
   _modalTouchInit = true;
   const wrap = document.getElementById('chart-modal-canvas-wrap');
+  const canvas = document.getElementById('chart-modal-canvas');
 
-  let t0x = 0, t0id = -1, dragging = false, accumulated = 0;
-
-  function onTouchStart(e){
-    if(e.touches.length !== 1) return;
-    t0x  = e.touches[0].clientX;
-    t0id = e.touches[0].identifier;
-    dragging = true;
-    accumulated = 0;
-  }
-
-  function onTouchMove(e){
-    if(!dragging || e.touches.length !== 1) return;
-    const t = e.touches[0];
-    if(t.identifier !== t0id) return;
-    const dx = t0x - t.clientX;
-    accumulated += dx;
-    t0x = t.clientX;
-
-    const viewDays = chartZoom['chart-modal-canvas'] || VIEW_DAYS;
-    const threshold = Math.max(12, 24 * viewDays / ZOOM_STEPS[0]);
-    if(Math.abs(accumulated) >= threshold){
-      shiftModalChart(accumulated > 0 ? 1 : -1);
-      accumulated = 0;
+  // ── Swipe horizontal para navegar ──
+  let startX = null, moved = false;
+  wrap.addEventListener('pointerdown', e => {
+    if(e.pointerType === 'touch') return; // dejar a touch events para pinch
+    startX = e.clientX; moved = false;
+  }, {passive:true});
+  wrap.addEventListener('pointermove', e => {
+    if(startX === null) return;
+    const dx = startX - e.clientX;
+    if(Math.abs(dx) > 30){
+      shiftModalChart(dx > 0 ? 1 : -1);
+      startX = e.clientX;
+      moved = true;
     }
-    e.preventDefault();
-  }
+  }, {passive:true});
+  wrap.addEventListener('pointerup',     () => { startX = null; }, {passive:true});
+  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
 
-  function onTouchEnd(){
-    dragging = false;
-    accumulated = 0;
-  }
+  // ── Touch: swipe + pinch zoom ──
+  let touches = {};
+  let lastDist = null;
+  let zoomScale = 1;
+  let touchStartX = null;
 
-  wrap.addEventListener('touchstart',  onTouchStart,  {passive:true});
-  wrap.addEventListener('touchmove',   onTouchMove,   {passive:false});
-  wrap.addEventListener('touchend',    onTouchEnd,    {passive:true});
-  wrap.addEventListener('touchcancel', onTouchEnd,    {passive:true});
+  wrap.addEventListener('touchstart', e => {
+    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
+    const ids = Object.keys(touches);
+    if(ids.length === 1){
+      touchStartX = touches[ids[0]].x;
+    }
+    if(ids.length === 2){
+      touchStartX = null;
+      const t0 = touches[ids[0]], t1 = touches[ids[1]];
+      lastDist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('touchmove', e => {
+    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
+    const ids = Object.keys(touches);
+
+    if(ids.length === 1 && touchStartX !== null){
+      // Swipe single finger
+      const dx = touchStartX - touches[ids[0]].x;
+      if(Math.abs(dx) > 40){
+        shiftModalChart(dx > 0 ? 1 : -1);
+        touchStartX = touches[ids[0]].x;
+      }
+    }
+
+    if(ids.length === 2 && lastDist !== null){
+      // Pinch zoom
+      const t0 = touches[ids[0]], t1 = touches[ids[1]];
+      const dist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
+      const ratio = dist / lastDist;
+      zoomScale = Math.min(3, Math.max(0.5, zoomScale * ratio));
+      canvas.style.transform = `scale(${zoomScale})`;
+      canvas.style.transformOrigin = 'center center';
+      lastDist = dist;
+    }
+  }, {passive:true});
+
+  wrap.addEventListener('touchend', e => {
+    Array.from(e.changedTouches).forEach(t => { delete touches[t.identifier]; });
+    if(Object.keys(touches).length < 2){ lastDist = null; }
+    if(Object.keys(touches).length === 0){ touchStartX = null; }
+  }, {passive:true});
+
+  // Reset zoom on double-tap
+  let lastTap = 0;
+  wrap.addEventListener('touchend', e => {
+    const now = Date.now();
+    if(now - lastTap < 300){
+      zoomScale = 1;
+      canvas.style.transform = '';
+    }
+    lastTap = now;
+  }, {passive:true});
 }
 
 function closeChartModal(){
@@ -1725,8 +1618,11 @@ function closeChartModal(){
   document.body.style.top = '';
   document.body.style.width = '';
   window.scrollTo(0, scrollY);
+  // Resetear zoom del canvas modal
+  const mc = document.getElementById('chart-modal-canvas');
+  if(mc){ mc.style.transform = ''; }
   if(modalChart){ modalChart.destroy(); modalChart = null; }
-  _modalTouchInit = false;
+  _modalTouchInit = false; // reinit next time so zoom resets
 }
 
 // Cerrar con tecla Escape
