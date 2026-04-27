@@ -216,6 +216,30 @@ input[type="text"]::placeholder{color:var(--muted)}
 .date-row .field{flex:1;margin-bottom:0}
 .btn-row{display:flex;gap:0.6rem;flex-shrink:0}
 
+/* ─── Split date input ─── */
+.date-split{display:flex;gap:6px;align-items:flex-end}
+.date-part{display:flex;flex-direction:column;gap:4px}
+.date-part-label{font-size:10px;color:var(--muted);text-align:center;letter-spacing:0.06em;text-transform:uppercase}
+.date-sep{color:var(--muted);font-size:18px;line-height:1;padding-bottom:10px;user-select:none}
+input.date-box{
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-xs);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  padding:10px 0;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  text-align:center;
+}
+input.date-box:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(91,141,238,0.12);
+}
+input.date-box::placeholder{color:var(--muted)}
+input.date-box.dd{ width:52px }
+input.date-box.mm{ width:52px }
+input.date-box.yyyy{ width:72px }
+
 /* ─── Buttons ─── */
 button{
   background:var(--accent);color:#fff;border:none;
@@ -468,8 +492,22 @@ canvas { touch-action: pan-y; }
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <input type="text" id="d1" placeholder="DD/MM/AAAA" maxlength="10"/>
-        <div class="hint">DD/MM/AAAA</div>
+        <div class="date-split">
+          <div class="date-part">
+            <div class="date-part-label">DD</div>
+            <input class="date-box dd" type="text" id="d1_dd" placeholder="DD" maxlength="2" inputmode="numeric"/>
+          </div>
+          <div class="date-sep">/</div>
+          <div class="date-part">
+            <div class="date-part-label">MM</div>
+            <input class="date-box mm" type="text" id="d1_mm" placeholder="MM" maxlength="2" inputmode="numeric"/>
+          </div>
+          <div class="date-sep">/</div>
+          <div class="date-part">
+            <div class="date-part-label">AAAA</div>
+            <input class="date-box yyyy" type="text" id="d1_yyyy" placeholder="AAAA" maxlength="4" inputmode="numeric"/>
+          </div>
+        </div>
         <div class="err" id="err-d1">Fecha inválida</div>
       </div>
     </div>
@@ -493,8 +531,22 @@ canvas { touch-action: pan-y; }
       </div>
       <div class="field">
         <label>Fecha de nacimiento</label>
-        <input type="text" id="d2" placeholder="DD/MM/AAAA" maxlength="10"/>
-        <div class="hint">DD/MM/AAAA</div>
+        <div class="date-split">
+          <div class="date-part">
+            <div class="date-part-label">DD</div>
+            <input class="date-box dd" type="text" id="d2_dd" placeholder="DD" maxlength="2" inputmode="numeric"/>
+          </div>
+          <div class="date-sep">/</div>
+          <div class="date-part">
+            <div class="date-part-label">MM</div>
+            <input class="date-box mm" type="text" id="d2_mm" placeholder="MM" maxlength="2" inputmode="numeric"/>
+          </div>
+          <div class="date-sep">/</div>
+          <div class="date-part">
+            <div class="date-part-label">AAAA</div>
+            <input class="date-box yyyy" type="text" id="d2_yyyy" placeholder="AAAA" maxlength="4" inputmode="numeric"/>
+          </div>
+        </div>
         <div class="err" id="err-d2">Fecha inválida</div>
       </div>
     </div>
@@ -507,8 +559,22 @@ canvas { touch-action: pan-y; }
   <div class="date-row">
     <div class="field">
       <label>Fecha a calcular</label>
-      <input type="text" id="dq" placeholder="DD/MM/AAAA" maxlength="10"/>
-      <div class="hint">DD/MM/AAAA</div>
+      <div class="date-split">
+        <div class="date-part">
+          <div class="date-part-label">DD</div>
+          <input class="date-box dd" type="text" id="dq_dd" placeholder="DD" maxlength="2" inputmode="numeric"/>
+        </div>
+        <div class="date-sep">/</div>
+        <div class="date-part">
+          <div class="date-part-label">MM</div>
+          <input class="date-box mm" type="text" id="dq_mm" placeholder="MM" maxlength="2" inputmode="numeric"/>
+        </div>
+        <div class="date-sep">/</div>
+        <div class="date-part">
+          <div class="date-part-label">AAAA</div>
+          <input class="date-box yyyy" type="text" id="dq_yyyy" placeholder="AAAA" maxlength="4" inputmode="numeric"/>
+        </div>
+      </div>
       <div class="err" id="err-dq">Fecha inválida</div>
     </div>
     <div class="btn-row">
@@ -667,8 +733,8 @@ const CP  = '#f5d842';
 let charts = [];
 
 // ── Persistencia de campos ───────────────────────────────────
-const FIELDS = ['n1','d1','n2','d2','dq'];
-FIELDS.forEach(id => {
+const TEXT_FIELDS = ['n1','n2'];
+TEXT_FIELDS.forEach(id => {
   const el = document.getElementById(id);
   try { const s = localStorage.getItem('bio_'+id); if(s) el.value = s; } catch(e){}
   el.addEventListener('input', () => {
@@ -676,33 +742,67 @@ FIELDS.forEach(id => {
   });
 });
 
-// ── Prellenar fecha de hoy ───────────────────────────────────
-(function(){
-  const dqEl = document.getElementById('dq');
-  if(!dqEl.value){
-    const t = new Date();
-    const dd = String(t.getDate()).padStart(2,'0');
-    const mm = String(t.getMonth()+1).padStart(2,'0');
-    const yyyy = t.getFullYear();
-    dqEl.value = `${dd}/${mm}/${yyyy}`;
-  }
-})();
-
-// ── Auto-formato DD/MM/AAAA ──────────────────────────────────
-['d1','d2','dq'].forEach(id => {
-  document.getElementById(id).addEventListener('input', function(){
-    let v = this.value.replace(/\D/g,'');
-    if(v.length > 2) v = v.slice(0,2)+'/'+v.slice(2);
-    if(v.length > 5) v = v.slice(0,5)+'/'+v.slice(5);
-    this.value = v.slice(0,10);
-    try { localStorage.setItem('bio_'+id, this.value); } catch(e){}
+// Persistencia y auto-avance para cajitas de fecha
+const DATE_GROUPS = [
+  { prefix: 'd1', parts: ['dd','mm','yyyy'] },
+  { prefix: 'd2', parts: ['dd','mm','yyyy'] },
+  { prefix: 'dq', parts: ['dd','mm','yyyy'] },
+];
+DATE_GROUPS.forEach(g => {
+  g.parts.forEach((part, idx) => {
+    const id = g.prefix + '_' + part;
+    const el = document.getElementById(id);
+    const maxLen = part === 'yyyy' ? 4 : 2;
+    // Restore
+    try { const s = localStorage.getItem('bio_'+id); if(s) el.value = s; } catch(e){}
+    el.addEventListener('input', function(){
+      // Solo dígitos
+      this.value = this.value.replace(/\D/g,'').slice(0, maxLen);
+      try { localStorage.setItem('bio_'+id, this.value); } catch(e){}
+      // Auto-avanzar al siguiente campo cuando completo
+      if(this.value.length === maxLen && idx < g.parts.length - 1){
+        const nextId = g.prefix + '_' + g.parts[idx+1];
+        document.getElementById(nextId).focus();
+      }
+    });
+    // Retroceder con Backspace si vacío
+    el.addEventListener('keydown', function(e){
+      if(e.key === 'Backspace' && this.value === '' && idx > 0){
+        const prevId = g.prefix + '_' + g.parts[idx-1];
+        document.getElementById(prevId).focus();
+      }
+    });
   });
 });
 
+// ── Prellenar fecha de hoy ───────────────────────────────────
+(function(){
+  const dd = document.getElementById('dq_dd');
+  const mm = document.getElementById('dq_mm');
+  const yy = document.getElementById('dq_yyyy');
+  if(!dd.value && !mm.value && !yy.value){
+    const t = new Date();
+    dd.value = String(t.getDate()).padStart(2,'0');
+    mm.value = String(t.getMonth()+1).padStart(2,'0');
+    yy.value = t.getFullYear();
+    try {
+      localStorage.setItem('bio_dq_dd', dd.value);
+      localStorage.setItem('bio_dq_mm', mm.value);
+      localStorage.setItem('bio_dq_yyyy', yy.value);
+    } catch(e){}
+  }
+})();
+
 // ── Parseo de fecha ──────────────────────────────────────────
+function getDateStr(prefix){
+  const dd   = (document.getElementById(prefix+'_dd')   || {}).value || '';
+  const mm   = (document.getElementById(prefix+'_mm')   || {}).value || '';
+  const yyyy = (document.getElementById(prefix+'_yyyy') || {}).value || '';
+  return dd && mm && yyyy ? `${dd}/${mm}/${yyyy}` : '';
+}
 function parseDate(str){
   if(!str) return null;
-  const m = str.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const m = str.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if(!m) return null;
   const day=+m[1], mon=+m[2]-1, yr=+m[3];
   const d = new Date(yr, mon, day, 0,0,0,0);
@@ -948,11 +1048,14 @@ function buildLegend3(elId, l1, l2, l3, c1, c2, c3){
 // ── Manejo de errores de fecha ────────────────────────────────
 function setErr(id, show){
   document.getElementById('err-'+id).style.display = show ? 'block' : 'none';
-  document.getElementById(id).style.borderColor    = show ? '#f06a6a' : '';
-  if(show)
-    document.getElementById(id).style.boxShadow = '0 0 0 3px rgba(240,106,106,0.12)';
-  else
-    document.getElementById(id).style.boxShadow = '';
+  // id puede ser 'd1', 'd2', 'dq' → cajitas separadas
+  const parts = [id+'_dd', id+'_mm', id+'_yyyy'];
+  parts.forEach(pid => {
+    const el = document.getElementById(pid);
+    if(!el) return;
+    el.style.borderColor = show ? '#f06a6a' : '';
+    el.style.boxShadow   = show ? '0 0 0 3px rgba(240,106,106,0.12)' : '';
+  });
 }
 
 // ── Edad, signo zodiacal, signo chino ────────────────────────
@@ -1037,9 +1140,9 @@ function nearestFullMoon(date){
 
 // ── Calcular ─────────────────────────────────────────────────
 function calcular(){
-  const sv1 = document.getElementById('d1').value;
-  const sv2 = document.getElementById('d2').value;
-  const svq = document.getElementById('dq').value;
+  const sv1 = getDateStr('d1');
+  const sv2 = getDateStr('d2');
+  const svq = getDateStr('dq');
   const d1  = parseDate(sv1), d2 = parseDate(sv2), dq = parseDate(svq);
 
   // P1 y fecha son obligatorios; P2 es opcional
@@ -1331,7 +1434,7 @@ function renderAllSelects(selectedKey, changedSlot){
 
 function saveProfile(slot){
   const name = document.getElementById('n'+slot).value.trim();
-  const date = document.getElementById('d'+slot).value.trim();
+  const date = getDateStr('d'+slot);
   if(!name){ showToast(slot, 'Ingresá un nombre para guardar.', true); return; }
   if(!parseDate(date)){ showToast(slot, 'Fecha inválida.', true); return; }
   const key = name.toLowerCase().replace(/\s+/g,'_') + '_' + date.replace(/\//g,'');
@@ -1348,11 +1451,19 @@ function loadProfile(slot, key){
   const p = profiles[key];
   if(!p) return;
   document.getElementById('n'+slot).value = p.name;
-  document.getElementById('d'+slot).value = p.date;
-  try {
-    localStorage.setItem('bio_n'+slot, p.name);
-    localStorage.setItem('bio_d'+slot, p.date);
-  } catch(e){}
+  // Split date into boxes
+  const parts = p.date.split('/');
+  if(parts.length === 3){
+    document.getElementById('d'+slot+'_dd').value   = parts[0];
+    document.getElementById('d'+slot+'_mm').value   = parts[1];
+    document.getElementById('d'+slot+'_yyyy').value = parts[2];
+    try {
+      localStorage.setItem('bio_d'+slot+'_dd',   parts[0]);
+      localStorage.setItem('bio_d'+slot+'_mm',   parts[1]);
+      localStorage.setItem('bio_d'+slot+'_yyyy', parts[2]);
+    } catch(e){}
+  }
+  try { localStorage.setItem('bio_n'+slot, p.name); } catch(e){}
   setErr('d'+slot, false);
 }
 
