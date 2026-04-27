@@ -1690,6 +1690,14 @@ function initModalTouch(){
     _mPanY = Math.max(-maxY, Math.min(maxY, _mPanY));
   }
 
+  // Mapea deltas de pantalla al espacio del gráfico según rotación del modal
+  function mapDelta(dx, dy){
+    const rotated = document.getElementById('chart-modal').classList.contains('rotated');
+    // Con rotate(90deg): X visual → -Y DOM, Y visual → X DOM
+    if(rotated) return { dx: dy, dy: -dx };
+    return { dx, dy };
+  }
+
   // ── pointerdown ───────────────────────────────────────────────
   wrap.addEventListener('pointerdown', e => {
     e.preventDefault();
@@ -1723,8 +1731,8 @@ function initModalTouch(){
 
     // ── Pan (1 dedo, zoomed) ──────────────────────────────────
     if(gesture === 'pan' && n === 1){
-      const dx = e.clientX - lastX;
-      const dy = e.clientY - lastY;
+      const raw = { dx: e.clientX - lastX, dy: e.clientY - lastY };
+      const { dx, dy } = mapDelta(raw.dx, raw.dy);
       _mPanX += dx; _mPanY += dy;
       clampPan();
       _applyModalTransform();
@@ -1734,14 +1742,15 @@ function initModalTouch(){
 
     // ── Swipe (1 dedo, zoom=1) → navegar gráfico ─────────────
     if(gesture === 'swipe' && n === 1){
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      const rawDx = e.clientX - startX;
+      const rawDy = e.clientY - startY;
+      const { dx, dy } = mapDelta(rawDx, rawDy);
       if(!axisLocked && Math.max(Math.abs(dx), Math.abs(dy)) > 6){
         axisLocked = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
       }
       if(axisLocked === 'h' && Math.abs(dx) > 22){
         shiftModalChart(dx < 0 ? 1 : -1);
-        startX = e.clientX;
+        startX = e.clientX; startY = e.clientY;
       }
       return;
     }
@@ -1754,16 +1763,16 @@ function initModalTouch(){
 
       _mZoom = Math.min(5, Math.max(1, _mZoom * ratio));
 
-      // Pan desde el punto medio del pinch
-      _mPanX += m.x - pinchMidX0;
-      _mPanY += m.y - pinchMidY0;
+      // Pan desde el punto medio del pinch (también mapear por rotación)
+      const { dx: panDx, dy: panDy } = mapDelta(m.x - pinchMidX0, m.y - pinchMidY0);
+      _mPanX += panDx;
+      _mPanY += panDy;
 
       if(_mZoom <= 1.001){ _mPanX = 0; _mPanY = 0; }
       else clampPan();
 
       _applyModalTransform();
 
-      // Actualizar base para el siguiente frame
       pinchDist0 = d;
       pinchMidX0 = m.x; pinchMidY0 = m.y;
     }
