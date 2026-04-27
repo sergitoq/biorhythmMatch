@@ -396,7 +396,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:1.4rem 0}
   border-radius:var(--radius-xs);flex-shrink:0;width:2.4rem;text-align:center;
 }
 #chart-modal-close:hover{color:var(--text);border-color:var(--border-h);box-shadow:none}
-#chart-modal-canvas-wrap{flex:1;position:relative;min-height:0}
+#chart-modal-canvas-wrap{flex:1;position:relative;min-height:0;overflow:hidden;touch-action:none}
 #chart-modal-nav{flex-shrink:0;padding:6px 0 0}
 
 /* ─── Person card accent borders ─── */
@@ -422,9 +422,10 @@ canvas { touch-action: pan-y; }
 .chart-wrap { touch-action: pan-y; }
 #chart-modal-canvas-wrap { touch-action: pan-x pinch-zoom; }
 
-/* Modal: permitir scroll Y y zoom dentro */
-#chart-modal { touch-action: manipulation; }
-#chart-modal-inner { touch-action: manipulation; }
+/* Modal: bloquear todo scroll del browser para manejar todo manualmente */
+#chart-modal { touch-action: none; }
+#chart-modal-inner { touch-action: none; }
+#chart-modal-canvas-wrap { touch-action: none; }
 </style>
 </head>
 <body>
@@ -1633,107 +1634,186 @@ function updateModalNavLabel(offset){
 }
 
 let _modalTouchInit = false;
+
+// Estado de zoom/pan persistente entre aperturas del modal
+let _mZoom  = 1;   // escala actual
+let _mPanX  = 0;   // desplazamiento X en px (a escala 1)
+let _mPanY  = 0;   // desplazamiento Y en px (a escala 1)
+
+function _applyModalTransform(){
+  const canvas = document.getElementById('chart-modal-canvas');
+  if(!canvas) return;
+  canvas.style.transform = `scale(${_mZoom}) translate(${_mPanX/_mZoom}px, ${_mPanY/_mZoom}px)`;
+  canvas.style.transformOrigin = 'center center';
+}
+
+function _resetModalTransform(){
+  _mZoom = 1; _mPanX = 0; _mPanY = 0;
+  _applyModalTransform();
+}
+
 function initModalTouch(){
   if(_modalTouchInit) return;
   _modalTouchInit = true;
+
   const wrap = document.getElementById('chart-modal-canvas-wrap');
-  const canvas = document.getElementById('chart-modal-canvas');
 
-  // ── Swipe horizontal para navegar ──
-  let startX = null, moved = false;
-  wrap.addEventListener('pointerdown', e => {
-    if(e.pointerType === 'touch') return; // dejar a touch events para pinch
-    startX = e.clientX; moved = false;
-  }, {passive:true});
-  wrap.addEventListener('pointermove', e => {
-    if(startX === null) return;
-    const dx = startX - e.clientX;
-    if(Math.abs(dx) > 30){
-      shiftModalChart(dx > 0 ? 1 : -1);
-      startX = e.clientX;
-      moved = true;
-    }
-  }, {passive:true});
-  wrap.addEventListener('pointerup',     () => { startX = null; }, {passive:true});
-  wrap.addEventListener('pointercancel', () => { startX = null; }, {passive:true});
+  // Estado de gestos
+  let activeTouches = {};   // id → {x, y}
+  let lastDist      = null;
+  let lastMidX      = null;
+  let lastMidY      = null;
+  let swipeStartX   = null;
+  let swipeStartY   = null;
+  let swipeLocked   = null; // 'h' | 'v' | null — eje decidido
+  let lastTap       = 0;
 
-  // ── Touch: swipe + pinch zoom ──
-  let touches = {};
-  let lastDist = null;
-  let zoomScale = 1;
-  let touchStartX = null;
+  function getTouchIds(){ return Object.keys(activeTouches); }
+
+  function midpoint(){
+    const ids = getTouchIds();
+    if(ids.length < 2) return null;
+    const a = activeTouches[ids[0]], b = activeTouches[ids[1]];
+    return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
+  }
+  function touchDist(){
+    const ids = getTouchIds();
+    if(ids.length < 2) return null;
+    const a = activeTouches[ids[0]], b = activeTouches[ids[1]];
+    return Math.hypot(b.x-a.x, b.y-a.y);
+  }
+
+  // Clamp pan so the canvas never desaparece completamente
+  function clampPan(){
+    if(_mZoom <= 1){ _mPanX = 0; _mPanY = 0; return; }
+    const wrap = document.getElementById('chart-modal-canvas-wrap');
+    const maxX = wrap.offsetWidth  * (_mZoom - 1) / 2;
+    const maxY = wrap.offsetHeight * (_mZoom - 1) / 2;
+    _mPanX = Math.max(-maxX, Math.min(maxX, _mPanX));
+    _mPanY = Math.max(-maxY, Math.min(maxY, _mPanY));
+  }
 
   wrap.addEventListener('touchstart', e => {
-    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
-    const ids = Object.keys(touches);
-    if(ids.length === 1){
-      touchStartX = touches[ids[0]].x;
+    e.preventDefault(); // evitar scroll de página y retraso de 300ms
+    Array.from(e.changedTouches).forEach(t => {
+      activeTouches[t.identifier] = {x: t.clientX, y: t.clientY};
+    });
+
+    const n = getTouchIds().length;
+
+    if(n === 1){
+      const id = getTouchIds()[0];
+      swipeStartX  = activeTouches[id].x;
+      swipeStartY  = activeTouches[id].y;
+      swipeLocked  = null;
     }
-    if(ids.length === 2){
-      touchStartX = null;
-      const t0 = touches[ids[0]], t1 = touches[ids[1]];
-      lastDist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
+
+    if(n === 2){
+      // Entrar en modo pinch: cancelar swipe
+      swipeStartX = null; swipeStartY = null; swipeLocked = null;
+      lastDist = touchDist();
+      const mid = midpoint();
+      lastMidX = mid.x; lastMidY = mid.y;
     }
-  }, {passive:true});
+  }, {passive:false});
 
   wrap.addEventListener('touchmove', e => {
-    Array.from(e.changedTouches).forEach(t => { touches[t.identifier] = {x: t.clientX, y: t.clientY}; });
-    const ids = Object.keys(touches);
+    e.preventDefault();
+    Array.from(e.changedTouches).forEach(t => {
+      activeTouches[t.identifier] = {x: t.clientX, y: t.clientY};
+    });
 
-    if(ids.length === 1 && touchStartX !== null){
-      // Swipe single finger
-      const dx = touchStartX - touches[ids[0]].x;
-      if(Math.abs(dx) > 40){
-        shiftModalChart(dx > 0 ? 1 : -1);
-        touchStartX = touches[ids[0]].x;
+    const n = getTouchIds().length;
+
+    // ── Un dedo ──
+    if(n === 1 && swipeStartX !== null){
+      const id = getTouchIds()[0];
+      const cur = activeTouches[id];
+      const dx = cur.x - swipeStartX;
+      const dy = cur.y - swipeStartY;
+
+      if(_mZoom > 1.05){
+        // Modo pan: mover la imagen
+        _mPanX += dx; _mPanY += dy;
+        clampPan();
+        _applyModalTransform();
+        swipeStartX = cur.x; swipeStartY = cur.y;
+      } else {
+        // Modo swipe: decidir eje si aún no está bloqueado
+        if(!swipeLocked && Math.max(Math.abs(dx), Math.abs(dy)) > 8){
+          swipeLocked = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+        }
+        if(swipeLocked === 'h'){
+          // Swipe horizontal → navegar gráfico
+          if(Math.abs(dx) > 25){
+            shiftModalChart(dx < 0 ? 1 : -1);
+            swipeStartX = cur.x;
+          }
+        }
+        // swipeLocked === 'v' → no hacemos nada (el e.preventDefault ya bloqueó scroll)
       }
     }
 
-    if(ids.length === 2 && lastDist !== null){
-      // Pinch zoom
-      const t0 = touches[ids[0]], t1 = touches[ids[1]];
-      const dist = Math.hypot(t1.x - t0.x, t1.y - t0.y);
+    // ── Dos dedos: pinch zoom + pan ──
+    if(n === 2 && lastDist !== null){
+      const dist = touchDist();
+      const mid  = midpoint();
+
+      // Pan por movimiento del punto medio
+      if(lastMidX !== null){
+        _mPanX += mid.x - lastMidX;
+        _mPanY += mid.y - lastMidY;
+      }
+
+      // Zoom
       const ratio = dist / lastDist;
-      zoomScale = Math.min(3, Math.max(0.5, zoomScale * ratio));
-      canvas.style.transform = `scale(${zoomScale})`;
-      canvas.style.transformOrigin = 'center center';
+      _mZoom = Math.min(4, Math.max(1, _mZoom * ratio));
+
+      if(_mZoom <= 1){ _mPanX = 0; _mPanY = 0; }
+      clampPan();
+      _applyModalTransform();
+
       lastDist = dist;
+      lastMidX = mid.x; lastMidY = mid.y;
     }
-  }, {passive:true});
+  }, {passive:false});
 
   wrap.addEventListener('touchend', e => {
-    Array.from(e.changedTouches).forEach(t => { delete touches[t.identifier]; });
-    if(Object.keys(touches).length < 2){ lastDist = null; }
-    if(Object.keys(touches).length === 0){ touchStartX = null; }
-  }, {passive:true});
+    Array.from(e.changedTouches).forEach(t => { delete activeTouches[t.identifier]; });
+    const n = getTouchIds().length;
 
-  // Reset zoom on double-tap
-  let lastTap = 0;
-  wrap.addEventListener('touchend', e => {
+    if(n < 2){ lastDist = null; lastMidX = null; lastMidY = null; }
+    if(n === 0){
+      swipeStartX = null; swipeStartY = null; swipeLocked = null;
+    }
+
+    // Doble tap → reset zoom/pan
     const now = Date.now();
-    if(now - lastTap < 300){
-      zoomScale = 1;
-      canvas.style.transform = '';
+    if(now - lastTap < 280 && e.changedTouches.length === 1){
+      _resetModalTransform();
     }
     lastTap = now;
+  }, {passive:true});
+
+  wrap.addEventListener('touchcancel', e => {
+    Array.from(e.changedTouches).forEach(t => { delete activeTouches[t.identifier]; });
+    lastDist = null; lastMidX = null; lastMidY = null;
+    swipeStartX = null; swipeStartY = null; swipeLocked = null;
   }, {passive:true});
 }
 
 function closeChartModal(){
   const modal = document.getElementById('chart-modal');
   modal.classList.remove('open','rotated');
-  // Restaurar scroll position correctamente
   const scrollY = parseInt(document.body.dataset.scrollY || 0);
   document.body.style.overflow = '';
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.width = '';
   window.scrollTo(0, scrollY);
-  // Resetear zoom del canvas modal
-  const mc = document.getElementById('chart-modal-canvas');
-  if(mc){ mc.style.transform = ''; }
+  _resetModalTransform();
   if(modalChart){ modalChart.destroy(); modalChart = null; }
-  _modalTouchInit = false; // reinit next time so zoom resets
+  _modalTouchInit = false;
 }
 
 // Cerrar con tecla Escape
