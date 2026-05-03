@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>BiorhythmMatch</title>
-<meta name="description" content="Calculadora interactiva de biorritmos que compara ciclos físico, emocional e intelectual entre dos personas, con puntaje de compatibilidad y gráficos comparativos.">
+<meta name="description" content="Calculadora interactiva de biorritmos que compara ciclos físico, emocional e intelectual de dos personas, con puntaje de compatibilidad y gráficos comparativos.">
 <meta name="theme-color" content="#080a10">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -699,6 +699,13 @@ canvas { touch-action: none; }
     </div>
   </div>
 
+  <!-- Botón reporte -->
+  <div style="text-align:center;margin-top:0.5rem;margin-bottom:1rem">
+    <button id="btn-reporte" onclick="generarReporte()" style="background:linear-gradient(135deg,#5b8dee,#c77dff);border:none;padding:12px 32px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;color:#fff;letter-spacing:0.03em;cursor:pointer">
+      📄 Generar reporte
+    </button>
+  </div>
+
 </div><!-- /results -->
 </div><!-- /container -->
 
@@ -955,7 +962,7 @@ const CHART_OPTS = {
       border:{color:'rgba(255,255,255,0.07)'}
     },
     y:{
-      min:-105, max:105,
+      min:-100, max:100,
       ticks:{color:'#5a607a',font:{size:10},callback:v=>v+'%',stepSize:50},
       grid:{color:'rgba(255,255,255,0.05)'},
       border:{color:'rgba(255,255,255,0.07)'}
@@ -980,8 +987,8 @@ function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
     data:{
       labels,
       datasets:[
-        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
-        {label:'P2', data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]}
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2', data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]}
       ]
     },
     options: JSON.parse(JSON.stringify(CHART_OPTS))
@@ -1013,9 +1020,9 @@ function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
     data:{
       labels,
       datasets:[
-        {label:'P1',     data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
-        {label:'P2',     data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]},
-        {label:'Pasión', data:ds3, borderColor:c3, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[2,2]}
+        {label:'P1',     data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2',     data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]},
+        {label:'Pasión', data:ds3, borderColor:c3, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[2,2]}
       ]
     },
     options: JSON.parse(JSON.stringify(CHART_OPTS))
@@ -1307,7 +1314,7 @@ function mkChartSolo(canvasId, d1, dq, cycle, c1){
     data:{
       labels,
       datasets:[
-        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4},
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4},
         {label:'P2', data:Array(VIEW_DAYS).fill(null), borderColor:'transparent', backgroundColor:'transparent', borderWidth:0, pointRadius:0}
       ]
     },
@@ -1335,7 +1342,7 @@ function mkPassionChartSolo(canvasId, d1, dq, c1){
     data:{
       labels,
       datasets:[
-        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.4}
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4}
       ]
     },
     options: JSON.parse(JSON.stringify(CHART_OPTS))
@@ -1825,6 +1832,357 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeChartMod
 document.getElementById('chart-modal').addEventListener('click', function(e){
   if(e.target === this) closeChartModal();
 });
+
+// ── Reporte visual con canvas ────────────────────────────────
+function generarReporte(){
+  const sv1=getDateStr('d1'), sv2=getDateStr('d2'), svq=getDateStr('dq');
+  const d1=parseDate(sv1), d2=parseDate(sv2), dq=parseDate(svq);
+  if(!d1||!dq) return;
+  const soloP1=!d2;
+  const n1=document.getElementById('n1').value.trim()||'Persona 1';
+  const n2=document.getElementById('n2').value.trim()||'Persona 2';
+
+  // Capturar gráficos existentes como imágenes a máxima resolución
+  const chartImgs={};
+  ['cf','ce','ci','cp'].forEach(id=>{
+    try{
+      const srcCanvas = document.getElementById(id);
+      // Crear canvas temporal al doble de resolución para mayor calidad
+      const tmp = document.createElement('canvas');
+      const scale = 3;
+      tmp.width  = srcCanvas.offsetWidth  * scale;
+      tmp.height = srcCanvas.offsetHeight * scale;
+      const tg = tmp.getContext('2d');
+      tg.scale(scale, scale);
+      tg.drawImage(srcCanvas, 0, 0, srcCanvas.offsetWidth, srcCanvas.offsetHeight);
+      chartImgs[id] = tmp.toDataURL('image/png');
+    }catch(e){}
+  });
+
+  // Datos calculados
+  const days1=daysBetween(d1,dq);
+  const v1={f:bio(days1,CYCLES.F), e:bio(days1,CYCLES.E), i:bio(days1,CYCLES.I)};
+  const v2=soloP1?null:{f:bio(daysBetween(d2,dq),CYCLES.F), e:bio(daysBetween(d2,dq),CYCLES.E), i:bio(daysBetween(d2,dq),CYCLES.I)};
+  const z1=getZodiac(d1), ch1=getChineseSign(d1), age1=calcAge(d1,dq);
+  const z2=soloP1?null:getZodiac(d2), ch2=soloP1?null:getChineseSign(d2), age2=soloP1?null:calcAge(d2,dq);
+  const moon1=lunarPhaseInfo(d1);
+  const moon2=soloP1?null:lunarPhaseInfo(d2);
+
+  const compatNum  = soloP1?null:parseInt(document.getElementById('compat-num')?.textContent)||0;
+  const compatDesc = soloP1?null:(document.getElementById('compat-desc')?.textContent||'');
+  const passionNum = soloP1?null:parseInt(document.getElementById('compat-passion-num')?.textContent)||0;
+  const passionDesc= soloP1?null:(document.getElementById('compat-passion-desc')?.textContent||'');
+  const pctF=soloP1?null:Math.round(parseFloat(document.getElementById('compat-raw')?.textContent?.match(/Físico: ([\d.]+)/)?.[1])||0);
+  const pctE=soloP1?null:Math.round(parseFloat(document.getElementById('compat-raw')?.textContent?.match(/Emocional: ([\d.]+)/)?.[1])||0);
+  const pctI=soloP1?null:Math.round(parseFloat(document.getElementById('compat-raw')?.textContent?.match(/Intelectual: ([\d.]+)/)?.[1])||0);
+
+  // ── Dibujar canvas ─────────────────────────────────────────
+  const W=900;
+  const CARD=20, PAD=28, GAP=14;
+  const chartH=180;
+
+  // Calcular altura total dinámica
+  let totalH = 80; // header
+  totalH += 110;   // persona 1 card
+  if(!soloP1) totalH += 110; // persona 2
+  if(!soloP1) totalH += 110; // compat
+  totalH += (chartH+GAP+50)*4; // 4 gráficos
+  totalH += 60; // footer
+  totalH += PAD*4;
+
+  const DPR = 2; // render a 2× para mayor nitidez
+  const cv=document.createElement('canvas');
+  cv.width  = W    * DPR;
+  cv.height = totalH * DPR;
+  cv.style.width  = W+'px';
+  cv.style.height = totalH+'px';
+  const g=cv.getContext('2d');
+  g.scale(DPR, DPR); // todo lo que dibujemos usa coordenadas lógicas normales
+
+  // Fondo degradado
+  const bg=g.createLinearGradient(0,0,0,totalH);
+  bg.addColorStop(0,'#080a10');
+  bg.addColorStop(1,'#0d1020');
+  g.fillStyle=bg; g.fillRect(0,0,W,totalH);
+
+  // Estrellas decorativas
+  g.fillStyle='rgba(255,255,255,0.35)';
+  [[60,30],[200,15],[450,40],[700,20],[820,35],[100,80],[380,60],[650,75]].forEach(([x,y])=>{
+    g.beginPath(); g.arc(x,y,1,0,Math.PI*2); g.fill();
+  });
+
+  let y=0;
+
+  // ── Header ────────────────────────────────────────────────
+  const hGrad=g.createLinearGradient(0,0,W,0);
+  hGrad.addColorStop(0,'#5b8dee'); hGrad.addColorStop(1,'#c77dff');
+  g.fillStyle=hGrad; g.fillRect(0,0,W,5);
+
+  y+=24;
+  g.font='bold 28px Georgia, serif';
+  g.fillStyle='#dde2f0'; g.textAlign='left';
+  g.fillText('BioMatch', PAD, y+20);
+  g.font='13px DM Sans, Arial, sans-serif';
+  g.fillStyle='#5a607a';
+  g.fillText('Reporte de biorritmos · '+svq, PAD, y+44);
+  y+=64;
+
+  // ── Función helpers canvas ─────────────────────────────────
+  function roundRect(x,y,w,h,r,fill,stroke){
+    g.beginPath();
+    g.moveTo(x+r,y); g.lineTo(x+w-r,y);
+    g.quadraticCurveTo(x+w,y,x+w,y+r);
+    g.lineTo(x+w,y+h-r); g.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    g.lineTo(x+r,y+h); g.quadraticCurveTo(x,y+h,x,y+h-r);
+    g.lineTo(x,y+r); g.quadraticCurveTo(x,y,x+r,y);
+    g.closePath();
+    if(fill){g.fillStyle=fill;g.fill();}
+    if(stroke){g.strokeStyle=stroke;g.lineWidth=0.5;g.stroke();}
+  }
+
+  function bioColor(v){ return v>0.33?'#4ecda4':v<-0.33?'#f06a6a':'#f59e3f'; }
+  function bioLabel(v){
+    if(v>0.66)return'Máximo'; if(v>0.33)return'Alto';
+    if(v>-0.33)return'Neutro'; if(v>-0.66)return'Bajo'; return'Mínimo';
+  }
+  function compatColor(n){ return n>=70?'#4ecda4':n>=45?'#f59e3f':'#f06a6a'; }
+
+  function drawPersonCard(py, name, info, vals, accentColor, moonInfo){
+    roundRect(PAD, py, W-PAD*2, 100, 12, '#0f1118', 'rgba(255,255,255,0.07)');
+    // Línea accent izquierda
+    g.fillStyle=accentColor; g.fillRect(PAD,py,3,100);
+
+    // Nombre
+    g.font='bold 16px Georgia, serif';
+    g.fillStyle='#dde2f0'; g.textAlign='left';
+    g.fillText(name, PAD+18, py+24);
+
+    // Info (edad, signo, etc.)
+    g.font='12px DM Sans, Arial, sans-serif';
+    g.fillStyle='#7e86a0';
+    g.fillText(info, PAD+18, py+44);
+
+    // Barras de métricas
+    const keys=['f','e','i'], lbl=['Físico','Emocional','Intelectual'];
+    const colors=['#5b8dee','#4ecda4','#c77dff'];
+    const bW=(W-PAD*2-18-20)/3-12;
+    keys.forEach((k,i)=>{
+      const bx=PAD+18+i*(bW+12);
+      const by=py+58;
+      // Label
+      g.font='10px DM Sans, Arial, sans-serif';
+      g.fillStyle='#5a607a'; g.textAlign='left';
+      g.fillText(lbl[i], bx, by);
+      // Barra fondo
+      roundRect(bx,by+6,bW,8,4,'#1c2232');
+      // Barra valor
+      const pct=(vals[k]+1)/2; // -1..1 → 0..1
+      const col=bioColor(vals[k]);
+      if(pct>0) roundRect(bx,by+6,bW*pct,8,4,col);
+      // Valor texto
+      g.font='bold 12px DM Sans, Arial, sans-serif';
+      g.fillStyle=col;
+      g.fillText(Math.round(vals[k]*100)+'%', bx, by+26);
+      // Etiqueta
+      g.font='10px DM Sans, Arial, sans-serif';
+      g.fillStyle='#5a607a';
+      g.fillText(bioLabel(vals[k]), bx+36, by+26);
+    });
+  }
+
+  // ── Persona 1 ─────────────────────────────────────────────
+  const info1=`${age1} años · ${z1} · ${ch1} · ${moon1.emoji} ${moon1.name} · nacido el ${sv1}`;
+  drawPersonCard(y, n1, info1, v1, '#5b8dee', moon1);
+  y+=114;
+
+  // ── Persona 2 ─────────────────────────────────────────────
+  if(!soloP1){
+    const info2=`${age2} años · ${z2} · ${ch2} · ${moon2.emoji} ${moon2.name} · nacido el ${sv2}`;
+    drawPersonCard(y, n2, info2, v2, '#f59e3f', moon2);
+    y+=114;
+
+    // ── Compatibilidad ──────────────────────────────────────
+    roundRect(PAD, y, W-PAD*2, 100, 12, '#0f1118', 'rgba(255,255,255,0.07)');
+    g.font='10px DM Sans, Arial, sans-serif';
+    g.fillStyle='#5a607a'; g.textAlign='left';
+    g.fillText('COMPATIBILIDAD', PAD+18, y+20);
+    g.fillText('PASIÓN', PAD+(W-PAD*2)/2+10, y+20);
+
+    // Número compatibilidad general
+    g.font='bold 36px Georgia, serif';
+    g.fillStyle=compatColor(compatNum);
+    g.fillText(compatNum+'%', PAD+18, y+60);
+    g.font='12px DM Sans, Arial, sans-serif';
+    g.fillStyle='#7e86a0';
+    g.fillText(compatDesc, PAD+18, y+80);
+
+    // Barras F/E/I de compat
+    const cKeys=[{l:'Fís',v:pctF},{l:'Emo',v:pctE},{l:'Int',v:pctI}];
+    cKeys.forEach((ck,i)=>{
+      const bx=PAD+18+150+i*68;
+      const bW=56;
+      g.font='10px DM Sans, Arial, sans-serif';
+      g.fillStyle='#5a607a'; g.textAlign='left';
+      g.fillText(ck.l, bx, y+38);
+      roundRect(bx,y+44,bW,6,3,'#1c2232');
+      roundRect(bx,y+44,bW*(ck.v/100),6,3,compatColor(ck.v||0));
+      g.font='bold 11px DM Sans, Arial, sans-serif';
+      g.fillStyle=compatColor(ck.v||0);
+      g.fillText((ck.v||0)+'%', bx, y+62);
+    });
+
+    // Separador vertical
+    g.strokeStyle='rgba(255,255,255,0.07)'; g.lineWidth=1;
+    g.beginPath(); g.moveTo(PAD+(W-PAD*2)/2, y+14); g.lineTo(PAD+(W-PAD*2)/2, y+90); g.stroke();
+
+    // Pasión
+    g.font='bold 36px Georgia, serif';
+    g.fillStyle=compatColor(passionNum);
+    g.textAlign='left';
+    g.fillText(passionNum+'%', PAD+(W-PAD*2)/2+10, y+60);
+    g.font='12px DM Sans, Arial, sans-serif';
+    g.fillStyle='#7e86a0';
+    g.fillText(passionDesc, PAD+(W-PAD*2)/2+10, y+80);
+
+    y+=114;
+  }
+
+  // ── Gráficos ──────────────────────────────────────────────
+  const chartDefs=[
+    {id:'cf', label:'Ciclo Físico', tag:'23 días', tagColor:'#5b8dee'},
+    {id:'ce', label:'Ciclo Emocional', tag:'28 días', tagColor:'#4ecda4'},
+    {id:'ci', label:'Ciclo Intelectual', tag:'33 días', tagColor:'#c77dff'},
+    {id:'cp', label:'Pasión', tag:'Físico + Emocional', tagColor:'#f5d842'},
+  ];
+
+  function loadImgAndDraw(idx){
+    if(idx>=chartDefs.length){
+      finalizarReporte(cv, soloP1, n1, n2);
+      return;
+    }
+    const def=chartDefs[idx];
+    const cardH=chartH+60;
+    roundRect(PAD, y, W-PAD*2, cardH, 12, '#0f1118', 'rgba(255,255,255,0.07)');
+
+    // Label
+    g.font='bold 12px DM Sans, Arial, sans-serif';
+    g.fillStyle=def.tagColor; g.textAlign='left';
+    g.fillText(def.label, PAD+16, y+22);
+    g.font='10px DM Sans, Arial, sans-serif';
+    g.fillStyle='rgba(255,255,255,0.3)';
+    g.fillText(def.tag, PAD+16+g.measureText(def.label).width+10, y+22);
+
+    const src=chartImgs[def.id];
+    if(src){
+      const img=new Image();
+      img.onload=()=>{
+        g.drawImage(img, PAD+12, y+30, W-PAD*2-24, chartH);
+        y+=cardH+GAP;
+        loadImgAndDraw(idx+1);
+      };
+      img.onerror=()=>{ y+=cardH+GAP; loadImgAndDraw(idx+1); };
+      img.src=src;
+    } else {
+      // Sin imagen: placeholder
+      g.fillStyle='#1c2232';
+      g.fillRect(PAD+12, y+30, W-PAD*2-24, chartH);
+      y+=cardH+GAP;
+      loadImgAndDraw(idx+1);
+    }
+  }
+
+  loadImgAndDraw(0);
+}
+
+function finalizarReporte(cv, soloP1, n1, n2){
+  const g=cv.getContext('2d');
+  const W=cv.width;
+  const y=cv.height-44;
+
+  // Footer
+  g.font='11px DM Sans, Arial, sans-serif';
+  g.fillStyle='#5a607a'; g.textAlign='center';
+  g.fillText('Generado con BioMatch · biorritmos y compatibilidad', W/2, y+16);
+
+  // Línea degradada inferior
+  const fg=g.createLinearGradient(0,0,W,0);
+  fg.addColorStop(0,'#5b8dee'); fg.addColorStop(1,'#c77dff');
+  g.fillStyle=fg; g.fillRect(0,cv.height-4,W,4);
+
+  // Convertir a blob y mostrar modal
+  cv.toBlob(blob=>{
+    const url=URL.createObjectURL(blob);
+    mostrarModalReporte(url, cv, soloP1, n1, n2);
+  }, 'image/png');
+}
+
+function mostrarModalReporte(imgUrl, cv, soloP1, n1, n2){
+  const prev=document.getElementById('reporte-modal');
+  if(prev) prev.remove();
+
+  const overlay=document.createElement('div');
+  overlay.id='reporte-modal';
+  overlay.style.cssText=`position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);
+    display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);`;
+
+  overlay.innerHTML=`
+    <div style="background:#0f1118;border:0.5px solid rgba(255,255,255,0.1);
+      border-radius:20px 20px 0 0;padding:20px 20px 36px;width:100%;max-width:620px;
+      display:flex;flex-direction:column;gap:14px;max-height:90vh;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <span style="font-family:Georgia,serif;font-size:1.1rem;color:#dde2f0">📊 Reporte BioMatch</span>
+        <button onclick="document.getElementById('reporte-modal').remove()"
+          style="background:transparent;border:0.5px solid rgba(255,255,255,0.12);color:#7e86a0;
+                 border-radius:7px;padding:4px 12px;font-size:16px;cursor:pointer">✕</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;border-radius:10px;background:#080a10;min-height:200px">
+        <img src="${imgUrl}" style="width:100%;display:block;border-radius:10px" />
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <button onclick="descargarReporte('${imgUrl}')" style="
+          flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;
+          background:#1c2232;color:#dde2f0;font-size:14px;font-weight:600;">
+          ⬇️ Descargar imagen
+        </button>
+        <button onclick="compartirReporte('${imgUrl}')" style="
+          flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;
+          background:#25D366;color:#fff;font-size:14px;font-weight:600;">
+          📤 Compartir
+        </button>
+      </div>
+    </div>`;
+
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+function descargarReporte(url){
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='BioMatch_reporte.png';
+  a.click();
+}
+
+async function compartirReporte(url){
+  try{
+    const res=await fetch(url);
+    const blob=await res.blob();
+    const file=new File([blob],'BioMatch_reporte.png',{type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        title:'BioMatch — Reporte de biorritmos',
+        files:[file]
+      });
+    } else {
+      // Fallback: abrir imagen en nueva pestaña para compartir manualmente
+      window.open(url,'_blank');
+    }
+  } catch(e){
+    window.open(url,'_blank');
+  }
+}
+
+
 </script>
 </body>
 </html>
