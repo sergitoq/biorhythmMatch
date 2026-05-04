@@ -983,19 +983,14 @@ const verticalGridPlugin = {
 const CHART_OPTS = {
   responsive:true, maintainAspectRatio:false,
   interaction:{mode:'index', intersect:false},
+  layout:{ padding:{ bottom:18 } },
   plugins:{
     legend:{display:false},
     tooltip:{enabled:false}
   },
   scales:{
     x:{
-      ticks:{
-        color:'transparent',
-        font:{size:0},
-        autoSkip:false,
-        maxTicksLimit:999,
-        callback:function(){ return ''; }
-      },
+      ticks:{ display:false },
       grid:{ display:false },
       border:{color:'rgba(255,255,255,0.07)'}
     },
