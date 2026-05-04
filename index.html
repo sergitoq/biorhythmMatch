@@ -924,8 +924,8 @@ function todayLinePlugin(canvasId){
     id: 'todayLine_'+canvasId,
     afterDraw(chart){
       const offset   = chartOffsets[canvasId] || 0;
-      const todayIdx = 7 - offset; // "hoy" está en posición 7 de los datos totales
-      if(todayIdx < 0 || todayIdx >= VIEW_DAYS) return; // "hoy" está fuera de la ventana visible
+      const todayIdx = 7 - offset;
+      if(todayIdx < 0 || todayIdx >= VIEW_DAYS) return;
       const meta = chart.getDatasetMeta(0);
       if(!meta.data[todayIdx]) return;
       const x = meta.data[todayIdx].x;
@@ -948,6 +948,38 @@ function todayLinePlugin(canvasId){
   };
 }
 
+// Plugin: líneas verticales de grilla cada 3 días + etiquetas alineadas
+const verticalGridPlugin = {
+  id: 'verticalGrid3',
+  afterDraw(chart){
+    const meta = chart.getDatasetMeta(0);
+    if(!meta || !meta.data.length) return;
+    const c    = chart.ctx;
+    const top  = chart.chartArea.top;
+    const bot  = chart.chartArea.bottom;
+    const labels = chart.data.labels || [];
+    c.save();
+    meta.data.forEach((pt, idx) => {
+      if(idx % 3 !== 0) return;
+      // Línea vertical
+      c.strokeStyle = 'rgba(255,255,255,0.06)';
+      c.lineWidth   = 0.5;
+      c.beginPath();
+      c.moveTo(pt.x, top);
+      c.lineTo(pt.x, bot);
+      c.stroke();
+      // Etiqueta
+      if(labels[idx]){
+        c.fillStyle  = '#5a607a';
+        c.font       = '10px DM Sans, Arial, sans-serif';
+        c.textAlign  = 'center';
+        c.fillText(labels[idx], pt.x, bot + 14);
+      }
+    });
+    c.restore();
+  }
+};
+
 const CHART_OPTS = {
   responsive:true, maintainAspectRatio:false,
   interaction:{mode:'index', intersect:false},
@@ -957,13 +989,19 @@ const CHART_OPTS = {
   },
   scales:{
     x:{
-      ticks:{color:'#5a607a',font:{size:10},maxTicksLimit:10,autoSkip:true},
-      grid:{color:'rgba(255,255,255,0.035)'},
+      ticks:{
+        color:'transparent',
+        font:{size:0},
+        autoSkip:false,
+        maxTicksLimit:999,
+        callback:function(){ return ''; }
+      },
+      grid:{ display:false },
       border:{color:'rgba(255,255,255,0.07)'}
     },
     y:{
       min:-100, max:100,
-      ticks:{color:'#5a607a',font:{size:10},callback:v=>v+'%',stepSize:50},
+      ticks:{color:'#5a607a',font:{size:10},callback:v=>v+'%',stepSize:25},
       grid:{color:'rgba(255,255,255,0.05)'},
       border:{color:'rgba(255,255,255,0.07)'}
     }
@@ -983,12 +1021,12 @@ function mkChart(canvasId, d1, d2, dq, cycle, c1, c2){
 
   const ch = new Chart(ctx, {
     type:'line',
-    plugins:[todayLinePlugin(canvasId)],
+    plugins:[todayLinePlugin(canvasId), verticalGridPlugin],
     data:{
       labels,
       datasets:[
-        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
-        {label:'P2', data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]}
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2', data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]}
       ]
     },
     options: JSON.parse(JSON.stringify(CHART_OPTS))
@@ -1016,13 +1054,13 @@ function mkPassionChart(canvasId, d1, d2, dq, c1, c2, c3){
 
   const ch = new Chart(ctx, {
     type:'line',
-    plugins:[todayLinePlugin(canvasId)],
+    plugins:[todayLinePlugin(canvasId), verticalGridPlugin],
     data:{
       labels,
       datasets:[
-        {label:'P1',     data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
-        {label:'P2',     data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]},
-        {label:'Pasión', data:ds3, borderColor:c3, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[2,2]}
+        {label:'P1',     data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[]},
+        {label:'P2',     data:ds2, borderColor:c2, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[6,3]},
+        {label:'Pasión', data:ds3, borderColor:c3, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4, borderDash:[2,2]}
       ]
     },
     options: JSON.parse(JSON.stringify(CHART_OPTS))
@@ -1310,11 +1348,11 @@ function mkChartSolo(canvasId, d1, dq, cycle, c1){
 
   const ch = new Chart(ctx, {
     type:'line',
-    plugins:[todayLinePlugin(canvasId)],
+    plugins:[todayLinePlugin(canvasId), verticalGridPlugin],
     data:{
       labels,
       datasets:[
-        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4},
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4},
         {label:'P2', data:Array(VIEW_DAYS).fill(null), borderColor:'transparent', backgroundColor:'transparent', borderWidth:0, pointRadius:0}
       ]
     },
@@ -1338,11 +1376,11 @@ function mkPassionChartSolo(canvasId, d1, dq, c1){
 
   const ch = new Chart(ctx, {
     type:'line',
-    plugins:[todayLinePlugin(canvasId)],
+    plugins:[todayLinePlugin(canvasId), verticalGridPlugin],
     data:{
       labels,
       datasets:[
-        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:1.2, pointRadius:0, pointHoverRadius:5, tension:0.4}
+        {label:'P1', data:ds1, borderColor:c1, backgroundColor:'transparent', borderWidth:0.9, pointRadius:0, pointHoverRadius:5, tension:0.4}
       ]
     },
     options: JSON.parse(JSON.stringify(CHART_OPTS))
@@ -1582,7 +1620,7 @@ function openChartModal(canvasId){
       chartOffsets['chart-modal-canvas'] = srcOffset;
       modalChart = new Chart(ctx, {
         type: 'line',
-        plugins: [todayLinePlugin('chart-modal-canvas')],
+        plugins: [todayLinePlugin('chart-modal-canvas'), verticalGridPlugin],
         data: {
           labels: srcChart.data.labels.slice(),
           datasets: srcChart.data.datasets.map(ds => ({...ds, data: ds.data.slice()}))
