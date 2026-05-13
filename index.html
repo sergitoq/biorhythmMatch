@@ -885,8 +885,8 @@ function calcCompat(birth1, birth2, dq, cycle){
 }
 
 // ── Series para gráficos ─────────────────────────────────────
-const TOTAL_DAYS = 92;  // datos calculados
-const VIEW_DAYS  = 46;  // ventana visible
+const TOTAL_DAYS = 120;  // datos calculados
+const VIEW_DAYS  = 60;   // ventana visible
 
 function makeSeriesData(birth, dq, cycle){
   return Array.from({length:TOTAL_DAYS}, (_,k) => {
@@ -1254,6 +1254,9 @@ function calcular(){
     const pctE = Math.min(100, Math.max(0, Math.round(rawE)));
     const pctI = Math.min(100, Math.max(0, Math.round(rawI)));
     const total = Math.round((pctF+pctE+pctI)/3);
+    // Guardar para el reporte
+    window._bioCompat = { pctF, pctE, pctI, total,
+      passion: Math.round((pctF+pctE)/2) };
 
     const ccolor = total>=70 ? '#4ecda4' : total>=45 ? '#f59e3f' : '#f06a6a';
     const ctxt   = total>=70 ? 'Alta compatibilidad' : total>=45 ? 'Compatibilidad moderada' : 'Baja compatibilidad';
@@ -1910,13 +1913,13 @@ function generarReporte(){
   const moon1=lunarPhaseInfo(d1);
   const moon2=soloP1?null:lunarPhaseInfo(d2);
 
-  const compatNum  = soloP1?null:parseInt(document.getElementById('compat-num')?.textContent)||0;
-  const compatDesc = soloP1?null:(document.getElementById('compat-desc')?.textContent||'');
-  const passionNum = soloP1?null:parseInt(document.getElementById('compat-passion-num')?.textContent)||0;
-  const passionDesc= soloP1?null:(document.getElementById('compat-passion-desc')?.textContent||'');
-  const pctF=soloP1?null:Math.round(parseFloat(document.getElementById('compat-raw')?.textContent?.match(/Físico: ([\d.]+)/)?.[1])||0);
-  const pctE=soloP1?null:Math.round(parseFloat(document.getElementById('compat-raw')?.textContent?.match(/Emocional: ([\d.]+)/)?.[1])||0);
-  const pctI=soloP1?null:Math.round(parseFloat(document.getElementById('compat-raw')?.textContent?.match(/Intelectual: ([\d.]+)/)?.[1])||0);
+  const compatNum   = soloP1?null:(window._bioCompat?.total ?? 0);
+  const compatDesc  = soloP1?null:(document.getElementById('compat-desc')?.textContent||'');
+  const passionNum  = soloP1?null:(window._bioCompat?.passion ?? 0);
+  const passionDesc = soloP1?null:(document.getElementById('compat-passion-desc')?.textContent||'');
+  const pctF = soloP1?null:(window._bioCompat?.pctF ?? 0);
+  const pctE = soloP1?null:(window._bioCompat?.pctE ?? 0);
+  const pctI = soloP1?null:(window._bioCompat?.pctI ?? 0);
 
   // ── Dibujar canvas ─────────────────────────────────────────
   const W=900;
@@ -1940,6 +1943,9 @@ function generarReporte(){
   cv.style.height = totalH+'px';
   const g=cv.getContext('2d');
   g.scale(DPR, DPR); // todo lo que dibujemos usa coordenadas lógicas normales
+
+  const FONT_SERIF = 'Georgia, serif';
+  const FONT_SANS  = 'Arial, sans-serif';
 
   // Fondo degradado
   const bg=g.createLinearGradient(0,0,0,totalH);
